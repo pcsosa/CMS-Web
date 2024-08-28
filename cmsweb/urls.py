@@ -22,4 +22,3 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('appcms.urls')),  # Incluye las URLs de 'myapp'
 ]
-
