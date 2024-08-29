@@ -102,11 +102,11 @@ WSGI_APPLICATION = 'cmsweb.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('NAME'),  # Nombre de la base de datos en PostgreSQL
-        'USER': os.getenv('USER'),                  # Usuario de PostgreSQL
-        'PASSWORD': os.getenv('PASSWORD'),           # Contraseña del usuario
-        'HOST': os.getenv('HOST'),                   # O la IP del servidor si está en otra máquina
-        'PORT': os.getenv('PORT'),                        # Puerto por defecto para PostgreSQL
+        'NAME': os.getenv('DB_NAME'),  # Nombre de la base de datos en PostgreSQL
+        'USER': os.getenv('DB_USER'),                  # Usuario de PostgreSQL
+        'PASSWORD': os.getenv('DB_PASSWORD'),           # Contraseña del usuario
+        'HOST': os.getenv('DB_HOST'),                   # O la IP del servidor si está en otra máquina
+        'PORT': os.getenv('DB_PORT'),                        # Puerto por defecto para PostgreSQL
     }
 }
 
@@ -154,6 +154,6 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SITE_ID = 1
-
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
+ACCOUNT_EMAIL_VERIFICATION = "none"
+LOGIN_REDIRECT_URL = "home"
+ACCOUNT_LOGOUT_ON_GET = True

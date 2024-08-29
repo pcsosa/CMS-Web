@@ -1,0 +1,22 @@
+{% extends '_base.html' %} {% load socialaccount %}
+
+{% block content %}
+
+<div class="container" style="text-align: center; padding-top: 10%;">
+  <h1>CMS WEB</h1>
+  <br /><br />
+
+  {% if user.is_authenticated %}
+    <h3>Bienvenido {{ user.username }} !!!</h3>
+    <br /><br />
+    <a href="{% url 'account_logout' %}" class="btn btn-danger">Logout</a>
+  {% else %}
+    <!-- Botón de google -->
+    <a href="{% provider_login_url 'google' %}" class="btn btn-secondary">
+      <i class="fa fa-google fa-fw"></i>
+      <span>Iniciar sesión con Google</span>
+    </a>
+  {% endif %}
+</div>
+
+{% endblock content %}
