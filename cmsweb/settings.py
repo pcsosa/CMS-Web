@@ -70,6 +70,7 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 ALLOWED_HOSTS = [
+  'localhost',
   'cms-web-mt3l.onrender.com'
 ]
 
