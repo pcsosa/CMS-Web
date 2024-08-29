@@ -21,3 +21,6 @@ def buscar_categorias(request):
     }
     
     return render(request, 'buscar_categorias.html', contexto)
+
+class Home(TemplateView):
+    template_name = "home.html"
