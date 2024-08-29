@@ -2,18 +2,18 @@
   "version": "2.0.0",
   "tasks": [
       {
-          "label": "Iniciar Django",
+          "label": "INICIAR DJANGO",
           "type": "shell",
-          "command": "python3",
-          "args": [
-              "manage.py",
-              "runserver"
-          ],
+          "command": "python manage.py runserver",
           "group": {
               "kind": "build",
               "isDefault": true
           },
-          "problemMatcher": []
+          "problemMatcher": [],
+          "presentation": {
+              "reveal": "never",  // No mostrar la terminal automáticamente
+              "panel": "dedicated"  // Usar un panel dedicado, sin abrir uno nuevo
+          }
       }
   ]
 }
