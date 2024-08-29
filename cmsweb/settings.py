@@ -70,8 +70,8 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 ALLOWED_HOSTS = [
-  'localhost',
-  'cms-web-mt3l.onrender.com'
+    'localhost',
+  'cms-web-mt3l.onrender.com', '127.0.0.1'
 ]
 
 ROOT_URLCONF = 'cmsweb.urls'
@@ -118,11 +118,11 @@ WSGI_APPLICATION = 'cmsweb.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),  # Nombre de la base de datos en PostgreSQL
-        'USER': os.getenv('DB_USER'),                  # Usuario de PostgreSQL
-        'PASSWORD': os.getenv('DB_PASSWORD'),           # Contraseña del usuario
-        'HOST': os.getenv('DB_HOST'),                   # O la IP del servidor si está en otra máquina
-        'PORT': os.getenv('DB_PORT'),                        # Puerto por defecto para PostgreSQL
+        'NAME': os.getenv('bd_is2'),  # Nombre de la base de datos en PostgreSQL
+        'USER': os.getenv('mabi'),                  # Usuario de PostgreSQL
+        'PASSWORD': os.getenv('2024_EJPES_pasan'),           # Contraseña del usuario
+        'HOST': os.getenv('localhost'),                   # O la IP del servidor si está en otra máquina
+        'PORT': os.getenv('5432'),                        # Puerto por defecto para PostgreSQL
     }
 }
 
