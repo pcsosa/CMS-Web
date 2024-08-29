@@ -101,10 +101,15 @@ WSGI_APPLICATION = 'cmsweb.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('NAME'),  # Nombre de la base de datos en PostgreSQL
+        'USER': os.getenv('USER'),                  # Usuario de PostgreSQL
+        'PASSWORD': os.getenv('PASSWORD'),           # Contraseña del usuario
+        'HOST': os.getenv('HOST'),                   # O la IP del servidor si está en otra máquina
+        'PORT': os.getenv('PORT'),                        # Puerto por defecto para PostgreSQL
     }
 }
+
 
 
 # Password validation
