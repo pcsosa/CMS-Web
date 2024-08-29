@@ -7,9 +7,9 @@
   <br /><br />
 
   {% if user.is_authenticated %}
-    <h3>Bienvenido {{ user.username }} !!!</h3>
+    <h3>Bienvenido {{ user.first_name }} {{ user.last_name }} !!!</h3>
     <br /><br />
-    <a href="{% url 'account_logout' %}" class="btn btn-danger">Logout</a>
+    <a href="{% url 'account_logout' %}" class="btn btn-danger">Cerrar sesión</a>
   {% else %}
     <!-- Botón de google -->
     <a href="{% provider_login_url 'google' %}" class="btn btn-secondary">

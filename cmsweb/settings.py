@@ -79,7 +79,7 @@ ROOT_URLCONF = 'cmsweb.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / "templates"],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -92,6 +92,17 @@ TEMPLATES = [
         },
     },
 ]
+
+# Directorio donde se almacenarán los archivos estáticos
+STATIC_URL = '/static/'
+
+# Directorio en tu sistema de archivos donde se recogerán los archivos estáticos
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
+# Directorio donde se almacenan los archivos estáticos recolectados para producción
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -139,7 +150,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'es-PY'
+LANGUAGE_CODE = 'es'
 
 TIME_ZONE = 'UTC'
 
