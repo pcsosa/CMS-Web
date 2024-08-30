@@ -5,9 +5,11 @@ certifi==2024.7.4
 cffi==1.17.0
 charset-normalizer==3.3.2
 cryptography==43.0.0
+dj-database-url==2.2.0
 Django==5.1
 django-allauth==64.1.0
 docutils==0.20.1
+gunicorn==23.0.0
 idna==3.8
 imagesize==1.4.1
 Jinja2==3.1.4
