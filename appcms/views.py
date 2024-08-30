@@ -46,8 +46,15 @@ class Home(TemplateView):
 class search(TemplateView):
     template_name = "buscar_categorias.html"
 
-class Vista2(TemplateView):
-    template_name = "vista2.html"
+class admincat(TemplateView):
+    template_name = "administrar_categorias.html"
+
+class lista(TemplateView):
+    template_name = "lista_categorias.html"
+
+class crear(TemplateView):
+    template_name = "crear_categoria.html"
+      
 
 def administrar_categorias(request):
     if request.method == 'POST':
