@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista de Subategorías</title>
+</head>
+<body>
+    <h1>Lista de Subcategorías</h1>
+    <ul>
+        {% for subcategoria in subcategorias %}
+            <li>{{ subcategoria.nombre }} - {{ subcategoria.categoria }}</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'crear_subcategorias' %}">volver</a>
+</body>
+</html>
