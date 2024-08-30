@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from dotenv import load_dotenv
 import os
 from pathlib import Path
+import dj_database_url
 
 load_dotenv()
 
@@ -115,17 +116,22 @@ WSGI_APPLICATION = 'cmsweb.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),  # Nombre de la base de datos en PostgreSQL
-        'USER': os.getenv('DB_USER'),                  # Usuario de PostgreSQL
-        'PASSWORD': os.getenv('DB_PASSWORD'),           # Contraseña del usuario
-        'HOST': os.getenv('DB_HOST'),                   # O la IP del servidor si está en otra máquina
-        'PORT': os.getenv('DB_PORT'),                        # Puerto por defecto para PostgreSQL
-    }
-}
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql',
+#        'NAME': os.getenv('DB_NAME'),  # Nombre de la base de datos en PostgreSQL
+#        'USER': os.getenv('DB_USER'),                  # Usuario de PostgreSQL
+#        'PASSWORD': os.getenv('DB_PASSWORD'),           # Contraseña del usuario
+#        'HOST': os.getenv('DB_HOST'),                   # O la IP del servidor si está en otra máquina
+#        'PORT': os.getenv('DB_PORT'),                        # Puerto por defecto para PostgreSQL
+#    }
+#}
 
+DATABASES = {
+    'default': dj_database_url.parse(os.getenv('DATABASE_URL'))
+
+    
+}
 
 
 # Password validation
@@ -163,6 +169,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+MEDIA_URL = 'media/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
