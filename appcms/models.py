@@ -13,6 +13,13 @@ class Categoria(models.Model):
         def get_descripcion(self):
             return self.descripcion
         """
+class subcategoria(models.Model):
+    id_subcategoria = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length = 100)
+    categoria = models.ForeignKey(Categoria , on_delete= models.CASCADE)
+    
+    def __str__(self):
+        return self.nombre
     
 
 
