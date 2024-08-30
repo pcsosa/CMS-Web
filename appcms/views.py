@@ -43,6 +43,12 @@ def buscar_categorias(request):
 class Home(TemplateView):
     template_name = "home.html"
 
+class search(TemplateView):
+    template_name = "buscar_categorias.html"
+
+class Vista2(TemplateView):
+    template_name = "vista2.html"
+
 def administrar_categorias(request):
     if request.method == 'POST':
         if 'create' in request.POST:
@@ -68,3 +74,4 @@ def crear_categoria(request):
 def lista_categorias(request):
     categorias = Categoria.objects.all()
     return render(request, 'lista_categorias.html', {'categorias': categorias})
+

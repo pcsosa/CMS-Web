@@ -10,6 +10,10 @@
     <h3>Bienvenido {{ user.first_name }} {{ user.last_name }} !!!</h3>
     <br /><br />
     <a href="{% url 'account_logout' %}" class="btn btn-danger">Cerrar sesión</a>
+
+    <br /><br />
+    <a href="{% url 'search' %}" class="btn btn-primary">buscar categoria</a>
+    <a href="{% url 'vista2' %}" class="btn btn-primary">Ir a Vista 2</a>
   {% else %}
     <!-- Botón de google -->
     <a href="{% provider_login_url 'google' %}" class="btn btn-secondary">
