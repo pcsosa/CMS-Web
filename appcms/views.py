@@ -1,4 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, redirect, render
+
+from appcms.forms import CategoriaForm
 from .models import Categoria
 from django.views.generic import TemplateView
 
@@ -24,3 +26,29 @@ def buscar_categorias(request):
 
 class Home(TemplateView):
     template_name = "home.html"
+
+def administrar_categorias(request):
+    if request.method == 'POST':
+        if 'create' in request.POST:
+            form = CategoriaForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect('administrar_categorias')
+    else:
+        form = CategoriaForm()
+    categorias = Categoria.objects.all()
+    return render(request, 'administrar_categorias.html', {'categorias': categorias, 'form': form})
+
+def crear_categoria(request):
+    if request.method == 'POST':
+        form = CategoriaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('lista_categorias')
+    else:
+        form = CategoriaForm()
+    return render(request, 'crear_categoria.html', {'form': form})
+
+def lista_categorias(request):
+    categorias = Categoria.objects.all()
+    return render(request, 'lista_categorias.html', {'categorias': categorias})
