@@ -5,16 +5,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buscar Categorías</title>
+    {% load static %}
+
+    <!--Hace referencia al archivo Javascript que tiene la función-->
 </head>
 
 <body>
     <h1>Buscar Categorías</h1>
-
-    <form method="get" action="{% url 'buscar_categorias' %}">
-        <input type="text" name="q" value="{{ query }}" placeholder="Buscar categorías...">
+    <!-- Formulario de búsqueda -->
+    <form method="GET" action="{% url 'buscar_categorias' %}">
+        {{ form.as_p }}
+        <input type="text" name='q' placeholder="Buscar categoría..." value="{{ consulta }}">
         <button type="submit">Buscar</button>
     </form>
 
-    </body>
+    <!--Sección de resultados-->
+    {% if consulta %}
+    <h2>Resultados para "{{ consulta }}"</h2>
+    {% if categorias %}
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for categoria in categorias %}
+            <tr>
+                <td>{{ categoria.nombre }}</td>
+                <td>{{ categoria.descripcion }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No se encontraron categorías que coincidan con tu búsqueda.</p>
+    {% endif %}
+    {% endif %}
+</body>
 
 </html>

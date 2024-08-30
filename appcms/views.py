@@ -1,29 +1,45 @@
 from django.shortcuts import get_object_or_404, redirect, render
-
+from .forms import BusquedaCategoriaForm
 from appcms.forms import CategoriaForm
 from .models import Categoria
 from django.views.generic import TemplateView
+from django.db.models import Q
+import unicodedata
 
 # Create your views here.
+def quitar_acentos(texto):
+    if texto is None:
+        return ''
+    # Normaliza el texto en forma NFD (Normalization Form Decomposition)
+    texto_normalizado = unicodedata.normalize('NFD', texto)
+    # Filtra los caracteres que no son marcas diacríticas (acentos)
+    texto_sin_acentos = ''.join(char for char in texto_normalizado if unicodedata.category(char) != 'Mn')
+    return texto_sin_acentos
 
 def buscar_categorias(request):
+    print("--------VISTA 'buscar_categorias' ejecutada")
     consulta = request.GET.get('q')
+    consulta = quitar_acentos(consulta)
     categorias = []
-    mensaje = ''
-    
+    mensaje = "Se ha encontado exitosamente"
+    print(consulta)
+    #import pdb; pdb.set_trace()
     if consulta:
-        categorias = Categoria.objects.filter(nombre__icono_contiene = consulta)
+        categorias = Categoria.objects.filter( Q(nombre__icontains = consulta)) #nombre__icontains = consulta
         if not categorias.exists():
             mensaje = "Categoría no encontrada"
-    
+        
     contexto = {
         'categorias': categorias,
         'mensaje': mensaje,
         'consulta': consulta
     }
-    
+    print("----------------------------RESULTADO DE CONSULTA")
+    print(contexto)
     return render(request, 'buscar_categorias.html', contexto)
-
+    """resultados = Categoria.objects.filter(nombre_incontains)
+    return render(request, buscar_categorias, {categorias:resultados})"""
+   
 class Home(TemplateView):
     template_name = "home.html"
 
