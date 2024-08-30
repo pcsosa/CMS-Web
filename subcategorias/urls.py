@@ -1,0 +1,8 @@
+from django.urls import path
+from . import views
+
+urlpatterns =[
+    path('',views.administrar_subcategorias, name='administrar_subcategorias'),
+    path('crear/',views.crear_subcategoria, name='crear_subcategorias'),
+    path('lista/', views.lista_subcategorias, name='lista_subcategorias'),
+]
