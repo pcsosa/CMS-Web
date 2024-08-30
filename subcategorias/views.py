@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from subcategorias.forms import SubcategoriaForm
 from .models import Subcategoria
 
@@ -31,3 +31,12 @@ def crear_subcategoria(request):
 def lista_subcategorias(request):
     subcategorias = Subcategoria.objects.all()  # Recupera todas las subcategorías
     return render(request, 'lista_subcategorias.html', {'subcategorias': subcategorias})
+
+def eliminar_subcategoria(request, pk):
+    subcategoria = get_object_or_404(Subcategoria, pk=pk)
+    
+    if request.method == 'POST':
+        subcategoria.delete()
+        return redirect('lista_subcategorias')  # Redirige a la lista de subcategorías después de eliminar
+    
+    return render(request, 'eliminar_subcategoria.html', {'subcategoria': subcategoria})
