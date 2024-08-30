@@ -11,4 +11,6 @@ urlpatterns = [
     path('lista/', views.lista_categorias, name='lista_categorias'),
       path('crear/', views.crear_categoria, name='crear_categoria'),
     path('lista/', views.lista_categorias, name='lista_categorias'),
+    
+    
 ]
