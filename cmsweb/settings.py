@@ -13,8 +13,28 @@ from dotenv import load_dotenv
 import os
 from pathlib import Path
 import dj_database_url
+from oauthlib.oauth2 import BackendApplicationClient
+from requests_oauthlib import OAuth2Session
 
 load_dotenv()
+
+
+
+KEYCLOAK_SERVER_URL = "http://localhost:8080/auth/"
+KEYCLOAK_REALM = "cmsweb"
+KEYCLOAK_CLIENT_ID = "cmsweb"
+KEYCLOAK_CLIENT_SECRET = "WdRVbq5nkzdHxVVSgAQqq5Ra0uhZfODS"
+KEYCLOAK_WELL_KNOWN = f"{KEYCLOAK_SERVER_URL}/realms/{KEYCLOAK_REALM}/.well-known/openid-configuration"
+
+OAUTH2_CLIENT_CONFIG = {
+    "client_id": KEYCLOAK_CLIENT_ID,
+    "client_secret": KEYCLOAK_CLIENT_SECRET,
+    "authorize_url": f"{KEYCLOAK_SERVER_URL}/realms/{KEYCLOAK_REALM}/protocol/openid-connect/auth",
+    "access_token_url": f"{KEYCLOAK_SERVER_URL}/realms/{KEYCLOAK_REALM}/protocol/openid-connect/token",
+    "refresh_token_url": f"{KEYCLOAK_SERVER_URL}/realms/{KEYCLOAK_REALM}/protocol/openid-connect/token",
+    "base_url": f"{KEYCLOAK_SERVER_URL}/realms/{KEYCLOAK_REALM}/protocol/openid-connect",
+}
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -109,7 +129,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
+    'appcms.auth_backends.KeycloakBackend',
 ]
+
 
 WSGI_APPLICATION = 'cmsweb.wsgi.application'
 
