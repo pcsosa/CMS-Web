@@ -1,0 +1,23 @@
+<!-- lista_subcategorias.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Subcategorías</title>
+</head>
+<body>
+    <h1>Lista de Subcategorías</h1>
+
+    <ul>
+        {% for subcategoria in subcategorias %}
+            <li>
+                {{ subcategoria.nombre }} - {{ subcategoria.categoria.nombre }}
+                <a href="{% url 'eliminar_subcategoria' subcategoria.pk %}">Eliminar</a>  <!-- Enlace para eliminar -->
+            </li>
+        {% empty %}
+            <li>No hay subcategorías disponibles.</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'crear_subcategorias' %}">Crear Nueva Subcategoría</a>
+</body>
+</html>
