@@ -82,3 +82,11 @@ def lista_categorias(request):
     categorias = Categoria.objects.all()
     return render(request, 'lista_categorias.html', {'categorias': categorias})
 
+def eliminar_categoria(request, pk):
+    categoria = get_object_or_404(Categoria, pk=pk)
+    
+    if request.method == 'POST':
+        categoria.delete()
+        return redirect('lista_categorias')  # Redirige a la lista de subcategorías después de eliminar
+    
+    return render(request, 'eliminar_categoria.html', {'categoria': categoria})

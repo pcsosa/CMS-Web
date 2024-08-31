@@ -9,8 +9,7 @@ urlpatterns = [
     path('search/', buscar_categorias, name='buscar_categorias'),
     path('admincat/', views.administrar_categorias, name='administrar_categorias'),
     path('lista/', views.lista_categorias, name='lista_categorias'),
-
+    path('eliminar/<int:pk>/',views.eliminar_categoria, name='eliminar_categoria'),
     path('crear/', views.crear_categoria, name='crear_categoria'),
-    path('lista/', views.lista_categorias, name='lista_categorias'),
     path('adminsub/', include('subcategorias.urls')),
 ]
