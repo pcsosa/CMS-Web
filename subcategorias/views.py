@@ -18,6 +18,14 @@ def administrar_subcategorias(request):
 
 
 def crear_subcategoria(request):
+    """
+    Crea uba subcategoria nueva dentro de una categoria
+    
+    :param request: La solicitud HTTP
+    :type request: HttpRequest
+    :return: una respuesta con la vista de la lista de las subcategorias existentes
+    :rtype: HttpResponse
+    """
     if request.method == 'POST':
         form = SubcategoriaForm(request.POST)
         if form.is_valid():
@@ -29,10 +37,28 @@ def crear_subcategoria(request):
 
 
 def lista_subcategorias(request):
+    """
+    lista todas las subcategorias existentes a una categoria
+    
+    :param request: La solicitud HTTP
+    :type request: HttpRequest
+    :return: una respuesta con la vista de la lista de las subcategorias existentes
+    :rtype: HttpResponse
+    """
     subcategorias = Subcategoria.objects.all()  # Recupera todas las subcategorías
     return render(request, 'lista_subcategorias.html', {'subcategorias': subcategorias})
 
 def eliminar_subcategoria(request, pk):
+    """
+    elimina una subcategoria de una categoria
+    
+    :param request: La solicitud HTTP
+    :type request: HttpRequest
+    :param pk: el primary key de la categoria a la que pertenece la subcategoria
+    :type pk: int
+    :return: una respuesta con una vista a de verificacion de eliminacion de subcategoria
+    :rtype: HttpResponse
+    """
     subcategoria = get_object_or_404(Subcategoria, pk=pk)
     
     if request.method == 'POST':
