@@ -58,6 +58,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'allauth.socialaccount.providers.openid_connect',
+
     'appcms',
     'subcategorias',
     
@@ -78,16 +80,32 @@ MIDDLEWARE = [
     "allauth.account.middleware.AccountMiddleware"
 ]
 
+#SOCIALACCOUNT_PROVIDERS = {
+#    'google': {
+#        'SCOPE': [
+#            'profile',
+#            'email',
+#        ],
+#        'AUTH_PARAMS': {
+#            'access_type': 'online',
+#        },
+#        'OAUTH_PKCE_ENABLED': True,
+#    }
+#}
+
 SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'SCOPE': [
-            'profile',
-            'email',
-        ],
-        'AUTH_PARAMS': {
-            'access_type': 'online',
-        },
-        'OAUTH_PKCE_ENABLED': True,
+    "openid_connect": {
+        "APPS": [
+            {
+                "provider_id": "keycloak",
+                "name": "Keycloak",
+                "client_id": "cmsweb",
+                "secret": "WdRVbq5nkzdHxVVSgAQqq5Ra0uhZfODS",
+                "settings": {
+                    "server_url": "http://localhost:8080/realms/cmsweb/.well-known/openid-configuration",
+                },
+            }
+        ]
     }
 }
 
@@ -130,6 +148,7 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
     'appcms.auth_backends.KeycloakBackend',
+    
 ]
 
 
