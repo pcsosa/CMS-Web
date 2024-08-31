@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect,get_object_or_404
+from appcms.models import Categoria
 from subcategorias.forms import SubcategoriaForm
 from .models import Subcategoria
 
@@ -33,7 +34,7 @@ def lista_subcategorias(request):
     return render(request, 'lista_subcategorias.html', {'subcategorias': subcategorias})
 
 def eliminar_subcategoria(request, pk):
-    subcategoria = get_object_or_404(Subcategoria, pk=pk)
+    subcategoria = get_object_or_404(Categoria, pk=pk)
     
     if request.method == 'POST':
         subcategoria.delete()
