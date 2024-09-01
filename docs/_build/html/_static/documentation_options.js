@@ -1,5 +1,9 @@
 const DOCUMENTATION_OPTIONS = {
+<<<<<<< HEAD
     VERSION: '0.1',
+=======
+    VERSION: '01',
+>>>>>>> branch_E
     LANGUAGE: 'es',
     COLLAPSE_INDEX: false,
     BUILDER: 'html',
