@@ -13,8 +13,28 @@ from dotenv import load_dotenv
 import os
 from pathlib import Path
 import dj_database_url
+from oauthlib.oauth2 import BackendApplicationClient
+from requests_oauthlib import OAuth2Session
 
 load_dotenv()
+
+
+
+KEYCLOAK_SERVER_URL = "https://keycloak-production-63af.up.railway.app/auth"
+KEYCLOAK_REALM = "cmsweb"
+KEYCLOAK_CLIENT_ID = "cmsweb"
+KEYCLOAK_CLIENT_SECRET = "0zVx5AbaO6fLkn9YH5N1qdFeyl95ctoU"
+KEYCLOAK_WELL_KNOWN = f"{KEYCLOAK_SERVER_URL}/realms/{KEYCLOAK_REALM}/.well-known/openid-configuration"
+
+OAUTH2_CLIENT_CONFIG = {
+    "client_id": KEYCLOAK_CLIENT_ID,
+    "client_secret": KEYCLOAK_CLIENT_SECRET,
+    "authorize_url": f"{KEYCLOAK_SERVER_URL}/realms/{KEYCLOAK_REALM}/protocol/openid-connect/auth",
+    "access_token_url": f"{KEYCLOAK_SERVER_URL}/realms/{KEYCLOAK_REALM}/protocol/openid-connect/token",
+    "refresh_token_url": f"{KEYCLOAK_SERVER_URL}/realms/{KEYCLOAK_REALM}/protocol/openid-connect/token",
+    "base_url": f"{KEYCLOAK_SERVER_URL}/realms/{KEYCLOAK_REALM}/protocol/openid-connect",
+}
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,6 +58,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'allauth.socialaccount.providers.openid_connect',
+
     'appcms',
     'subcategorias',
     
@@ -58,16 +80,32 @@ MIDDLEWARE = [
     "allauth.account.middleware.AccountMiddleware"
 ]
 
+#SOCIALACCOUNT_PROVIDERS = {
+#    'google': {
+#        'SCOPE': [
+#            'profile',
+#            'email',
+#        ],
+#        'AUTH_PARAMS': {
+#            'access_type': 'online',
+#        },
+#        'OAUTH_PKCE_ENABLED': True,
+#    }
+#}
+
 SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'SCOPE': [
-            'profile',
-            'email',
-        ],
-        'AUTH_PARAMS': {
-            'access_type': 'online',
-        },
-        'OAUTH_PKCE_ENABLED': True,
+    "openid_connect": {
+        "APPS": [
+            {
+                "provider_id": "keycloak",
+                "name": "Keycloak",
+                "client_id": "cmsweb",
+                "secret": "0zVx5AbaO6fLkn9YH5N1qdFeyl95ctoU",
+                "settings": {
+                    "server_url": "https://keycloak-production-63af.up.railway.app/realms/cmsweb/.well-known/openid-configuration",
+                },
+            }
+        ]
     }
 }
 
@@ -109,7 +147,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
+    'appcms.auth_backends.KeycloakBackend',
+    
 ]
+
 
 WSGI_APPLICATION = 'cmsweb.wsgi.application'
 
@@ -181,3 +222,6 @@ SITE_ID = 1
 ACCOUNT_EMAIL_VERIFICATION = "none"
 LOGIN_REDIRECT_URL = "home"
 ACCOUNT_LOGOUT_ON_GET = True
+
+SESSION_COOKIE_AGE = 1200  # Tiempo en segundos, por ejemplo 20 minutos
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
