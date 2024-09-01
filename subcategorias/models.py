@@ -1,14 +1,11 @@
+# subcategorias/models.py
 from django.db import models
 from appcms.models import Categoria
 
-# Create your models here.
 class Subcategoria(models.Model):
     """
-    El modelo Subcategoria representa una subcategoría que está asociada a una categoría principal.
-    
-    Este modelo se utiliza para organizar y categorizar elementos dentro de una jerarquía de categorías
-    en la aplicación.
-    
+    Representa una subcategoría asociada a una categoría principal.
+
     :param id_subcategoria: Identificador único y autoincremental de la subcategoría.
     :type id_subcategoria: int
     :param nombre: Nombre de la subcategoría.
@@ -19,11 +16,10 @@ class Subcategoria(models.Model):
     :ivar id_subcategoria: Campo clave primaria autoincremental de la subcategoría.
     :ivar nombre: Campo de texto que almacena el nombre de la subcategoría.
     :ivar categoria: Relación ForeignKey con el modelo Categoria, define la asociación con la categoría principal.
-   
     """
     id_subcategoria = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length = 100)
-    categoria = models.ForeignKey(Categoria , on_delete= models.CASCADE)
+    nombre = models.CharField(max_length=100)
+    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
     
     def __str__(self):
         """
@@ -33,6 +29,7 @@ class Subcategoria(models.Model):
         :rtype: str
         """
         return self.nombre
+
     
 
 

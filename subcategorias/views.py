@@ -1,11 +1,19 @@
-from django.shortcuts import render, redirect,get_object_or_404
+# subcategorias/views.py
+from django.shortcuts import render, redirect, get_object_or_404
 from appcms.models import Categoria
 from subcategorias.forms import SubcategoriaForm
 from .models import Subcategoria
 
-
-# Create your views here.
 def administrar_subcategorias(request):
+    """
+    Administra subcategorías, mostrando un formulario para crear nuevas subcategorías
+    y listando las subcategorías existentes.
+    
+    :param request: La solicitud HTTP.
+    :type request: HttpRequest
+    :return: Una respuesta con la vista de administración de subcategorías.
+    :rtype: HttpResponse
+    """
     if request.method == 'POST':
         if 'create' in request.POST:
             form = SubcategoriaForm(request.POST)
@@ -14,17 +22,17 @@ def administrar_subcategorias(request):
                 return redirect('administrar_subcategorias')
     else:
         form = SubcategoriaForm()
+    
     subcategorias = Subcategoria.objects.all()
     return render(request, 'administrar_subcategorias.html', {'subcategorias': subcategorias, 'form': form})
 
-
 def crear_subcategoria(request):
     """
-    Crea uba subcategoria nueva dentro de una categoria
+    Crea una nueva subcategoría dentro de una categoría existente.
     
-    :param request: La solicitud HTTP
+    :param request: La solicitud HTTP.
     :type request: HttpRequest
-    :return: una respuesta con la vista de la lista de las subcategorias existentes
+    :return: Una respuesta con la vista para crear una nueva subcategoría.
     :rtype: HttpResponse
     """
     if request.method == 'POST':
@@ -34,16 +42,16 @@ def crear_subcategoria(request):
             return redirect('lista_subcategorias')  # Asegúrate de que esta URL exista
     else:
         form = SubcategoriaForm()
+    
     return render(request, 'crear_subcategoria.html', {'form': form})
-
 
 def lista_subcategorias(request):
     """
-    lista todas las subcategorias existentes a una categoria
+    Lista todas las subcategorías existentes.
     
-    :param request: La solicitud HTTP
+    :param request: La solicitud HTTP.
     :type request: HttpRequest
-    :return: una respuesta con la vista de la lista de las subcategorias existentes
+    :return: Una respuesta con la vista de la lista de subcategorías.
     :rtype: HttpResponse
     """
     subcategorias = Subcategoria.objects.all()  # Recupera todas las subcategorías
@@ -51,13 +59,13 @@ def lista_subcategorias(request):
 
 def eliminar_subcategoria(request, pk):
     """
-    elimina una subcategoria de una categoria
+    Elimina una subcategoría específica.
     
-    :param request: La solicitud HTTP
+    :param request: La solicitud HTTP.
     :type request: HttpRequest
-    :param pk: el primary key de la categoria a la que pertenece la subcategoria
+    :param pk: La clave primaria de la subcategoría a eliminar.
     :type pk: int
-    :return: una respuesta con una vista a de verificacion de eliminacion de subcategoria
+    :return: Una respuesta con la vista de confirmación de eliminación.
     :rtype: HttpResponse
     """
     subcategoria = get_object_or_404(Subcategoria, pk=pk)

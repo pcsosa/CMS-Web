@@ -1,5 +1,5 @@
-Categoria
-=========
+appcms
+======
 
 .. toctree::
    :maxdepth: 1
@@ -8,3 +8,4 @@ Categoria
    views.rst
    models.rst
    forms.rst
+   apps.rst
