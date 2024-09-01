@@ -3,6 +3,7 @@ from django.urls import path,include
 from .views import buscar_categorias, crear_categoria, lista_categorias
 from . import views
 from .views import Home
+
 """
     URL para la aplicación 'appcms'.
 
@@ -19,7 +20,6 @@ from .views import Home
     - Subcategorías: Incluye los patrones de URL de la aplicación 'subcategorias'.
 """
 urlpatterns = [
-    
     path('', Home.as_view(), name='home'),
     path('search/', buscar_categorias, name='buscar_categorias'),
     path('admincat/', views.administrar_categorias, name='administrar_categorias'),
