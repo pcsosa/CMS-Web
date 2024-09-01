@@ -20,10 +20,10 @@ load_dotenv()
 
 
 
-KEYCLOAK_SERVER_URL = "http://localhost:8080/auth/"
+KEYCLOAK_SERVER_URL = "https://keycloak-production-63af.up.railway.app/auth"
 KEYCLOAK_REALM = "cmsweb"
 KEYCLOAK_CLIENT_ID = "cmsweb"
-KEYCLOAK_CLIENT_SECRET = "WdRVbq5nkzdHxVVSgAQqq5Ra0uhZfODS"
+KEYCLOAK_CLIENT_SECRET = "0zVx5AbaO6fLkn9YH5N1qdFeyl95ctoU"
 KEYCLOAK_WELL_KNOWN = f"{KEYCLOAK_SERVER_URL}/realms/{KEYCLOAK_REALM}/.well-known/openid-configuration"
 
 OAUTH2_CLIENT_CONFIG = {
@@ -100,9 +100,9 @@ SOCIALACCOUNT_PROVIDERS = {
                 "provider_id": "keycloak",
                 "name": "Keycloak",
                 "client_id": "cmsweb",
-                "secret": "WdRVbq5nkzdHxVVSgAQqq5Ra0uhZfODS",
+                "secret": "0zVx5AbaO6fLkn9YH5N1qdFeyl95ctoU",
                 "settings": {
-                    "server_url": "http://localhost:8080/realms/cmsweb/.well-known/openid-configuration",
+                    "server_url": "https://keycloak-production-63af.up.railway.app/realms/cmsweb/.well-known/openid-configuration",
                 },
             }
         ]
