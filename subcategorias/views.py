@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect,get_object_or_404
+from appcms.models import Categoria
 from subcategorias.forms import SubcategoriaForm
 from .models import Subcategoria
 
