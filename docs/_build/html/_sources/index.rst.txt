@@ -3,19 +3,17 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-cmsweb documentation
+CMS-WEB-EQUIPO01
 ====================
 
-Add your content using ``reStructuredText`` syntax. See the
-`reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html>`_
-documentation for details.
+Sistema de gestion de contenidos para la materia is2
 
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   modulesf/views.rst
-   modulesf/models.rst
-   modulesf/forms.rst
+   modulesf/appcms/index.rst
+   modulesf/subcategorias/index.rst
+   
 
