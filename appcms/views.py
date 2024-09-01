@@ -5,6 +5,12 @@ from .models import Categoria
 from django.views.generic import TemplateView
 from django.db.models import Q
 import unicodedata
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def protected_view(request):
+    return render(request, 'protected.html')
+
 
 def quitar_acentos(texto):
     """
