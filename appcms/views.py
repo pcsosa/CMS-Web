@@ -58,8 +58,11 @@ def buscar_categorias(request):
     print("----------------------------RESULTADO DE CONSULTA")
     print(contexto)
     return render(request, 'buscar_categorias.html', contexto)
-    """resultados = Categoria.objects.filter(nombre_incontains)
-    return render(request, buscar_categorias, {categorias:resultados})"""
+    """_summary_
+
+    Returns:
+        _type_: _description_
+    """
    
 class Home(TemplateView):
     """

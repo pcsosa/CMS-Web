@@ -9,8 +9,8 @@ class CategoriaForm(forms.ModelForm):
         Este formulario utiliza el modelo Categoria para crear o actualizar instancias.
         
     Clase Meta:
-        model (models.Model): El modelo asociado a este formulario.
-        fields (list): Lista de campos que se incluirán en el formulario,incluye los campos nombre y descripcion.
+        :model (models.Model): El modelo asociado a este formulario.
+        :fields (list): Lista de campos que se incluirán en el formulario,incluye los campos nombre y descripcion.
     """
     class Meta:
         model = Categoria
