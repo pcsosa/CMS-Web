@@ -9,7 +9,6 @@ CMS-WEB-EQUIPO01
 Sistema de gestion de contenidos para la materia is2
 
 
-
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
