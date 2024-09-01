@@ -5,10 +5,10 @@ from keycloak import KeycloakOpenID
 class KeycloakBackend(BaseBackend):
     def authenticate(self, request, username=None, password=None, **kwargs):
         
-        KEYCLOAK_SERVER_URL = "http://localhost:8080/auth/"
+        KEYCLOAK_SERVER_URL = "https://keycloak-production-63af.up.railway.app/auth"
         KEYCLOAK_REALM = "cmsweb"
         KEYCLOAK_CLIENT_ID = "cmsweb"
-        KEYCLOAK_CLIENT_SECRET = "WdRVbq5nkzdHxVVSgAQqq5Ra0uhZfODS"
+        KEYCLOAK_CLIENT_SECRET = "0zVx5AbaO6fLkn9YH5N1qdFeyl95ctoU"
         KEYCLOAK_WELL_KNOWN = f"{KEYCLOAK_SERVER_URL}/realms/{KEYCLOAK_REALM}/.well-known/openid-configuration"
 
         keycloak_openid = KeycloakOpenID(server_url=KEYCLOAK_SERVER_URL,
