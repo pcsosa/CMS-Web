@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404, redirect, render
+from django.http.response import JsonResponse
 from .forms import BusquedaCategoriaForm
 from appcms.forms import CategoriaForm
 from .models import Categoria
@@ -6,6 +7,7 @@ from django.views.generic import TemplateView
 from django.db.models import Q
 import unicodedata
 from django.contrib.auth.decorators import login_required
+
 
 @login_required
 def protected_view(request):
@@ -57,9 +59,6 @@ def buscar_categorias(request):
         'consulta': consulta
     }
     return render(request, 'buscar_categorias.html', contexto)
-
-def interfaz_estandar(request):
-    return render(request,"interfaz_estandar.html")
 
 class Home(TemplateView):
     """
@@ -180,3 +179,12 @@ def eliminar_categoria(request, pk):
         return redirect('lista_categorias')
     
     return render(request, 'eliminar_categoria.html', {'categoria': categoria})
+
+#A DOCUMENTAR
+def interfaz_estandar(request):
+    return render(request,"interfaz_estandar.html")
+
+def listar_categorias(_request):
+    categorias = list(Categoria.objects.values())
+    data = {'categorias': categorias}
+    return JsonResponse(data)   

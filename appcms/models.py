@@ -12,7 +12,7 @@ class Categoria(models.Model):
     id_categoria = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100, unique=True)
     descripcion = models.CharField(max_length=500)
-    
+
     def __str__(self):
         """
         Representación en cadena de la categoría.
@@ -30,7 +30,9 @@ class Categoria(models.Model):
         :rtype: str
         """
         return self.descripcion
-
+    
+class Meta: #Cambia el nombre de la tabla de la base de datos
+        db_table = 'categoria'
     
 
 
