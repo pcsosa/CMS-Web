@@ -58,6 +58,9 @@ def buscar_categorias(request):
     }
     return render(request, 'buscar_categorias.html', contexto)
 
+def interfaz_estandar(request):
+    return render(request,"interfaz_estandar.html")
+
 class Home(TemplateView):
     """
     Vista para la página de inicio.
