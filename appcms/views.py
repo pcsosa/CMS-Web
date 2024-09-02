@@ -181,3 +181,17 @@ def eliminar_categoria(request, pk):
         return redirect('lista_categorias')
     
     return render(request, 'eliminar_categoria.html', {'categoria': categoria})
+
+def editar_categoria(request,pk):
+    categoria = get_object_or_404(Categoria, id=categoria_id)
+    
+    if request.method == 'POST':
+        form = CategoriaForm(request.POST, instance=categoria)
+        if form.is_valid():
+            form.save()
+            return redirect('')  # Redirige a la vista principal después de editar
+    else:
+        form = CategoriaForm(instance=categoria)
+    
+    return render(request, 'editar_categoria.html', {'form': form})
+
