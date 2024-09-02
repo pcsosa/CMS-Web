@@ -1,3 +1,6 @@
+let dataTable;
+let dataTableIsInitialized = false;
+
 const listar_categorias = async () => {
   try {
       const response = await fetch("http://127.0.0.1:8000/listar/");
@@ -8,7 +11,7 @@ const listar_categorias = async () => {
 
           content += `
           <tr>
-              <td>${index} </td>
+              <td>${index + 1} </td>
               <td>${categoria.nombre}</td>
               <td>${categoria.descripcion}</td>
           </tr> 
