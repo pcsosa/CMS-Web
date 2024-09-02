@@ -1,4 +1,3 @@
-# subcategorias/models.py
 from django.db import models
 from appcms.models import Categoria
 
@@ -18,8 +17,8 @@ class Subcategoria(models.Model):
     :ivar categoria: Relación ForeignKey con el modelo Categoria, define la asociación con la categoría principal.
     """
     id_subcategoria = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=100)
-    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
+    nombre = models.CharField(max_length=100, unique=True)  # Agregar unique=True para evitar nombres duplicados
+    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, related_name='subcategorias')
     
     def __str__(self):
         """
@@ -29,7 +28,5 @@ class Subcategoria(models.Model):
         :rtype: str
         """
         return self.nombre
-
-    
 
 

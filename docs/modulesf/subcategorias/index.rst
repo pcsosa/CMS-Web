@@ -8,3 +8,4 @@ subcategorias
    views.rst
    models.rst
    forms.rst
+   tests_views.rst
