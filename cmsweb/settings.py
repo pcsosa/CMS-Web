@@ -140,8 +140,15 @@ WSGI_APPLICATION = 'cmsweb.wsgi.application'
 #    }
 #}
 
+#DATABASES = {
+#    'default': dj_database_url.parse(os.getenv('DATABASE_URL'))   
+#}
+
 DATABASES = {
-    'default': dj_database_url.parse(os.getenv('DATABASE_URL'))
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': ':memory:',
+    }
 }
 
 
