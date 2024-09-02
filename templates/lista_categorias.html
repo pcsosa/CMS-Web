@@ -1,15 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Lista de Categorías</title>
+    <title>Gestión de Categorías</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
 <body>
-    <h1>Lista de Categorías</h1>
-    <ul>
-        {% for categoria in categorias %}
-            <li>{{ categoria.nombre }} - {{ categoria.descripcion }}</li>
-        {% endfor %}
-    </ul>
-    <a href="{% url 'crear_categoria' %}">volver</a>
+    <div class="container">
+        <h1>Gestión de Categorías</h1>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="nombre">Creacion de Categorías</label>
+                {{ form.nombre }}
+            </div>
+            <input type="hidden" name="categoria_id" id="categoria_id">
+            <button type="button" class="btn btn-success" onclick="window.location.href='{% url 'crear_categoria'%}'">Crear</button>
+
+        </form>
+        <h2>Listado de Categorías</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Acciones</th>
+                </tr>
+                
+            </thead>
+            <tbody>
+                {% for categoria in categorias %}
+                    <tr>
+                        <td>{{ categoria.nombre }} - {{ categoria.descripcion }}</td>
+                    </tr>
+                    
+                {% endfor %}
+            </tbody>
+        </table>
+       
+        
+    </div>
 </body>
 </html>

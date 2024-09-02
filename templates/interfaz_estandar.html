@@ -12,17 +12,14 @@
         <form method="post">
             {% csrf_token %}
             <div class="form-group">
-                <label for="nombre">Nombre de la Categoría</label>
+                <label for="nombre">Creacion de Categorías</label>
                 {{ form.nombre }}
             </div>
             <input type="hidden" name="categoria_id" id="categoria_id">
-            <button type="button" class="btn btn-success" onclick="window.location.href='{% url 'crear_categoria' %}'">Crear</button>
+            <button type="button" class="btn btn-success" onclick="window.location.href='{% url 'crear_categoria'%}'">Crear</button>
 
-
-            <button type="submit" name="editar" class="btn btn-info">Editar</button>
         </form>
 
-        <hr>
 
         <!-- Listado de Categorías -->
         <h2>Listado de Categorías</h2>
@@ -33,33 +30,22 @@
                     <th>Acciones</th>
                 </tr>
             </thead>
-            <tbody>
-                <ul>
-                    {% for subcategoria in subcategorias %}
-                        <li>
-                            {{ categoria.nombre }} 
-                            <button type="button" class="btn btn-success" onclick="window.location.href='{% url 'eliminar_categoria' categoria.pk %}'">Eliminar</button>
-                        </li>
-                    {% empty %}
-                    {% endfor %}
-                </ul>
-                {% for categoria in categorias %}
-                <tr>
-                    <td>{{ categoria.nombre }}</td>
-                    <td>
-                        <button class="btn btn-warning btn-edit" data-id="{{ categoria.id }}" data-nombre="{{ categoria.nombre }}">Editar</button>
-                        <form method="post" style="display:inline;">
-                            {% csrf_token %}
-                            <input type="hidden" name="categoria_id" value="{{ categoria.id }}">
-                            <button type="submit" name="eliminar" class="btn btn-danger">Eliminar</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
+          
         </table>
     </div>
+    <div class="container">
+        <ul class="list-group">
+            <p>{{ categorias.count }}</p>
 
+            {% for categoria in categorias %}
+                <li class="list-group-item">
+                    <strong>{{ categorias.nombre }}</strong> - {{ categorias.descripcion }}
+                </li>
+            {% empty %}
+                <li class="list-group-item">No hay componentes disponibles.</li>
+            {% endfor %}
+        </ul>
+    </div>
     <script>
         document.querySelectorAll('.btn-edit').forEach(function(button) {
             button.addEventListener('click', function() {

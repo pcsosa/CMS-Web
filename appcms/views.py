@@ -158,6 +158,7 @@ def lista_categorias(request):
     :return: HttpResponse: La respuesta renderizada con la lista de categorías.
     """
     categorias = Categoria.objects.all()
+    print(categorias) 
     return render(request, 'lista_categorias.html', {'categorias': categorias})
 
 def eliminar_categoria(request, pk):
