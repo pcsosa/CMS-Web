@@ -140,16 +140,16 @@ WSGI_APPLICATION = 'cmsweb.wsgi.application'
 #    }
 #}
 
-#DATABASES = {
-#    'default': dj_database_url.parse(os.getenv('DATABASE_URL'))   
-#}
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': ':memory:',
-    }
+    'default': dj_database_url.parse(os.getenv('DATABASE_URL'))   
 }
+
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': ':memory:',
+#    }
+#}
 
 
 # Password validation
