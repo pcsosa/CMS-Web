@@ -18,14 +18,9 @@
     <a href="{% url 'crear_categoria' %}" class="btn btn-primary">crear categoria</a>
     
   {% else %}
-    <!-- Botón de google -->
-    <a href="{% provider_login_url 'google' %}" class="btn btn-secondary">
-      <i class="fa fa-google fa-fw"></i>
-      <span>Iniciar sesión con Google</span>
-    </a>
     <a href="{% provider_login_url 'keycloak' %}" class="btn btn-secondary">
       <i class="fa-solid fa-poo"></i>
-      <span>Iniciar sesión con keycloak</span>
+      <span>Iniciar sesión con Keycloak</span>
     </a>
   {% endif %}
 </div>
