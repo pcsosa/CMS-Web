@@ -4,11 +4,13 @@ const listar_categorias = async () => {
       const data = await response.json();
 
       let content = ``;
-      data.categorias.forEach((categorias,index) => {
+      data.categorias.forEach((categoria,index) => {
 
           content += `
           <tr>
-              <><td>${index} </td><td>${categoria.nombre}</td></>
+              <td>${index} </td>
+              <td>${categoria.nombre}</td>
+              <td>${categoria.descripcion}</td>
           </tr> 
           `;
       });
