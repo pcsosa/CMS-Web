@@ -5,6 +5,9 @@ from appcms.views import buscar_categorias, administrar_categorias, lista_catego
 
 
 class TestUrls(SimpleTestCase):
+  """
+  Clase para testear todas las urls
+  """
 
     def test_buscar_categorias_url_resolves(self):
         url = reverse( 'buscar_categorias')
