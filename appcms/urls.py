@@ -21,6 +21,7 @@ urlpatterns = [
     path('lista/', views.lista_categorias, name='lista_categorias'),
     path('eliminar/<int:pk>/', views.eliminar_categoria, name='eliminar_categoria'),
     path('crear/', views.crear_categoria, name='crear_categoria'),
+    path('cat/', views.interfaz_estandar, name='interfaz_estandar'),
     path('adminsub/', include('subcategorias.urls')),
     path('login/', auth_views.LoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
