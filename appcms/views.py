@@ -183,7 +183,16 @@ def eliminar_categoria(request, pk):
     return render(request, 'eliminar_categoria.html', {'categoria': categoria})
 
 def editar_categoria(request,pk):
-    categoria = get_object_or_404(Categoria, id=categoria_id)
+    """Editar campos de categoria
+
+    Args:
+        :param request: La solicitud HTTP.
+        :type request: HttpRequest
+        :param pk: La clave primaria de la categoría a modificar.
+        :type pk: int
+        :return: HttpResponse.
+    """
+    categoria = get_object_or_404(Categoria, id=pk)
     
     if request.method == 'POST':
         form = CategoriaForm(request.POST, instance=categoria)
