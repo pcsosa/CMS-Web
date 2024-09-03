@@ -6,33 +6,34 @@
 </head>
 <body>
     <div class="container">
-        <h1>Gestión de Categorías</h1>
-        <form method="post">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="nombre">Creacion de Categorías</label>
-                {{ form.nombre }}
-            </div>
-            <input type="hidden" name="categoria_id" id="categoria_id">
-            <button type="button" class="btn btn-success" onclick="window.location.href='{% url 'crear_categoria'%}'">Crear</button>
-
-        </form>
-        <h2>Listado de Categorías</h2>
+        <h1 style="text-align: center";>Gestión de Categorías</h1>
+        <form method="post">   </form>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3>Listado de Categorías</h3>
+            <button type="button" class="btn btn-success" onclick="window.location.href='{% url 'crear_categoria' %}'">Nueva Categoria</button>
+        </div>
+        
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>Nombre</th>
+                    <th>Nombre-Descripcion</th>
                 </tr>
                 
             </thead>
             <tbody>
                 {% for categoria in categorias %}
                     <tr>
-                        <td>{{ categoria.nombre }} - {{ categoria.descripcion }}</td>
+                        <td>
+                            {{ categoria.nombre }} - {{ categoria.descripcion }}</td>
+                            <td>
+                                <button type="button" class="btn btn-danger" onclick="window.location.href=''">Eliminar</button>
+                                <button type="button" class="btn btn-primary" onclick="window.location.href=''">Editar</button>
+                        
+                            </td>
+                        </td>
                     </tr>
                     <td>
-                        
-                    </td>
+                       
                 {% endfor %}
             </tbody>
         </table>
