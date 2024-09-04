@@ -3,6 +3,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from appcms.models import Categoria
 from subcategorias.forms import SubcategoriaForm
 from .models import Subcategoria
+from django.contrib import messages
+from django.views.decorators.http import require_POST
 
 def administrar_subcategorias(request):
     """
@@ -36,26 +38,49 @@ def crear_subcategoria(request):
     :rtype: HttpResponse
     """
     if request.method == 'POST':
-        form = SubcategoriaForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('lista_subcategorias')  # Asegúrate de que esta URL exista
-    else:
-        form = SubcategoriaForm()
-    
-    return render(request, 'crear_subcategoria.html', {'form': form})
+        # Obtener el nombre de la subcategoría y el ID de la categoría desde la solicitud POST
+        nombre = request.POST.get('nombre').strip()  # Elimina espacios en blanco
+        categoria_id = request.POST.get('categoria_id')
 
-def lista_subcategorias(request):
+        # Validar que el nombre no esté vacío
+        if not nombre:
+            messages.error(request, "El nombre de la subcategoría no puede estar vacío.")
+            return redirect(request.META.get('HTTP_REFERER'))  # Regresar a la página anterior con el mensaje de error
+        
+        # Obtener la categoría correspondiente al ID
+        categoria = get_object_or_404(Categoria, pk=categoria_id)
+    
+        # Validar que no exista una subcategoría con el mismo nombre en la categoría
+        if Subcategoria.objects.filter(nombre=nombre, categoria=categoria).exists():
+            messages.error(request, "Ya existe una subcategoría con este nombre en la categoría seleccionada.")
+            return redirect(request.META.get('HTTP_REFERER'))  # Regresar a la página anterior con el mensaje de error
+        
+        # Crear una nueva subcategoría
+        Subcategoria.objects.create(nombre=nombre, categoria=categoria)
+        messages.success(request, "Subcategoría creada con éxito.")
+        
+        return redirect('lista_subcategorias', pk=categoria_id)  # Redirigir a la lista de subcategorías de la categoría
+
+    # En caso de GET, mostrar el formulario vacío (aunque aquí no aplicaría si solo usas POST en el script)
+    return render(request, 'crear_subcategoria.html')
+
+def lista_subcategorias(request, pk):
     """
     Lista todas las subcategorías existentes.
     
     :param request: La solicitud HTTP.
     :type request: HttpRequest
+    :param pk: primary key de categoria
+    :type: int
     :return: Una respuesta con la vista de la lista de subcategorías.
     :rtype: HttpResponse
     """
-    subcategorias = Subcategoria.objects.all()  # Recupera todas las subcategorías
-    return render(request, 'lista_subcategorias.html', {'subcategorias': subcategorias})
+    categoria = get_object_or_404(Categoria, pk=pk)
+    # Filtrar subcategorías que pertenecen a esta categoría
+    subcategorias = Subcategoria.objects.filter(categoria=categoria)
+
+    return render(request, 'lista_subcategorias.html', {'subcategorias': subcategorias,
+                                                        'categoria': categoria})
 
 def eliminar_subcategoria(request, pk):
     """
@@ -69,32 +94,30 @@ def eliminar_subcategoria(request, pk):
     :rtype: HttpResponse
     """
     subcategoria = get_object_or_404(Subcategoria, pk=pk)
+    categoria = subcategoria.categoria
     
     if request.method == 'POST':
         subcategoria.delete()
-        return redirect('lista_subcategorias')  # Redirige a la lista de subcategorías después de eliminar
+        messages.success(request, "La eliminacion ha sido exitosa")
+        return redirect('lista_subcategorias',pk=categoria.pk)  # Redirige a la lista de subcategorías después de eliminar
     
     return render(request, 'eliminar_subcategoria.html', {'subcategoria': subcategoria})
 
-def editar_subcategoria(request,pk):
-    """Editar campos de subcategoria
-
-    Args:
-        :param request: La solicitud HTTP.
-        :type request: HttpRequest
-        :param pk: La clave primaria de la subcategoría a modificar.
-        :type pk: int
-        :return: HttpResponse.
+@require_POST
+def actualizar_subcategoria(request):
     """
-    subcategoria = get_object_or_404(Subcategoria, id=pk)
+    Actualiza el nombre de una subcategoría existente.
     
-    if request.method == 'POST':
-        form = SubcategoriaForm(request.POST, instance=subcategoria)
-        if form.is_valid():
-            form.save()
-            return redirect('')  
-    else:
-        form = SubcategoriaForm(instance=subcategoria)
+    :param request: La solicitud HTTP.
+    :type request: HttpRequest
+    :return: Redirige a la lista de subcategorías.
+    :rtype: HttpResponseRedirect
+    """
+    id = request.POST.get('id')
+    nombre = request.POST.get('nombre')
     
-    return render(request, 'editar_subcategoria.html', {'form': form})
+    subcategoria = get_object_or_404(Subcategoria, pk=id)
+    subcategoria.nombre = nombre
+    subcategoria.save()
 
+    return redirect(request.META.get('HTTP_REFERER'))
