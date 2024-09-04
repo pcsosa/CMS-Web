@@ -1,15 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Lista de Categorías</title>
+    <title>Gestión de Categorías</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
 <body>
-    <h1>Lista de Categorías</h1>
-    <ul>
-        {% for categoria in categorias %}
-            <li>{{ categoria.nombre }} - {{ categoria.descripcion }}</li>
-        {% endfor %}
-    </ul>
-    <a href="{% url 'crear_categoria' %}">volver</a>
+    <div class="container">
+        <h1 style="text-align: center";>Gestión de Categorías</h1>
+        <form method="post">   </form>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3>Listado de Categorías</h3>
+            <button type="button" class="btn btn-success" onclick="window.location.href='{% url 'crear_categoria' %}'">Nueva Categoria</button>
+        </div>
+        
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Descripcion</th>
+                </tr>
+                
+            </thead>
+            <tbody>
+                {% for categoria in categorias %}
+                    <tr>
+                        <td>
+                            {{ categoria.nombre }} 
+                        </td>
+                        <td>
+                            {{ categoria.descripcion }}
+                        </td>
+                            <td>
+                                <button type="button" class="btn btn-danger" onclick="window.location.href=''">Eliminar</button>
+                                <button type="button" class="btn btn-primary" onclick="window.location.href=''">Editar</button>
+                        
+                            </td>
+                        </td>
+                    </tr>
+                    <td>
+                       
+                {% endfor %}
+            </tbody>
+        </table> 
+    </div>
 </body>
 </html>

@@ -158,6 +158,7 @@ def lista_categorias(request):
     :return: HttpResponse: La respuesta renderizada con la lista de categorías.
     """
     categorias = Categoria.objects.all()
+    print(categorias) 
     return render(request, 'lista_categorias.html', {'categorias': categorias})
 
 def eliminar_categoria(request, pk):
@@ -180,3 +181,26 @@ def eliminar_categoria(request, pk):
         return redirect('lista_categorias')
     
     return render(request, 'eliminar_categoria.html', {'categoria': categoria})
+
+def editar_categoria(request,pk):
+    """Editar campos de categoria
+
+    Args:
+        :param request: La solicitud HTTP.
+        :type request: HttpRequest
+        :param pk: La clave primaria de la categoría a modificar.
+        :type pk: int
+        :return: HttpResponse.
+    """
+    categoria = get_object_or_404(Categoria, id=pk)
+    
+    if request.method == 'POST':
+        form = CategoriaForm(request.POST, instance=categoria)
+        if form.is_valid():
+            form.save()
+            return redirect('')  # Redirige a la vista principal después de editar
+    else:
+        form = CategoriaForm(instance=categoria)
+    
+    return render(request, 'editar_categoria.html', {'form': form})
+
