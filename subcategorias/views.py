@@ -61,8 +61,6 @@ def crear_subcategoria(request):
         
         return redirect('lista_subcategorias', pk=categoria_id)  # Redirigir a la lista de subcategorías de la categoría
 
-    # En caso de GET, mostrar el formulario vacío (aunque aquí no aplicaría si solo usas POST en el script)
-    return render(request, 'crear_subcategoria.html')
 
 def lista_subcategorias(request, pk):
     """
@@ -101,7 +99,6 @@ def eliminar_subcategoria(request, pk):
         messages.success(request, "La eliminacion ha sido exitosa")
         return redirect('lista_subcategorias',pk=categoria.pk)  # Redirige a la lista de subcategorías después de eliminar
     
-    return render(request, 'eliminar_subcategoria.html', {'subcategoria': subcategoria})
 
 @require_POST
 def actualizar_subcategoria(request):
