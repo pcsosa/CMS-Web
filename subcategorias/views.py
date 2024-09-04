@@ -75,3 +75,26 @@ def eliminar_subcategoria(request, pk):
         return redirect('lista_subcategorias')  # Redirige a la lista de subcategorías después de eliminar
     
     return render(request, 'eliminar_subcategoria.html', {'subcategoria': subcategoria})
+
+def editar_subcategoria(request,pk):
+    """Editar campos de subcategoria
+
+    Args:
+        :param request: La solicitud HTTP.
+        :type request: HttpRequest
+        :param pk: La clave primaria de la subcategoría a modificar.
+        :type pk: int
+        :return: HttpResponse.
+    """
+    subcategoria = get_object_or_404(Subcategoria, id=pk)
+    
+    if request.method == 'POST':
+        form = SubcategoriaForm(request.POST, instance=subcategoria)
+        if form.is_valid():
+            form.save()
+            return redirect('')  
+    else:
+        form = SubcategoriaForm(instance=subcategoria)
+    
+    return render(request, 'editar_subcategoria.html', {'form': form})
+
