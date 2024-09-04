@@ -17,7 +17,8 @@ patrones de URL a sus vistas correspondientes.
 urlpatterns = [
     path('', Home.as_view(), name='home'),
     path('search/', buscar_categorias, name='buscar_categorias'),
-    path('lista/', views.lista_categorias, name='lista_categorias'),
+    path('admincat/', views.lista_categorias, name='lista_categorias'),
+    path('editar/<int:pk>/', views.editar_categoria, name='editar_categoria'),
     path('eliminar/<int:pk>/', views.eliminar_categoria, name='eliminar_categoria'),
     path('crear/', views.crear_categoria, name='crear_categoria'),
     path('cat/', views.interfaz_estandar, name='interfaz_estandar'),
