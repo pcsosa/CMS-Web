@@ -53,8 +53,8 @@
                         </td>
                         <td>
                             <div class="button-group">
-                                <button type="button" class="btn btn-primary" onclick="editSubcategoria({{ subcategoria.id_subcategoria }})">Editar</button>
-                                <button type="button" class="btn btn-success editable" onclick="saveSubcategoria({{ subcategoria.id_subcategoria }})">Guardar</button>
+                                <button type="button" class="btn btn-primary" onclick="editSubcategoria('{{ subcategoria.id_subcategoria }}')">Editar</button>
+                                <button type="button" class="btn btn-success editable" onclick="saveSubcategoria('{{ subcategoria.id_subcategoria }}')">Guardar</button>
                                 <form method="post" action="{% url 'eliminar_subcategoria' subcategoria.id_subcategoria %}" style="display: inline;">
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar esta subcategoría?');">Eliminar</button>
@@ -66,9 +66,21 @@
             </tbody>
             
         </table> 
+        <button type="button" class="btn btn-success" onclick="volver()">volver</button>
             
     </div>
     <script>
+        function volver(){
+            // Obtener la URL actual
+            let currentUrl = window.location.href;
+            // Reemplazar '/lista/' con '/adminsub/lista/' y añadir el ID de la categoría
+            
+            let newUrl = currentUrl.replace(/\/adminsub\/lista\/\d+/, '/lista');
+
+            // Redirigir a la nueva URL
+            window.location.href = newUrl;
+
+        }
         function editSubcategoria(id) {
             document.getElementById('name-' + id).style.display = 'none';
             document.getElementById('input-name-' + id).style.display = 'inline';
