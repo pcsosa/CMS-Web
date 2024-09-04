@@ -6,6 +6,16 @@ from django.views.generic import TemplateView
 from django.db.models import Q
 import unicodedata
 from django.contrib.auth.decorators import login_required
+from .decorators import rol_requerido
+from django.http import HttpResponse
+from keycloak import KeycloakOpenID
+from django.conf import settings
+from urllib.parse import urlencode
+import os
+from dotenv import load_dotenv
+from .services.keycloak_service import KeycloakService
+load_dotenv()
+
 
 @login_required
 def protected_view(request):
@@ -125,6 +135,7 @@ def administrar_categorias(request):
     categorias = Categoria.objects.all()
     return render(request, 'administrar_categorias.html', {'categorias': categorias, 'form': form})
 
+@rol_requerido("Administrador")
 def crear_categoria(request):
     """
     Crea una nueva categoría.
@@ -203,4 +214,54 @@ def editar_categoria(request,pk):
         form = CategoriaForm(instance=categoria)
     
     return render(request, 'editar_categoria.html', {'form': form})
+
+def login(request):
+    keycloak = KeycloakService()
+    authorization_url = keycloak.openid.auth_url(
+        redirect_uri = os.getenv('URL') + ':' + os.getenv('PORT') + '/callback/',
+        scope='openid profile email'
+    )
+    return redirect(authorization_url)
+
+def callback(request):
+    code = request.GET.get('code')
+    if not code:
+        return HttpResponse('Error: No code provided', status=400)
+
+    keycloak = KeycloakService()
+    
+    # try:
+    token = keycloak.get_token(code)
+    print(token)
+    request.session['access_token'] = token['access_token']
+    request.session['refresh_token'] = token['refresh_token']
+    return redirect('/')
+    # except Exception as e:
+        # return HttpResponse(f'Error: {e}', status=500)
+
+def home(request):
+    token = request.session.get('access_token')
+    if token:
+        # try:
+      keycloak = KeycloakService()
+      user_info = keycloak.openid.userinfo(token)
+      print(user_info)
+      print("UserID: " + user_info.get('sub'))
+      print("ROLES:")
+      print(keycloak.admin.get_realm_roles_of_user(user_info.get('sub')))
+      print("USUARIO:")
+      print(keycloak.admin.get_user(user_info.get('sub')))
+      print("GRUPOS:")
+      print(keycloak.admin.get_user_groups(user_info.get('sub')))
+      return HttpResponse(f"Hello, {user_info.get('name')}")
+        # except Exception as e:
+            # return HttpResponse(f'Error: {e}', status=500)
+    return HttpResponse('Not logged in', status=401)
+
+def logout(request):
+    keycloak = KeycloakService()
+    token = request.session.get('refresh_token')
+    keycloak.openid.logout(token)
+    return HttpResponse("Chau")
+
 
