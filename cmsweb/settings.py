@@ -33,7 +33,7 @@ TEMPLATES_DIR = os.path.join(BASE_DIR,"templates")
 SECRET_KEY = 'django-insecure-)c$w1=-2dx9e&9^yi1tf*199nu(0d5yu2+0gpsak4d(%(8$2aq'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # Application definition
 
@@ -105,7 +105,9 @@ TEMPLATES = [
 ]
 
 # Directorio donde se almacenarán los archivos estáticos
-STATIC_URL = '/static/'
+STATIC_URL = '/home/mabi/CMS-Web/static'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+
 
 # Directorio en tu sistema de archivos donde se recogerán los archivos estáticos
 STATICFILES_DIRS = [
