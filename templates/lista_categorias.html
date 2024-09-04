@@ -72,7 +72,7 @@
                 </tbody>
             
             </table> 
-            !-- Modal para editar categoría -->
+            
             <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
@@ -83,7 +83,12 @@
                             <h4 class="modal-title" id="editModalLabel">Editar Categoría</h4>
                         </div>
                         <div class="modal-body">
-                            <form id="editForm" method="post" action="{% url 'editar_categoria' %}">
+                            {% if categoria.id_categoria %}
+                                 <form id="editForm" method="post" action="{% url 'editar_categoria' categoria.id_categoria %}">
+                            {% else %}
+                                <p>Falta el ID de la categoría</p>
+                            {% endif %}
+                            <form id="editForm" method="post" action="{% url 'editar_categoria' categoria.id_categoria %}">
                                 {% csrf_token %}
                                 <input type="hidden" id="categoriaId" name="id_categoria">
                                 <div class="form-group">

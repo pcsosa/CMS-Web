@@ -200,9 +200,9 @@ def editar_categoria(request,pk):
         form = CategoriaForm(request.POST, instance=categoria)
         if form.is_valid():
             form.save()
-            return redirect('')  # Redirige a la vista principal después de editar
+            return redirect('lista_categorias')  
     else:
         form = CategoriaForm(instance=categoria)
     
-    return render(request, 'editar_categoria.html', {'form': form})
+    return render(request, 'editar_categoria.html', {'form': form, 'categoria': categoria})
 
