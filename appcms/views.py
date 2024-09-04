@@ -5,6 +5,7 @@ from .models import Categoria
 from django.views.generic import TemplateView
 from django.db.models import Q
 import unicodedata
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 @login_required
@@ -178,6 +179,7 @@ def eliminar_categoria(request, pk):
     
     if request.method == 'POST':
         categoria.delete()
+        messages.success(request, f'La categoría "{categoria.nombre}" ha sido eliminada correctamente.')
         return redirect('lista_categorias')
     
     return render(request, 'eliminar_categoria.html', {'categoria': categoria})
@@ -192,7 +194,7 @@ def editar_categoria(request,pk):
         :type pk: int
         :return: HttpResponse.
     """
-    categoria = get_object_or_404(Categoria, id=pk)
+    categoria = get_object_or_404(Categoria, pk=pk)
     
     if request.method == 'POST':
         form = CategoriaForm(request.POST, instance=categoria)

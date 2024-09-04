@@ -10,38 +10,56 @@
         <form method="post">   </form>
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <h3>Listado de Categorías</h3>
-            <button type="button" class="btn btn-success" onclick="window.location.href='{% url 'crear_categoria' %}'">Nueva Categoria</button>
+            <button type="button" class="btn btn-success" onclick="alert('Creando categoría'); window.location.href='{% url 'crear_categoria' %}';">Nueva Categoria</button>
+
         </div>
-        
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Descripcion</th>
-                </tr>
-                
-            </thead>
-            <tbody>
-                {% for categoria in categorias %}
-                    <tr>
-                        <td>
-                            {{ categoria.nombre }} 
-                        </td>
-                        <td>
-                            {{ categoria.descripcion }}
-                        </td>
-                            <td>
-                                <button type="button" class="btn btn-danger" onclick="window.location.href=''">Eliminar</button>
-                                <button type="button" class="btn btn-primary" onclick="window.location.href=''">Editar</button>
-                        
-                            </td>
-                        </td>
-                    </tr>
-                    <td>
-                       
+        {% if messages %}
+            <div class="alert alert-success">
+                {% for message in messages %}
+                    {{ message }}
                 {% endfor %}
-            </tbody>
-        </table> 
+            </div>
+        {% endif %}
+        
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Descripcion</th>
+                    </tr>
+                    
+                </thead>
+        
+                <tbody>
+                    {% for categoria in categorias %}
+                        <tr>
+                            <td>
+                                {{ categoria.id_categoria }} 
+                            </td>
+                            <td>
+                                {{ categoria.nombre }} 
+                            </td>
+                            <td>
+                                {{ categoria.descripcion }}
+                            </td>
+                            <td>
+                                <form method="post" action="{% url 'eliminar_categoria' categoria.id_categoria %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar esta categoría?');">Eliminar</button>
+                                </form>
+                                <button type="button" class="btn btn-primary" ;onclick="window.location.href={% url 'editar_categoria' categoria.id_categoria %}">Editar</button>
+                            
+                            </td>
+                            
+                        </tr>
+                        <td>
+                        
+                    {% endfor %}
+                </tbody>
+            
+            </table> 
+
     </div>
 </body>
 </html>
