@@ -3,6 +3,12 @@
 <head>
     <title>Gestión de Categorías</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style>
+        .button-group {
+            display: flex; /* Usa flexbox para alinear los botones horizontalmente */
+            gap: 10px; /* Espacio entre los botones */
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -44,11 +50,14 @@
                                 {{ categoria.descripcion }}
                             </td>
                             <td>
-                                <form method="post" action="{% url 'eliminar_categoria' categoria.id_categoria %}">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar esta categoría?');">Eliminar</button>
-                                </form>
-                                <button type="button" class="btn btn-primary" ;onclick="window.location.href={% url 'editar_categoria' categoria.id_categoria %}">Editar</button>
+                                <div class="button-group">
+                                    <form method="post" action="{% url 'eliminar_categoria' categoria.id_categoria %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar esta categoría?');">Eliminar</button>
+                                    </form>
+                                        <button type="button" class="btn btn-primary" ;onclick="window.location.href={% url 'editar_categoria' categoria.id_categoria %}">Editar</button>
+                                    
+                                </div>    
                             
                             </td>
                             
