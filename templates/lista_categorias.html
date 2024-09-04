@@ -58,7 +58,7 @@
                                         {% csrf_token %}
                                         <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar esta categoría?');">Eliminar</button>
                                     </form>
-                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editModal" data-id="{{ categoria.id_categoria }}" data-nombre="{{ categoria.nombre }}" data-descripcion="{{ categoria.descripcion }}">Editar</button>
+                                    <button type="button" class="btn btn-primary" onclick="redirigirUrl('{{ categoria.pk }}')">Ver Subcategoria</button>
                                
                                     
                                 </div>    
@@ -72,47 +72,20 @@
                 </tbody>
             
             </table> 
-            !-- Modal para editar categoría -->
-            <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            <h4 class="modal-title" id="editModalLabel">Editar Categoría</h4>
-                        </div>
-                        <div class="modal-body">
-                            <form id="editForm" method="post" action="{% url 'editar_categoria' %}">
-                                {% csrf_token %}
-                                <input type="hidden" id="categoriaId" name="id_categoria">
-                                <div class="form-group">
-                                    <label for="nombre">Nombre</label>
-                                    <input type="text" class="form-control" id="nombre" name="nombre" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="descripcion">Descripción</label>
-                                    <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required></textarea>
-                                </div>
-                                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            
     </div>
     <script>
-        $('#editModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget); // Botón que abrió el modal
-            var id = button.data('id'); // Extrae el ID de los datos del botón
-            var nombre = button.data('nombre'); // Extrae el nombre de los datos del botón
-            var descripcion = button.data('descripcion'); // Extrae la descripción de los datos del botón
+        function redirigirUrl(categoriaId) {
+            // Obtener la URL actual
+            let currentUrl = window.location.href;
 
-            var modal = $(this);
-            modal.find('#categoriaId').val(id);
-            modal.find('#nombre').val(nombre);
-            modal.find('#descripcion').val(descripcion);
-        });
+            // Reemplazar '/lista/' con '/adminsub/lista/' y añadir el ID de la categoría
+            let newUrl = currentUrl.replace('/lista/', `/adminsub/lista/${categoriaId}`);
+
+            // Redirigir a la nueva URL
+            window.location.href = newUrl;
+        }
     </script>
+
 </body>
 </html>
