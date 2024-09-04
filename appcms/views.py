@@ -181,7 +181,7 @@ def eliminar_categoria(request, pk):
     return render(request, 'eliminar_categoria.html', {'categoria': categoria})
 
 #A DOCUMENTAR
-def interfaz_estandar(request):
+def interfaz_estandar(request): #Esto en lugar del index
     return render(request,"interfaz_estandar.html")
 
 def listar_categorias(_request):

@@ -21,8 +21,12 @@ urlpatterns = [
     path('lista/', views.lista_categorias, name='lista_categorias'),
     path('eliminar/<int:pk>/', views.eliminar_categoria, name='eliminar_categoria'),
     path('crear/', views.crear_categoria, name='crear_categoria'),
-    path('cat/', views.interfaz_estandar, name='interfaz_estandar'),
+    path('cat/', views.interfaz_estandar, name='interfaz_estandar'), #CRUD DE Categorias: p/ ver json views.listar_categorias
+    path('list_cat/', views.listar_categorias, name='listar_categorias'),
     path('adminsub/', include('subcategorias.urls')),
     path('login/', auth_views.LoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    
+    #path('list_categorias/', views.list_programmers, name='list_programmers')
+    #Debe ser funcional http://127.0.0.1:8000/cat/list_cat/
 ]
