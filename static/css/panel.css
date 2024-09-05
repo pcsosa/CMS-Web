@@ -125,7 +125,7 @@ h1,
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  min-height: 100vh;
+  /* min-height: 100vh; */
 }
 
 .dashboard-app {

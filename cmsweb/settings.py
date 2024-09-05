@@ -57,8 +57,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # Middleware personalizado para autenticación con Keycloak
-    # 'appcms.middleware.KeycloakMiddleware',
 ]
 
 # Configuración de URLs y WSGI
@@ -103,9 +101,6 @@ MEDIA_URL = '/media/'
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-    # Otras opciones de autenticación comentadas
-    # 'allauth.account.auth_backends.AuthenticationBackend',
-    # 'appcms.auth_backends.KeycloakBackend',
 ]
 
 KEYCLOAK_SERVER_URL = os.getenv('KEYCLOAK_SERVER_URL')
