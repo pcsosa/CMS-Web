@@ -34,4 +34,9 @@ class KeycloakService:
   def get_userId(self, token):
     user_info = self.openid.userinfo(token)
     return user_info.get('sub')
-      
+  
+  def isActive(self, token):
+    return self.openid.introspect(token).get('active')
+    
+  def renovarToken(self, token):
+    return self.openid.refresh_token(token['refresh_token'])

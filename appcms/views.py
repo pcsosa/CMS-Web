@@ -5,8 +5,7 @@ from .models import Categoria
 from django.views.generic import TemplateView
 from django.db.models import Q
 import unicodedata
-from django.contrib.auth.decorators import login_required
-from .decorators import rol_requerido
+from .decorators import roles_requeridos
 from django.http import HttpResponse
 from keycloak import KeycloakOpenID
 from django.conf import settings
@@ -14,13 +13,8 @@ from urllib.parse import urlencode
 import os
 from dotenv import load_dotenv
 from .services.keycloak_service import KeycloakService
+from .utils.utils import comprobarToken
 load_dotenv()
-
-
-@login_required
-def protected_view(request):
-    return render(request, 'protected.html')
-
 
 def quitar_acentos(texto):
     """
@@ -71,24 +65,24 @@ def buscar_categorias(request):
 def interfaz_estandar(request):
     return render(request,"interfaz_estandar.html")
 
-def Home(request):
-    """
-    Vista para la página de inicio.
+def home(request):
+  return render(request, 'home.html')
 
-    Esta vista renderiza la plantilla 'home.html'.
-    """
-    keycloak = KeycloakService()
-    token = request.session.get('access_token')
-    print(token)
-    if token:
-      user_info = keycloak.openid.userinfo(token)
-      contexto = user_info
-      return render(request, 'home.html', contexto)
-      # return HttpResponse("Hola que tal")
-    else:
-      return HttpResponse("TENÉS QUE INICIAR SESIÓN!!!")
+@roles_requeridos("Administrador", "Editor")
+def panel(request):
+  """
+  Vista para la página de inicio.
 
-    
+  Esta vista renderiza la plantilla 'home.html'.
+  """
+  kc = KeycloakService()
+  token = request.session.get('token')
+  contexto = {}
+  if token:
+    token = comprobarToken(request, token, kc)
+    user_info = kc.openid.userinfo(token['access_token'])
+    contexto = user_info
+  return render(request, 'panel.html', contexto)
 
 class Search(TemplateView):
     """
@@ -146,7 +140,7 @@ def administrar_categorias(request):
     categorias = Categoria.objects.all()
     return render(request, 'administrar_categorias.html', {'categorias': categorias, 'form': form})
 
-@rol_requerido("Administrador")
+@roles_requeridos("Administrador")
 def crear_categoria(request):
     """
     Crea una nueva categoría.
@@ -227,8 +221,8 @@ def editar_categoria(request,pk):
     return render(request, 'editar_categoria.html', {'form': form})
 
 def login(request):
-    keycloak = KeycloakService()
-    authorization_url = keycloak.openid.auth_url(
+    kc = KeycloakService()
+    authorization_url = kc.openid.auth_url(
         redirect_uri = os.getenv('DJ_URL') + ':' + os.getenv('DJ_PORT') + '/callback/',
         scope='openid profile email'
     )
@@ -239,22 +233,17 @@ def callback(request):
     if not code:
         return HttpResponse('Error: No code provided', status=400)
 
-    keycloak = KeycloakService()
-    
-    # try:
-    token = keycloak.get_token(code)
-    print(token)
-    request.session['access_token'] = token['access_token']
-    request.session['refresh_token'] = token['refresh_token']
-    return redirect('/')
-    # except Exception as e:
-        # return HttpResponse(f'Error: {e}', status=500)
+    kc = KeycloakService()
+    token = kc.get_token(code)
+    request.session['token'] = token
+    return redirect('panel')
 
 def logout(request):
-    keycloak = KeycloakService()
-    token = request.session.get('refresh_token')
-    keycloak.openid.logout(token)
-    request.session.clear()
-    return HttpResponse("Chau")
+    kc = KeycloakService()
+    token = request.session.get('token')
+    if token:
+      request.session.clear()
+      kc.openid.logout(token['refresh_token'])    
+    return redirect('home')
 
 

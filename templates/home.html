@@ -2,91 +2,51 @@
 <!DOCTYPE html>
 <html lang="es">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CMSWEB</title>
-    <link rel="stylesheet" type="text/css" href={% static 'css/styles.css' %}>
+    <link rel="stylesheet" type="text/css" href={% static 'css/home.css' %}>
   </head>
   <body>
-    <div class="dashboard">
-      <div class="dashboard-nav">
-        <header>
-          <a href="#!" class="menu-toggle"><i class="fas fa-bars"></i></a>
-          <a href="#" class="brand-logo">
-            <i class="fas fa-anchor"></i>
-            <span>CMS WEB</span>
-          </a>
-        </header>
-        <nav class="dashboard-nav-list">
-          <a href="#" class="dashboard-nav-item"
-            ><i class="fas fa-home"></i> Inicio </a
-          ><a href="#" class="dashboard-nav-item active"
-            ><i class="fas fa-tachometer-alt"></i> Dashboard </a
-          ><a href="#" class="dashboard-nav-item"
-            ><i class="fas fa-file-upload"></i> Subir
-          </a>
-          <div class="dashboard-nav-dropdown">
-            <a href="#!" class="dashboard-nav-item dashboard-nav-dropdown-toggle"
-              ><i class="fas fa-photo-video"></i> Media
-            </a>
-            <div class="dashboard-nav-dropdown-menu">
-              <a href="#" class="dashboard-nav-dropdown-item">All</a
-              ><a href="#" class="dashboard-nav-dropdown-item">Recent</a
-              ><a href="#" class="dashboard-nav-dropdown-item">Images</a
-              ><a href="#" class="dashboard-nav-dropdown-item">Video</a>
-            </div>
+    <!-- Header Start -->
+    <header>
+      <div class="container-fluid">
+        <div class="navb-logo">CMS</div>
+        <div class="navb-items">
+          <div class="item">
+            <a href="/">Inicio</a>
           </div>
-          <div class="dashboard-nav-dropdown">
-            <a href="#!" class="dashboard-nav-item dashboard-nav-dropdown-toggle"
-              ><i class="fas fa-users"></i> Usuarios
-            </a>
-            <div class="dashboard-nav-dropdown-menu">
-              <a href="#" class="dashboard-nav-dropdown-item">All</a
-              ><a href="#" class="dashboard-nav-dropdown-item">Subscribed</a
-              ><a href="#" class="dashboard-nav-dropdown-item">Non-subscribed</a
-              ><a href="#" class="dashboard-nav-dropdown-item">Banned</a
-              ><a href="#" class="dashboard-nav-dropdown-item">New</a>
-            </div>
+          <div class="item">
+            <a href="/articulos">Articulos</a>
           </div>
-          <div class="dashboard-nav-dropdown">
-            <a href="#!" class="dashboard-nav-item dashboard-nav-dropdown-toggle"
-              ><i class="fas fa-money-check-alt"></i> Pagos
-            </a>
-            <div class="dashboard-nav-dropdown-menu">
-              <a href="#" class="dashboard-nav-dropdown-item">All</a
-              ><a href="#" class="dashboard-nav-dropdown-item">Recent</a
-              ><a href="#" class="dashboard-nav-dropdown-item"> Projections</a>
-            </div>
+          <div class="item">
+            <a href="/acerda-de">Acerca de</a>
           </div>
-          <a href="#" class="dashboard-nav-item"
-            ><i class="fas fa-cogs"></i> Configuración </a
-          ><a href="#" class="dashboard-nav-item"
-            ><i class="fas fa-user"></i> Perfil
-          </a>
-          <div class="nav-item-divider"></div>
-          <a href="#" class="dashboard-nav-item"
-            ><i class="fas fa-sign-out-alt"></i> Cerrar sesión
-          </a>
-        </nav>
-      </div>
-      <div class="dashboard-app">
-        <header class="dashboard-toolbar">
-          <a href="#!" class="menu-toggle"><i class="fas fa-bars"></i></a>
-        </header>
-        <div class="dashboard-content">
-          <div class="container">
-            <div class="card">
-              <div class="card-header">
-                <h1>Bienvenido de vuelta {{username}} {{name}}</h1>
-              </div>
-              <div class="card-body">
-                <p>Your account type is: Administrator</p>
-              </div>
-            </div>
+          <div class="item">
+            <a href="/contacto">Contacto</a>
+          </div>
+          <div class="item-button">
+            <a href="/login">Iniciar sesión</a>
           </div>
         </div>
       </div>
-    </div>
-    <script src={% static 'js/home.js' %}></script>
+    </header>
+    <!-- Header End -->
+    <section class="section-1">
+      <h1>This is title</h1>
+      <h2>This is subtitle</h2>
+    </section>
+    <!-- JS Start -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+      integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+      crossorigin="anonymous"
+    ></script>
+    <!-- JS End -->
   </body>
 </html>
