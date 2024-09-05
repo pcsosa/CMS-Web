@@ -10,6 +10,7 @@ class Contenido(models.Model):
 
     class Meta:
         verbose_name_plural = "Contenidos"
+        app_label = 'contenidos'
 
     def __str__(self):
         return self.titulo

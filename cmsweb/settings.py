@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'appcms',
+    'contenidos',
     'subcategorias',
     'allauth',
     'allauth.account',
@@ -145,7 +146,13 @@ WSGI_APPLICATION = 'cmsweb.wsgi.application'
 DATABASES = {
     'default': dj_database_url.parse(os.getenv('DATABASE_URL'))
 }
-
+"""DATABASE_URL = 'postgresql://postgres:SJMlPSVGgAbQWVUVEwJSHJyIQSDSlsUV@autorack.proxy.rlwy.net:25795/railway'
+KEYCLOAK_SERVER_URL = "https://keycloak-production-63af.up.railway.app/auth"
+KEYCLOAK_REALM = "cmsweb"
+KEYCLOAK_CLIENT_ID = "cmsweb"
+KEYCLOAK_CLIENT_SECRET = "0zVx5AbaO6fLkn9YH5N1qdFeyl95ctoU"
+DJ_URL = "http://localhost"
+DJ_PORT = 8000"""
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
