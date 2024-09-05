@@ -13,6 +13,15 @@
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Guardar borrador</button>
+        <label for="opciones">Selecciona tu editor:</label>
+        <select id="opciones" name="opciones">
+            <option value="" disabled selected>Seleccione una opción</option> <!-- Opción vacía por defecto -->
+            <option value="opcion1">Oscar</option>
+            <option value="opcion2">Daily</option>
+            <option value="opcion3">Robert</option>
+            <option value="opcion4">Susana</option>
+        </select>
+
         <button type="submit">Enviar contenido</button>
     </form>
 </body>
