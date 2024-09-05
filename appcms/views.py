@@ -229,7 +229,7 @@ def editar_categoria(request,pk):
 def login(request):
     keycloak = KeycloakService()
     authorization_url = keycloak.openid.auth_url(
-        redirect_uri = os.getenv('URL') + ':' + os.getenv('PORT') + '/callback/',
+        redirect_uri = os.getenv('DJ_URL') + ':' + os.getenv('DJ_PORT') + '/callback/',
         scope='openid profile email'
     )
     return redirect(authorization_url)
