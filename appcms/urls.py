@@ -29,7 +29,7 @@ urlpatterns = [
     path('adminsub/', include('subcategorias.urls')),
     path('login/', auth_views.LoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    
+
     path('crear_cont/', views_cont.crear_contenido, name='crear_contenido'),
     path('list_cont/', views_cont.lista_contenidos, name='lista_contenidos'),
     
