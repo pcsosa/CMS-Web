@@ -81,10 +81,10 @@ def Home(request):
     token = request.session.get('access_token')
     print(token)
     if token:
-      # user_info = keycloak.openid.userinfo(token)
-      # contexto = user_info
-      # return render(request, 'home.html', contexto)
-      return HttpResponse("Hola que tal")
+      user_info = keycloak.openid.userinfo(token)
+      contexto = user_info
+      return render(request, 'home.html', contexto)
+      # return HttpResponse("Hola que tal")
     else:
       return HttpResponse("TENÉS QUE INICIAR SESIÓN!!!")
 
