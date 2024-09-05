@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import ContenidoForm
+from .models import ContenidoForm, Contenido
 
 def crear_contenido(request):
     if request.method == 'POST':
@@ -10,3 +10,7 @@ def crear_contenido(request):
     else:
         form = ContenidoForm()
     return render(request, 'crear_contenido.html', {'form': form})
+
+def lista_contenidos(request):
+    contenidos = Contenido.objects.all()
+    return render(request, 'lista_contenidos.html', {'contenidos': contenidos})
