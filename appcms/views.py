@@ -79,10 +79,16 @@ def Home(request):
     """
     keycloak = KeycloakService()
     token = request.session.get('access_token')
-    user_info = keycloak.openid.userinfo(token)
-    contexto = user_info
+    print(token)
+    if token:
+      # user_info = keycloak.openid.userinfo(token)
+      # contexto = user_info
+      # return render(request, 'home.html', contexto)
+      return HttpResponse("Hola que tal")
+    else:
+      return HttpResponse("TENÉS QUE INICIAR SESIÓN!!!")
 
-    return render(request, 'home.html', contexto)
+    
 
 class Search(TemplateView):
     """
@@ -248,6 +254,7 @@ def logout(request):
     keycloak = KeycloakService()
     token = request.session.get('refresh_token')
     keycloak.openid.logout(token)
+    request.session.clear()
     return HttpResponse("Chau")
 
 
