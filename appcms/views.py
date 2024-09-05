@@ -71,13 +71,18 @@ def buscar_categorias(request):
 def interfaz_estandar(request):
     return render(request,"interfaz_estandar.html")
 
-class Home(TemplateView):
+def Home(request):
     """
     Vista para la página de inicio.
 
     Esta vista renderiza la plantilla 'home.html'.
     """
-    template_name = "home.html"
+    keycloak = KeycloakService()
+    token = request.session.get('access_token')
+    user_info = keycloak.openid.userinfo(token)
+    contexto = user_info
+
+    return render(request, 'home.html', contexto)
 
 class Search(TemplateView):
     """
@@ -238,25 +243,6 @@ def callback(request):
     return redirect('/')
     # except Exception as e:
         # return HttpResponse(f'Error: {e}', status=500)
-
-def home(request):
-    token = request.session.get('access_token')
-    if token:
-        # try:
-      keycloak = KeycloakService()
-      user_info = keycloak.openid.userinfo(token)
-      print(user_info)
-      print("UserID: " + user_info.get('sub'))
-      print("ROLES:")
-      print(keycloak.admin.get_realm_roles_of_user(user_info.get('sub')))
-      print("USUARIO:")
-      print(keycloak.admin.get_user(user_info.get('sub')))
-      print("GRUPOS:")
-      print(keycloak.admin.get_user_groups(user_info.get('sub')))
-      return HttpResponse(f"Hello, {user_info.get('name')}")
-        # except Exception as e:
-            # return HttpResponse(f'Error: {e}', status=500)
-    return HttpResponse('Not logged in', status=401)
 
 def logout(request):
     keycloak = KeycloakService()

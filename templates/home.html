@@ -1,1 +1,92 @@
-hola que tal
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMSWEB</title>
+    <link rel="stylesheet" type="text/css" href={% static 'css/styles.css' %}>
+  </head>
+  <body>
+    <div class="dashboard">
+      <div class="dashboard-nav">
+        <header>
+          <a href="#!" class="menu-toggle"><i class="fas fa-bars"></i></a>
+          <a href="#" class="brand-logo">
+            <i class="fas fa-anchor"></i>
+            <span>CMS WEB</span>
+          </a>
+        </header>
+        <nav class="dashboard-nav-list">
+          <a href="#" class="dashboard-nav-item"
+            ><i class="fas fa-home"></i> Inicio </a
+          ><a href="#" class="dashboard-nav-item active"
+            ><i class="fas fa-tachometer-alt"></i> Dashboard </a
+          ><a href="#" class="dashboard-nav-item"
+            ><i class="fas fa-file-upload"></i> Subir
+          </a>
+          <div class="dashboard-nav-dropdown">
+            <a href="#!" class="dashboard-nav-item dashboard-nav-dropdown-toggle"
+              ><i class="fas fa-photo-video"></i> Media
+            </a>
+            <div class="dashboard-nav-dropdown-menu">
+              <a href="#" class="dashboard-nav-dropdown-item">All</a
+              ><a href="#" class="dashboard-nav-dropdown-item">Recent</a
+              ><a href="#" class="dashboard-nav-dropdown-item">Images</a
+              ><a href="#" class="dashboard-nav-dropdown-item">Video</a>
+            </div>
+          </div>
+          <div class="dashboard-nav-dropdown">
+            <a href="#!" class="dashboard-nav-item dashboard-nav-dropdown-toggle"
+              ><i class="fas fa-users"></i> Usuarios
+            </a>
+            <div class="dashboard-nav-dropdown-menu">
+              <a href="#" class="dashboard-nav-dropdown-item">All</a
+              ><a href="#" class="dashboard-nav-dropdown-item">Subscribed</a
+              ><a href="#" class="dashboard-nav-dropdown-item">Non-subscribed</a
+              ><a href="#" class="dashboard-nav-dropdown-item">Banned</a
+              ><a href="#" class="dashboard-nav-dropdown-item">New</a>
+            </div>
+          </div>
+          <div class="dashboard-nav-dropdown">
+            <a href="#!" class="dashboard-nav-item dashboard-nav-dropdown-toggle"
+              ><i class="fas fa-money-check-alt"></i> Pagos
+            </a>
+            <div class="dashboard-nav-dropdown-menu">
+              <a href="#" class="dashboard-nav-dropdown-item">All</a
+              ><a href="#" class="dashboard-nav-dropdown-item">Recent</a
+              ><a href="#" class="dashboard-nav-dropdown-item"> Projections</a>
+            </div>
+          </div>
+          <a href="#" class="dashboard-nav-item"
+            ><i class="fas fa-cogs"></i> Configuración </a
+          ><a href="#" class="dashboard-nav-item"
+            ><i class="fas fa-user"></i> Perfil
+          </a>
+          <div class="nav-item-divider"></div>
+          <a href="#" class="dashboard-nav-item"
+            ><i class="fas fa-sign-out-alt"></i> Cerrar sesión
+          </a>
+        </nav>
+      </div>
+      <div class="dashboard-app">
+        <header class="dashboard-toolbar">
+          <a href="#!" class="menu-toggle"><i class="fas fa-bars"></i></a>
+        </header>
+        <div class="dashboard-content">
+          <div class="container">
+            <div class="card">
+              <div class="card-header">
+                <h1>Bienvenido de vuelta {{username}} {{name}}</h1>
+              </div>
+              <div class="card-body">
+                <p>Your account type is: Administrator</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src={% static 'js/home.js' %}></script>
+  </body>
+</html>

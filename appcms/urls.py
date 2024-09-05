@@ -15,7 +15,7 @@ patrones de URL a sus vistas correspondientes.
 """
 
 urlpatterns = [
-    path('', Home.as_view(), name='home'),
+    path('', views.Home, name='home'),
     path('search/', buscar_categorias, name='buscar_categorias'),
     path('admincat/', views.administrar_categorias, name='administrar_categorias'),
     path('lista/', views.lista_categorias, name='lista_categorias'),
@@ -24,10 +24,7 @@ urlpatterns = [
     path('crear/', views.crear_categoria, name='crear_categoria'),
     path('cat/', views.interfaz_estandar, name='interfaz_estandar'),
     path('adminsub/', include('subcategorias.urls')),
-    # path('login/', auth_views.LoginView.as_view(), name='login'),
-    # path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('login/', views.login, name='login'),
     path('callback/', views.callback, name='callback'),
-    path('home/', views.home, name='home'),
     path('logout/', views.logout, name='logout')
 ]
