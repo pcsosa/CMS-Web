@@ -6,6 +6,7 @@ from .views import Home
 from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
+from contenidos import views
 
 
 """
@@ -28,6 +29,7 @@ urlpatterns = [
     path('adminsub/', include('subcategorias.urls')),
     path('login/', auth_views.LoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('crear_cont/', views.crear_contenido, name='crear_contenido'),
     
     #path('list_categorias/', views.list_programmers, name='list_programmers')
     #Debe ser funcional http://127.0.0.1:8000/cat/list_cat/
