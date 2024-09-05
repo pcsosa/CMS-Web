@@ -4,6 +4,8 @@ from .views import buscar_categorias, crear_categoria, lista_categorias
 from . import views
 from .views import Home
 from django.contrib.auth import views as auth_views
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 """
@@ -30,3 +32,6 @@ urlpatterns = [
     #path('list_categorias/', views.list_programmers, name='list_programmers')
     #Debe ser funcional http://127.0.0.1:8000/cat/list_cat/
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
