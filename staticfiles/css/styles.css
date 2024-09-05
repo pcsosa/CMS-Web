@@ -102,7 +102,7 @@ a.active,a :hover{
   }
 }
 section{
-  background: url("{% static 'images/bg1.jpg' %}") no-repeat;
+  background: url(bg1.jpeg) no-repeat;
   background-size: cover;
   height: calc(100vh - 80px);
 }
