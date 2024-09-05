@@ -23,7 +23,7 @@ class KeycloakService:
     )
 
   def get_token(self, code):
-    redirect_uri = os.getenv('URL') + ':' + os.getenv('PORT') + '/callback/'
+    redirect_uri = os.getenv('DJ_URL') + ':' + os.getenv('DJ_PORT') + '/callback/'
     token = self.openid.token(
         code = code,
         redirect_uri = redirect_uri,
