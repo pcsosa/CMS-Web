@@ -32,7 +32,7 @@ class KeycloakService:
     return token
   
   def get_userId(self, token):
-    user_info = self.openid.userinfo(token)
+    user_info = self.openid.userinfo(token['access_token'])
     return user_info.get('sub')
   
   def isActive(self, token):
