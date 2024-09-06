@@ -7,11 +7,20 @@ from django.db.models import Q
 import unicodedata
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from .decorators import roles_requeridos
+from django.http import HttpResponse
+from keycloak import KeycloakOpenID
+from django.conf import settings
+from urllib.parse import urlencode
+import os
+from dotenv import load_dotenv
+from .services.keycloak_service import KeycloakService
+from .utils.utils import comprobarToken
+load_dotenv()
 
 @login_required
 def protected_view(request):
     return render(request, 'protected.html')
-
 
 def quitar_acentos(texto):
     """
@@ -62,13 +71,24 @@ def buscar_categorias(request):
 def interfaz_estandar(request):
     return render(request,"interfaz_estandar.html")
 
-class Home(TemplateView):
-    """
-    Vista para la página de inicio.
+def home(request):
+  return render(request, 'home.html')
 
-    Esta vista renderiza la plantilla 'home.html'.
-    """
-    template_name = "home.html"
+@roles_requeridos("Administrador", "Editor")
+def panel(request):
+  """
+  Vista para la página de inicio.
+
+  Esta vista renderiza la plantilla 'home.html'.
+  """
+  kc = KeycloakService()
+  token = request.session.get('token')
+  contexto = {}
+  if token:
+    token = comprobarToken(request, token, kc)
+    user_info = kc.openid.userinfo(token['access_token'])
+    contexto = user_info
+  return render(request, 'panel.html', contexto)
 
 class Search(TemplateView):
     """
@@ -126,6 +146,7 @@ def administrar_categorias(request):
     categorias = Categoria.objects.all()
     return render(request, 'administrar_categorias.html', {'categorias': categorias, 'form': form})
 
+@roles_requeridos("Administrador")
 def crear_categoria(request):
     """
     Crea una nueva categoría.
@@ -205,4 +226,31 @@ def editar_categoria(request,pk):
         form = CategoriaForm(instance=categoria)
     
     return render(request, 'editar_categoria.html', {'form': form, 'categoria': categoria})
+
+def login(request):
+    kc = KeycloakService()
+    authorization_url = kc.openid.auth_url(
+        redirect_uri = os.getenv('DJ_URL') + ':' + os.getenv('DJ_PORT') + '/callback/',
+        scope='openid profile email'
+    )
+    return redirect(authorization_url)
+
+def callback(request):
+    code = request.GET.get('code')
+    if not code:
+        return HttpResponse('Error: No code provided', status=400)
+
+    kc = KeycloakService()
+    token = kc.get_token(code)
+    request.session['token'] = token
+    return redirect('panel')
+
+def logout(request):
+    kc = KeycloakService()
+    token = request.session.get('token')
+    if token:
+      request.session.clear()
+      kc.openid.logout(token['refresh_token'])    
+    return redirect('home')
+
 
