@@ -1,41 +1,38 @@
-from dotenv import load_dotenv
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 import dj_database_url
-from oauthlib.oauth2 import BackendApplicationClient
-from requests_oauthlib import OAuth2Session
+
+# Cargar variables de entorno desde un archivo .env
 load_dotenv()
 
-KEYCLOAK_SERVER_URL = "https://keycloak-production-63af.up.railway.app/auth"
-KEYCLOAK_REALM = "cmsweb"
-KEYCLOAK_CLIENT_ID = "cmsweb"
-KEYCLOAK_CLIENT_SECRET = "0zVx5AbaO6fLkn9YH5N1qdFeyl95ctoU"
-KEYCLOAK_WELL_KNOWN = f"{KEYCLOAK_SERVER_URL}/realms/{KEYCLOAK_REALM}/.well-known/openid-configuration"
+#-------------------------------------------------
+#------------------- PATHS ----------------------
+#-------------------------------------------------
 
-OAUTH2_CLIENT_CONFIG = {
-    "client_id": KEYCLOAK_CLIENT_ID,
-    "client_secret": KEYCLOAK_CLIENT_SECRET,
-    "authorize_url": f"{KEYCLOAK_SERVER_URL}/realms/{KEYCLOAK_REALM}/protocol/openid-connect/auth",
-    "access_token_url": f"{KEYCLOAK_SERVER_URL}/realms/{KEYCLOAK_REALM}/protocol/openid-connect/token",
-    "refresh_token_url": f"{KEYCLOAK_SERVER_URL}/realms/{KEYCLOAK_REALM}/protocol/openid-connect/token",
-    "base_url": f"{KEYCLOAK_SERVER_URL}/realms/{KEYCLOAK_REALM}/protocol/openid-connect",
-}
-
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-TEMPLATES_DIR = os.path.join(BASE_DIR,"templates")
+TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
+#-------------------------------------------------
+#------------------- SEGURIDAD -------------------
+#-------------------------------------------------
 
-# SECURITY WARNING: keep the secret key used in production secret!
+# Clave secreta para la aplicación Django
 SECRET_KEY = 'django-insecure-)c$w1=-2dx9e&9^yi1tf*199nu(0d5yu2+0gpsak4d(%(8$2aq'
 
-# SECURITY WARNING: don't run with debug turned on in production!
+# Configuración de depuración (No debe estar habilitado en producción)
 DEBUG = True
 
-# Application definition
+# Hosts permitidos
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'cms-web-mt3l.onrender.com',
+]
+
+#-------------------------------------------------
+#----------------- APLICACIONES ------------------
+#-------------------------------------------------
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -46,11 +43,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'appcms',
     'subcategorias',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.openid_connect',
 ]
+
+#-------------------------------------------------
+#----------------- MIDDLEWARES -------------------
+#-------------------------------------------------
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -60,32 +57,15 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    "allauth.account.middleware.AccountMiddleware"
 ]
 
-SOCIALACCOUNT_PROVIDERS = {
-    "openid_connect": {
-        "APPS": [
-            {
-                "provider_id": "keycloak",
-                "name": "Keycloak",
-                "client_id": "cmsweb",
-                "secret": "0zVx5AbaO6fLkn9YH5N1qdFeyl95ctoU",
-                "settings": {
-                    "server_url": "https://keycloak-production-63af.up.railway.app/realms/cmsweb/.well-known/openid-configuration",
-                },
-            }
-        ]
-    }
-}
-
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    'cms-web-mt3l.onrender.com',
-]
-
+# Configuración de URLs y WSGI
 ROOT_URLCONF = 'cmsweb.urls'
+WSGI_APPLICATION = 'cmsweb.wsgi.application'
+
+#-------------------------------------------------
+#------------------- TEMPLATES -------------------
+#-------------------------------------------------
 
 TEMPLATES = [
     {
@@ -98,106 +78,99 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'django.template.context_processors.request'
+                'django.template.context_processors.request',
             ],
         },
     },
 ]
 
-# Directorio donde se almacenarán los archivos estáticos
+#-------------------------------------------------
+#---------------- STATIC FILES -------------------
+#-------------------------------------------------
+
 STATIC_URL = '/static/'
-
-# Directorio en tu sistema de archivos donde se recogerán los archivos estáticos
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
-
-# Directorio donde se almacenan los archivos estáticos recolectados para producción
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Configuración de archivos multimedia
+MEDIA_URL = '/media/'
+
+#-------------------------------------------------
+#---------------- AUTHENTICATION -----------------
+#-------------------------------------------------
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
-    'appcms.auth_backends.KeycloakBackend',
-    
 ]
 
+KEYCLOAK_SERVER_URL = os.getenv('KEYCLOAK_SERVER_URL')
+KEYCLOAK_CLIENT_ID = os.getenv('KEYCLOAK_CLIENT_ID')
+KEYCLOAK_REALM = os.getenv('KEYCLOAK_REALM')
+KEYCLOAK_CLIENT_SECRET = os.getenv('KEYCLOAK_CLIENT_SECRET')
 
-WSGI_APPLICATION = 'cmsweb.wsgi.application'
+#-------------------------------------------------
+#------------------- DATABASES -------------------
+#-------------------------------------------------
 
+# Dependiendo del entorno, puede elegir una de las configuraciones de base de datos
+# Descomente la configuración apropiada según sea necesario
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+# PostgreSQL
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.getenv('DB_NAME'),
+#         'USER': os.getenv('DB_USER'),
+#         'PASSWORD': os.getenv('DB_PASSWORD'),
+#         'HOST': os.getenv('DB_HOST'),
+#         'PORT': os.getenv('DB_PORT'),
+#     }
+# }
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.postgresql',
-#        'NAME': os.getenv('DB_NAME'),  # Nombre de la base de datos en PostgreSQL
-#        'USER': os.getenv('DB_USER'),                  # Usuario de PostgreSQL
-#        'PASSWORD': os.getenv('DB_PASSWORD'),           # Contraseña del usuario
-#        'HOST': os.getenv('DB_HOST'),                   # O la IP del servidor si está en otra máquina
-#        'PORT': os.getenv('DB_PORT'),                        # Puerto por defecto para PostgreSQL
-#    }
-#}
-
+# PostgreSQL desde URL
 DATABASES = {
-    'default': dj_database_url.parse(os.getenv('DATABASE_URL'))   
+     'default': dj_database_url.parse(os.getenv('DATABASE_URL'))
 }
 
-#DATABASES = {
+# SQLite en memoria (para pruebas)
+# DATABASES = {
 #    'default': {
 #        'ENGINE': 'django.db.backends.sqlite3',
 #        'NAME': ':memory:',
 #    }
+# }
+
+# SQLite archivo local
+#DATABASES = {
+#   'default': {
+#       'ENGINE': 'django.db.backends.sqlite3',
+#       'NAME': 'db.sqlite3',
+#   }
 #}
 
-
-# Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
+#-------------------------------------------------
+#----------------- PASSWORD VALIDATORS -----------
+#-------------------------------------------------
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
+#-------------------------------------------------
+#---------------- INTERNATIONALIZATION -----------
+#-------------------------------------------------
 
 LANGUAGE_CODE = 'es'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
+#-------------------------------------------------
+#--------------- OTRAS CONFIGURACIONES------------
+#-------------------------------------------------
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
-
-STATIC_URL = 'static/'
-MEDIA_URL = 'media/'
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
+# Tipo de dato predeterminado para los id de los modelos
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-SITE_ID = 1
-ACCOUNT_EMAIL_VERIFICATION = "none"
-LOGIN_REDIRECT_URL = "home"
-ACCOUNT_LOGOUT_ON_GET = True
-
-SESSION_COOKIE_AGE = 1200  # Tiempo en segundos, por ejemplo 20 minutos
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True

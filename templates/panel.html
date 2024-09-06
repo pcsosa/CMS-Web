@@ -1,0 +1,89 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMSWEB</title>
+    <link rel="stylesheet" type="text/css" href={% static 'css/panel.css' %}>
+  </head>
+  <body>
+    <div class="dashboard">
+      <div class="dashboard-nav">
+        <header>
+          <a href="#!" class="menu-toggle">
+            <i class="fas fa-bars"></i>
+          </a>
+          <a href="#" class="brand-logo">
+            <i class="fas fa-anchor"></i>
+            <span>CMS WEB</span>
+          </a>
+        </header>
+        <nav class="dashboard-nav-list">
+          <a href="#" class="dashboard-nav-item">
+            <i class="fas fa-home"></i>
+            Inicio
+          </a>
+          <a href="#" class="dashboard-nav-item active">
+            <i class="fas fa-tachometer-alt"></i>
+            Dashboard
+          </a>
+          <div class="dashboard-nav-dropdown">
+            <a href="#!" class="dashboard-nav-item dashboard-nav-dropdown-toggle">
+              <i class="fas fa-photo-video"></i>
+              Artículos
+            </a>
+            <div class="dashboard-nav-dropdown-menu">
+              <a href="#" class="dashboard-nav-dropdown-item">Ver artículos</a>
+              <a href="#" class="dashboard-nav-dropdown-item">Crear artículos</a>
+              <a href="#" class="dashboard-nav-dropdown-item">Editar artículos</a>
+              <a href="#" class="dashboard-nav-dropdown-item">Eliminar artículos</a>
+            </div>
+          </div>
+          <a href="#" onclick="dirigir()" class="dashboard-nav-item">
+            <i class="fas fa-file-upload"></i>
+            categoria
+          </a>
+          <a href="#" class="dashboard-nav-item">
+            <i class="fas fa-file-upload"></i>
+            Keycloak
+          </a>
+          <a href="#" class="dashboard-nav-item">
+            <i class="fas fa-cogs"></i>
+            Configuración
+          </a>
+          <a href="#" class="dashboard-nav-item">
+            <i class="fas fa-user"></i>
+            Perfil
+          </a>
+          <div class="nav-item-divider"></div>
+          <a href={% url 'logout' %} class="dashboard-nav-item">
+            <i class="fas fa-sign-out-alt"></i>
+            Cerrar sesión
+          </a>
+        </nav>
+      </div>
+      <div class="dashboard-app">
+        <header class="dashboard-toolbar">
+          <a href="#!" class="menu-toggle">
+            <i class="fas fa-bars"></i>
+          </a>
+          <p>{{username}} {{name}}</p>
+        </header>
+        <div class="dashboard-content">
+          <div class="container">
+            <div class="card">
+              <div class="card-header">
+                <h1>Hola que tal</h1>
+              </div>
+              <div class="card-body">
+                <p>Your account type is: Administrator</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src={% static 'js/panel.js' %}></script>
+  </body>
+</html>
