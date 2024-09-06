@@ -97,7 +97,15 @@
                 <h1>Hola que tal</h1>
               </div>
               <div class="card-body">
-                <p>Your account type is: Administrator</p>
+                {% if "Administrador" in user_roles %}
+                  <p> Sos admin </p>
+                {% endif%}
+                {% if "Editor" in user_roles %}
+                  <p> Sos editor </p>
+                {% endif%}
+                {% if "Administrador" in user_roles or "Editor" in user_roles %}
+                  <p>Sos admin o editor</p>
+                {% endif %}
               </div>
             </div>
           </div>
