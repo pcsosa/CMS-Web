@@ -2,6 +2,9 @@
 from django.urls import path, include
 from . import views
 from django.contrib.auth import views as auth_views
+from django.conf import settings
+from django.conf.urls.static import static
+from contenidos import views_cont
 
 
 """
@@ -20,9 +23,14 @@ urlpatterns = [
     path('editar/<int:pk>/', views.editar_categoria, name='editar_categoria'),
     path('eliminar/<int:pk>/', views.eliminar_categoria, name='eliminar_categoria'),
     path('crear/', views.crear_categoria, name='crear_categoria'),
-    path('cat/', views.interfaz_estandar, name='interfaz_estandar'),
+    path('list_cat/', views.listar_categorias, name='listar_categorias'),
     path('adminsub/', include('subcategorias.urls')),
     path('login/', views.login, name='login'),
     path('callback/', views.callback, name='callback'),
-    path('logout/', views.logout, name='logout')
+    path('logout/', views.logout, name='logout'),
+    path('crear_cont/', views_cont.crear_contenido, name='crear_contenido'),
+    path('list_cont/', views_cont.lista_contenidos, name='lista_contenidos'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404, redirect, render
+from django.http.response import JsonResponse
 from .forms import BusquedaCategoriaForm
 from appcms.forms import CategoriaForm
 from .models import Categoria
@@ -17,6 +18,7 @@ from dotenv import load_dotenv
 from .services.keycloak_service import KeycloakService
 from .utils.utils import comprobarToken
 load_dotenv()
+
 
 @login_required
 def protected_view(request):
@@ -68,18 +70,20 @@ def buscar_categorias(request):
     }
     return render(request, 'buscar_categorias.html', contexto)
 
-def interfaz_estandar(request):
-    return render(request,"interfaz_estandar.html")
-
 def home(request):
+  """
+  Vista para la página de inicio.
+  
+  Esta vista renderiza la plantilla 'home.html'.
+  """
   return render(request, 'home.html')
 
 @roles_requeridos("Administrador", "Editor")
 def panel(request):
   """
-  Vista para la página de inicio.
+  Vista para la página del panel de administración.
 
-  Esta vista renderiza la plantilla 'home.html'.
+  Esta vista renderiza la plantilla 'panel.html'.
   """
   kc = KeycloakService()
   token = request.session.get('token')
@@ -253,4 +257,7 @@ def logout(request):
       kc.openid.logout(token['refresh_token'])    
     return redirect('home')
 
-
+def listar_categorias(_request):
+    categorias = list(Categoria.objects.values())
+    data = {'categorias': categorias}
+    return JsonResponse(data)

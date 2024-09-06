@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor de Texto</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Enlaza el archivo CSS -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .editor-container {
+            width: 80%;
+            margin: auto;
+            margin-top: 20px;
+        }
+
+        .toolbar {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        #editor {
+            border: 1px solid #ccc;
+            min-height: 200px;
+            padding: 10px;
+        }
+
+        .comment {
+            color: #ff0000;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="editor-container">
+        <h1>Editor de Texto</h1>
+        <div class="toolbar">
+            <select id="fontSize" onchange="changeFontSize()">
+                <option value="3">Tamaño de Fuente</option>
+                <option value="1">Pequeño</option>
+                <option value="3">Mediano</option>
+                <option value="5">Grande</option>
+            </select>
+
+            <select id="fontName" onchange="changeFontName()">
+                <option value="Arial">Fuente</option>
+                <option value="Arial">Arial</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Courier New">Courier New</option>
+            </select>
+
+            <button onclick="execCommand('bold')">Negrita</button>
+            <button onclick="execCommand('italic')">Cursiva</button>
+            <button onclick="execCommand('underline')">Subrayado</button>
+
+            <button onclick="execCommand('justifyLeft')">Izquierda</button>
+            <button onclick="execCommand('justifyCenter')">Centro</button>
+            <button onclick="execCommand('justifyRight')">Derecha</button>
+            <button onclick="execCommand('justifyFull')">Justificar</button>
+
+            <button onclick="highlight()">Resaltar</button>
+            <button onclick="addComment()">Comentario</button>
+        </div>
+
+        <div id="editor" contenteditable="true">
+            <h2>Tu Título Aquí</h2>
+            <p>Escribe tu texto aquí...</p>
+        </div>
+    </div>
+
+    <script>
+    // Función para ejecutar comandos de formato como negrita, cursiva, subrayado, alineación, etc.
+    function execCommand(command) {
+        document.execCommand(command, false, null);
+    }
+
+    // Cambiar el tamaño de la fuente
+    function changeFontSize() {
+        var size = document.getElementById("fontSize").value;
+        document.execCommand("fontSize", false, size);
+    }
+
+    // Cambiar la fuente
+    function changeFontName() {
+        var font = document.getElementById("fontName").value;
+        document.execCommand("fontName", false, font);
+    }
+
+    // Resaltar texto
+    function highlight() {
+        document.execCommand("hiliteColor", false, "yellow");
+    }
+
+    // Agregar un comentario en el texto
+    function addComment() {
+        var comment = prompt("Escribe tu comentario:");
+        if (comment) {
+            document.execCommand("insertHTML", false, '<span class="comment">' + comment + '</span>');
+        }
+    }
+    </script>
+
+</body>
+
+</html>

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'appcms',
+    'contenidos',
     'subcategorias',
 ]
 
@@ -88,12 +89,16 @@ TEMPLATES = [
 #---------------- STATIC FILES -------------------
 #-------------------------------------------------
 
+# Directorio donde se almacenarán los archivos estáticos
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+# Directorio donde se almacenan los archivos estáticos recolectados para producción
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Configuración de archivos multimedia
 MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 #-------------------------------------------------
 #---------------- AUTHENTICATION -----------------
