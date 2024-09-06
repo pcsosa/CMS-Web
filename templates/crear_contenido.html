@@ -4,26 +4,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Contenido</title>
+    <title>Seleccionar Plantilla</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .template-options {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .template-option {
+            text-align: center;
+            cursor: pointer;
+            border: 2px solid transparent;
+            padding: 10px;
+            border-radius: 8px;
+            transition: border-color 0.3s;
+            background: #fff;
+        }
+
+        .template-option img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+
+        .template-option:hover,
+        .template-option:focus {
+            border-color: #007bff;
+        }
+
+        .form-container {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .form-container.active {
+            display: block;
+        }
+
+        .form-container label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        .form-container input[type="text"],
+        .form-container textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .form-container input[type="file"] {
+            margin-bottom: 10px;
+        }
+
+        .form-container button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .form-container button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <!-- TinyMCE CDN -->
+    <script src="https://cdn.tiny.cloud/1/igaej58ezdtpg4plti7ea4161ei2n0dg99q3lolqa4zdba33/tinymce/6/tinymce.min.js"
+        referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+            selector: 'textarea',  // Selecciona las áreas de texto que usarán TinyMCE
+            plugins: 'image link media table lists code',  // Habilita plugins como imágenes, enlaces, multimedia, etc.
+            toolbar: 'undo redo | styleselect | bold italic underline | copy cut paste | alignleft aligncenter alignright | bullist numlist outdent indent | link image media',  // Barra de herramientas personalizada
+            api_key: 'igaej58ezdtpg4plti7ea4161ei2n0dg99q3lolqa4zdba33',  // Incluye tu clave API
+            images_upload_url: '/upload',  // Ruta para subir imágenes (debes manejar esta URL en tu backend)
+            height: 400,  // Altura del editor
+            menubar: 'file edit view insert format tools table',  // Habilita el menú superior
+            branding: false,  // Desactiva la marca de TinyMCE
+        });
+    </script>
 </head>
 
 <body>
-    <h1>Crear Contenido</h1>
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Guardar borrador</button>
-        <label for="opciones">Selecciona tu editor:</label>
-        <select id="opciones" name="opciones">
-            <option value="" disabled selected>Seleccione una opción</option> <!-- Opción vacía por defecto -->
-            <option value="opcion1">Oscar</option>
-            <option value="opcion2">Daily</option>
-            <option value="opcion3">Robert</option>
-            <option value="opcion4">Susana</option>
-        </select>
 
-        <button type="submit">Enviar contenido</button>
-    </form>
+    <div class="container">
+        <h1>Crear Nuevo Contenido</h1>
+        <div class="template-options">
+            <button class="template-option" onclick="selectTemplate('blog')" aria-label="Seleccionar plantilla de blog">
+                <h2>Plantilla Blog</h2>
+                <img src="blog-template-preview.jpg" alt="Vista previa de plantilla de blog">
+                <p>Una plantilla simple para artículos de blog.</p>
+            </button>
+            <button class="template-option" onclick="selectTemplate('multimedia')"
+                aria-label="Seleccionar plantilla multimedia">
+                <h2>Plantilla Multimedia</h2>
+                <img src="multimedia-template-preview.jpg" alt="Vista previa de plantilla multimedia">
+                <p>Una plantilla avanzada para contenido multimedia con imágenes.</p>
+            </button>
+        </div>
+
+        <!-- Formulario de Blog -->
+        <div id="blog-form" class="form-container">
+            <h2>Crear Blog</h2>
+            <form method="POST" action="{% url 'crear_contenido' %}">
+                {% csrf_token %} <!-- Token CSRF para seguridad -->
+                <label for="blog-title">Título:</label>
+                <input type="text" id="blog-title" name="title">
+                <label for="blog-content">Contenido:</label>
+                <textarea id="blog-content" name="content" rows="10"></textarea>
+                <button type="submit">Guardar Blog</button>
+            </form>
+        </div>
+
+        <!-- Formulario de Contenido Multimedia -->
+        <div id="multimedia-form" class="form-container">
+            <h2>Crear Contenido Multimedia</h2>
+            <form method="POST" action="{% url 'crear_contenido' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <label for="media-title">Título:</label>
+                <input type="text" id="media-title" name="title">
+                <label for="media-description">Descripción:</label>
+                <textarea id="media-description" name="description" rows="10"></textarea>
+                <label for="media-image">Adjuntar Imagen:</label>
+                <input type="file" id="media-image" name="image">
+                <button type="submit">Guardar Multimedia</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function selectTemplate(templateType) {
+            // Ocultar todos los formularios
+            document.querySelectorAll('.form-container').forEach(form => form.classList.remove('active'));
+
+            // Mostrar el formulario seleccionado
+            if (templateType === 'blog') {
+                document.getElementById('blog-form').classList.add('active');
+            } else if (templateType === 'multimedia') {
+                document.getElementById('multimedia-form').classList.add('active');
+            }
+        }
+    </script>
+
 </body>
 
 </html>

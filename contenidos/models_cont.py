@@ -21,3 +21,4 @@ class ContenidoForm(forms.ModelForm):
     class Meta:
         model = Contenido
         fields = ['titulo', 'texto', 'imagen']
+
