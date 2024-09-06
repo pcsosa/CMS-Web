@@ -106,7 +106,6 @@ TEMPLATES = [
 ]
 
 # Directorio donde se almacenarán los archivos estáticos
-STATIC_URL = '/home/mabi/CMS-Web/static'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 
