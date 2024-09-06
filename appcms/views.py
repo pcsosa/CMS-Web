@@ -16,7 +16,7 @@ from urllib.parse import urlencode
 import os
 from dotenv import load_dotenv
 from .services.keycloak_service import KeycloakService
-from .utils.utils import comprobarToken
+from .utils.utils import comprobarToken, obtener_roles_desde_token
 load_dotenv()
 
 
@@ -87,11 +87,15 @@ def panel(request):
   """
   kc = KeycloakService()
   token = request.session.get('token')
-  contexto = {}
+  user_roles = obtener_roles_desde_token(token)
+  contexto = {'user_roles':user_roles}
   if token:
-    token = comprobarToken(request, token, kc)
+    try:
+      token = comprobarToken(request, token, kc)
+    except Exception as e:
+      return HttpResponse("Su inicio de sesión ha expirado, intente iniciar sesión de nuevo.")
     user_info = kc.openid.userinfo(token['access_token'])
-    contexto = user_info
+    contexto = {**contexto, 'user_info':user_info}
   return render(request, 'panel.html', contexto)
 
 class Search(TemplateView):
