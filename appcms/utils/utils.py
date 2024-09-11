@@ -27,6 +27,7 @@ def obtenerTokenActivo(request, token):
       request.session['token'] = newToken
       return newToken
     else:
+      print("TOKEN SIGUE ACTIVO")
       return token
     
 def comprobarToken(request, token):

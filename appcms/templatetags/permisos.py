@@ -10,5 +10,5 @@ def tienePermiso(context, *args):
   kc = KeycloakService.get_instance()
   token = context['request'].session.get('token')
   aux = kc.tienePermiso(token, args)
-  print("HABILITADO: ", aux)
+  print("TIENE PERMISOS ", args, ": ", aux)
   return aux 
