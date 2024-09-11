@@ -44,6 +44,18 @@ def crear_contenido(request):
 def lista_contenidos(request):
     contenidos = Contenido.objects.all()
     return render(request, 'lista_contenidos.html', {'contenidos': contenidos})
+  
+def gestion_contenido(request):
+    contenidos = Contenido.objects.all()
+    return render(request, 'gestion_contenido.html', {'contenidos': contenidos})
+  
+def editar_contenido(request):
+  # Falta codigo para editar contenido
+  return render(request, 'editar_contenido.html')
+
+def eliminar_contenido(request):
+  # Falta codigo para eliminar contenido
+  return render(request, 'eliminar_contenido.html')
 
 @csrf_exempt
 def upload_image(request):
