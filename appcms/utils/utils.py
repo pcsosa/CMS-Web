@@ -1,3 +1,4 @@
+import unicodedata
 from django.conf import settings
 from django.http import HttpResponse
 import jwt
@@ -45,3 +46,20 @@ def obtener_roles_desde_token(token):
   #  print(json.dumps(roles['realmMappings'], indent=2, ensure_ascii=False))
   role_names = [role['name'] for role in roles['realmMappings']]
   return role_names
+
+def quitar_acentos(texto):
+    """
+    Elimina los acentos de un texto.
+
+    Este método normaliza el texto en forma NFD y filtra los caracteres con acentos.
+
+    :param texto: El texto al que se le quitarán los acentos.
+    :type texto: str
+    :return: El texto sin acentos.
+    :rtype: str
+    """
+    if texto is None:
+        return ''
+    texto_normalizado = unicodedata.normalize('NFD', texto)
+    texto_sin_acentos = ''.join(char for char in texto_normalizado if unicodedata.category(char) != 'Mn')
+    return texto_sin_acentos

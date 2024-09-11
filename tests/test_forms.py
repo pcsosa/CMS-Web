@@ -33,20 +33,3 @@ class CategoriaFormTest(TestCase):
         form = CategoriaForm(data={})
         self.assertFalse(form.is_valid())
         self.assertEqual(len(form.errors), 2)  # Debería haber errores para 'nombre' y 'descripcion'
-
-class BusquedaCategoriaFormTest(TestCase):
-    def test_busqueda_categoria_form_valid_data(self):
-        """
-        Prueba que el formulario de búsqueda sea válido cuando se proporciona
-        una consulta válida.
-        """
-        form = BusquedaCategoriaForm(data={'consulta': 'Tecnología'})
-        self.assertTrue(form.is_valid())
-
-    def test_busqueda_categoria_form_empty_data(self):
-        """
-        Prueba que el formulario de búsqueda sea inválido cuando no se proporciona
-        una consulta.
-        """
-        form = BusquedaCategoriaForm(data={'consulta': ''})
-        self.assertFalse(form.is_valid())

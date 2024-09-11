@@ -1,14 +1,17 @@
-{% load permisos %}
 <!DOCTYPE html>
+{% load permisos %}
+{% tienePermiso 'categoria#crear' as permisoCrear %}
+{% tienePermiso 'categoria#eliminar' as permisoEliminar %}
+{% tienePermiso 'categoria#editar' as permisoEditar %}
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="CMSWEB para todo tipo de sitio web">
+    <meta name="keywords" content="django, python, cms">
     <title>Gestión de Categorías</title>
-    <link
-      rel="stylesheet"
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-    />
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <style>
@@ -21,100 +24,65 @@
   <body>
     <div class="container">
       <h1 class="text-center">Gestión de Categorías</h1>
-
-      <div
-        class="modal fade"
-        id="crearModal"
-        tabindex="-1"
-        role="dialog"
-        aria-labelledby="crearModalLabel"
-      >
+      <div class="modal fade"
+           id="crearModal"
+           tabindex="-1"
+           role="dialog"
+           aria-labelledby="crearModalLabel">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <button
-                type="button"
-                class="close"
-                data-dismiss="modal"
-                aria-label="Close"
-              >
-                <span aria-hidden="true">&times;</span>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
               </button>
-              <h4 class="modal-title" id="crearModalLabel">
-                Crear Nueva Categoría
-              </h4>
+              <h4 class="modal-title" id="crearModalLabel">Crear Nueva Categoría</h4>
             </div>
             <div class="modal-body">
               <!-- Formulario para crear categoría -->
-              <form
-                id="crearForm"
-                method="post"
-                action="{% url 'crear_categoria' %}"
-              >
+              <form id="crearForm" method="post" action="{% url 'crear_categoria' %}">
                 {% csrf_token %}
                 <div class="form-group">
                   <label for="nombre">Nombre de la Categoría</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="nombre"
-                    name="nombre"
-                    required
-                  />
+                  <input type="text" class="form-control" id="nombre" name="nombre" required />
                 </div>
                 <div class="form-group">
                   <label for="descripcion">Descripción</label>
-                  <textarea
-                    class="form-control"
-                    id="descripcion"
-                    name="descripcion"
-                    rows="3"
-                    required
-                  ></textarea>
+                  <textarea class="form-control"
+                            id="descripcion"
+                            name="descripcion"
+                            rows="3"
+                            required></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary">
-                  Guardar Categoría
-                </button>
+                <button type="submit" class="btn btn-primary">Guardar Categoría</button>
               </form>
             </div>
           </div>
         </div>
       </div>
-      <div
-        style="
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        "
-      >
-        <h3>Listado de Categorías</h3>
-        <button
-          type="button"
-          class="btn btn-success"
-          data-toggle="modal"
-          data-target="#crearModal"
-          {% tienePermiso 'categoria#crear' as permisoCrear %}
-          {% if not permisoCrear %} disabled {% endif %}
-        >
-          Nueva Categoría
-        </button>
-      </div>
-
-      {% if messages %}
-      <div class="alert alert-success">
-        {% for message in messages %} {{ message }} {% endfor %}
-      </div>
+            <!-- djlint:off -->
+            <div style="display: flex;
+                        justify-content: space-between;
+                        align-items: center">
+            <!-- djlint:on -->
+              <h3>Listado de Categorías</h3>
+              <button type="button"
+                      class="btn btn-success"
+                      data-toggle="modal"
+                      data-target="#crearModal"
+                    {% if not permisoCrear %}disabled{% endif %}>Nueva Categoría</button>
+        </div>
+        {% if messages %}
+          <div class="alert alert-success">
+            {% for message in messages %}{{ message }}{% endfor %}
+        </div>
       {% endif %}
-
       <!-- Formulario de búsqueda -->
-      <form method="GET" action="{% url 'lista_categorias' %}">
+      <form method="get" action="{% url 'lista_categorias' %}">
         {{ form.as_p }}
-        <input
-          type="text"
-          name="q"
-          placeholder="Buscar categoría"
-          value="{{ consulta }}"
-        />
+        <input type="text"
+               name="q"
+               placeholder="Buscar categoría"
+               value="{{ consulta }}" />
         <button type="submit">Buscar</button>
       </form>
       <table class="table table-bordered">
@@ -128,78 +96,51 @@
         </thead>
         <tbody>
           {% for categoria in categorias %}
-          <tr>
-            <td>{{ categoria.id_categoria }}</td>
-            <td>{{ categoria.nombre }}</td>
-            <td>{{ categoria.descripcion }}</td>
-            <td>
-              <div class="button-group">
-                <!-- Botón Eliminar -->
-                <form
-                  method="post"
-                  action="{% url 'eliminar_categoria' categoria.id_categoria %}"
-                >
-                  {% csrf_token %}
-                  <button
-                    type="submit"
-                    class="btn btn-danger"
-                    onclick="return confirm('¿Estás seguro de que deseas eliminar esta categoría?');"
-                    {% tienePermiso 'categoria#eliminar' as permisoEliminar %}
-                    {% if not permisoEliminar %} disabled {% endif %}
-                    >
-                    Eliminar
-                  </button>
-                </form>
-                <!-- Botón Editar -->
-                <button
-                  type="button"
-                  class="btn btn-primary"
-                  data-toggle="modal"
-                  data-target="#editModal"
-                  data-id="{{ categoria.id_categoria }}"
-                  data-nombre="{{ categoria.nombre }}"
-                  data-descripcion="{{ categoria.descripcion }}"
-                  {% tienePermiso 'categoria#editar' as permisoEditar %}
-                  {% if not permisoEditar %} disabled {% endif %}
-                >
-                  Editar
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-celeste"
-                  onclick="redirigirUrl('{{ categoria.pk }}')"
-                >
-                  Subcategorias
-                </button>
-              </div>
-            </td>
-          </tr>
+            <tr>
+              <td>{{ categoria.id_categoria }}</td>
+              <td>{{ categoria.nombre }}</td>
+              <td>{{ categoria.descripcion }}</td>
+              <td>
+                <div class="button-group">
+                  <!-- Botón Eliminar -->
+                  <form method="post"
+                        action="{% url 'eliminar_categoria' categoria.id_categoria %}">
+                    {% csrf_token %}
+                    <button type="submit"
+                            class="btn btn-danger"
+                            onclick="return confirm('¿Estás seguro de que deseas eliminar esta categoría?');"
+                            {% if not permisoEliminar %}disabled{% endif %}>Eliminar</button>
+                  </form>
+                  <!-- Botón Editar -->
+                  <button type="button"
+                          class="btn btn-primary"
+                          data-toggle="modal"
+                          data-target="#editModal"
+                          data-id="{{ categoria.id_categoria }}"
+                          data-nombre="{{ categoria.nombre }}"
+                          data-descripcion="{{ categoria.descripcion }}"
+                          {% if not permisoEditar %}disabled{% endif %}>Editar</button>
+                  <button type="button"
+                          class="btn btn-celeste"
+                          onclick="redirigirUrl('{{ categoria.pk }}')">Subcategorias</button>
+                </div>
+              </td>
+            </tr>
           {% endfor %}
         </tbody>
       </table>
-
-      {% if consulta %}
-      <p>Resultados para "{{ consulta }}"</p>
-      {% endif %}
-
+      {% if consulta %}<p>Resultados para "{{ consulta }}"</p>{% endif %}
       <!-- Modal para Editar Categoría -->
-      <div
-        class="modal fade"
-        id="editModal"
-        tabindex="-1"
-        role="dialog"
-        aria-labelledby="editModalLabel"
-      >
+      <div class="modal fade"
+           id="editModal"
+           tabindex="-1"
+           role="dialog"
+           aria-labelledby="editModalLabel">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <button
-                type="button"
-                class="close"
-                data-dismiss="modal"
-                aria-label="Close"
-              >
-                <span aria-hidden="true">&times;</span>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
               </button>
               <h4 class="modal-title" id="editModalLabel">Editar Categoría</h4>
             </div>
@@ -209,34 +150,23 @@
                 <input type="hidden" id="categoriaId" name="id_categoria" />
                 <div class="form-group">
                   <label for="nombre">Nombre</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="nombre"
-                    name="nombre"
-                    required
-                  />
+                  <input type="text" class="form-control" id="nombre" name="nombre" required />
                 </div>
                 <div class="form-group">
                   <label for="descripcion">Descripción</label>
-                  <textarea
-                    class="form-control"
-                    id="descripcion"
-                    name="descripcion"
-                    rows="3"
-                    required
-                  ></textarea>
+                  <textarea class="form-control"
+                            id="descripcion"
+                            name="descripcion"
+                            rows="3"
+                            required></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary">
-                  Guardar Cambios
-                </button>
+                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
               </form>
             </div>
           </div>
         </div>
       </div>
     </div>
-
     <script>
       function redirigirUrl(categoriaId) {
         // Obtener la URL actual
@@ -271,6 +201,6 @@
         var actionUrl = "{% url 'editar_categoria' 0 %}".replace('0', id)
         modal.find('form').attr('action', actionUrl)
       })
-    </script>
+</script>
   </body>
 </html>
