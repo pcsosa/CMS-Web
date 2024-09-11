@@ -64,6 +64,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'appcms.middleware.token_middleware.KeycloakTokenMiddleware',
 ]
 
 # Configuración de URLs y WSGI

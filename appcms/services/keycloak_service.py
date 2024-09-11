@@ -120,9 +120,8 @@ class KeycloakService:
     return self.openid.uma_permissions(token['access_token'])
   
   def tienePermiso(self, token, permiso):
-    permisos = json.dumps(self.get_permisos(token), indent=2)
-    print("PERMISOS: ", permisos)
-    
-    missing = self.openid.has_uma_access(token['access_token'], permiso).missing_permissions
-    print("MISSING: ", missing)
+    # permisos = json.dumps(self.get_permisos(token), indent=2)
+    # print("PERMISOS: ", permisos)
+    # missing = self.openid.has_uma_access(token['access_token'], permiso).missing_permissions
+    # print("MISSING: ", missing)
     return self.openid.has_uma_access(token['access_token'], permiso).is_authorized

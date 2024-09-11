@@ -5,7 +5,7 @@ from django.db.models import Q
 from .forms import CategoriaForm
 from .models import Categoria
 from .services.keycloak_service import KeycloakService
-from .utils.utils import quitar_acentos, comprobarToken
+from .utils.utils import quitar_acentos
 from dotenv import load_dotenv
 import os
 load_dotenv()
@@ -28,7 +28,6 @@ def panel(request):
   """
   kc = KeycloakService.get_instance()
   token = request.session.get('token')
-  token = comprobarToken(request, token) # Comprueba si el token sigue siendo valido y si no genera uno nuevo
   
   # print("ACCESS TOKEN")
   # print(token['access_token'])
