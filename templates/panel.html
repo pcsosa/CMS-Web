@@ -1,4 +1,5 @@
 {% load static %}
+{% load permisos %}
 <!DOCTYPE html>
 <html lang="es">
   <head>
@@ -40,10 +41,13 @@
               <a href="#" class="dashboard-nav-dropdown-item">Eliminar artículos</a>
             </div>
           </div>
-          <a href="#" onclick="dirigir()" class="dashboard-nav-item">
-            <i class="fas fa-file-upload"></i>
-            categoria
-          </a>
+          {% tienePermiso 'categoria#ver' as permisoCat %}
+          {% if permisoCat %}
+            <a href={% url 'lista_categorias' %} class="dashboard-nav-item">
+              <i class="fas fa-file-upload"></i>
+              Categorías
+            </a>
+          {% endif %}
           <a href="#" class="dashboard-nav-item">
             <i class="fas fa-file-upload"></i>
             Keycloak

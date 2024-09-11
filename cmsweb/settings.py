@@ -3,15 +3,21 @@ from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url
 
-# Cargar variables de entorno desde un archivo .env
-load_dotenv()
-
 #-------------------------------------------------
 #------------------- PATHS ----------------------
 #-------------------------------------------------
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
+
+# Cargar variables de entorno desde un archivo .env
+load_dotenv(dotenv_path=os.path.join(BASE_DIR, '.env'), override=True)
+
+# Mostrar todas las variables de entorno (incluyendo las del sistema)
+# expected_keys = ['KEYCLOAK_RS256_PUBLIC_KEY', 'DJ_PORT', 'DJ_URL']
+# for key in expected_keys:
+#     value = os.getenv(key)
+#     print(f"{key}: {value}")
 
 #-------------------------------------------------
 #------------------- SEGURIDAD -------------------
@@ -81,7 +87,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.request',
             ],
-        },
+        }
     },
 ]
 
@@ -112,6 +118,7 @@ KEYCLOAK_SERVER_URL = os.getenv('KEYCLOAK_SERVER_URL')
 KEYCLOAK_CLIENT_ID = os.getenv('KEYCLOAK_CLIENT_ID')
 KEYCLOAK_REALM = os.getenv('KEYCLOAK_REALM')
 KEYCLOAK_CLIENT_SECRET = os.getenv('KEYCLOAK_CLIENT_SECRET')
+KEYCLOAK_RS256_PUBLIC_KEY = os.getenv('KEYCLOAK_RS256_PUBLIC_KEY')
 
 #-------------------------------------------------
 #------------------- DATABASES -------------------
