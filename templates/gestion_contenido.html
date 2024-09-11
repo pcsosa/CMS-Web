@@ -1,0 +1,140 @@
+{% extends "panel.html" %}
+{% block content %}
+  {% load permisos %}
+  {% tienePermiso 'contenido#crear' as permisoCrear %}
+  {% tienePermiso 'contenido#eliminar' as permisoEliminar %}
+  {% tienePermiso 'contenido#editar' as permisoEditar %}
+  <h1 class="text-center">Gestión de Contenidos</h1>
+  <!-- djlint:off -->
+                <div style="display: flex;
+                  justify-content: space-between;
+                  align-items: center">
+  <!-- djlint:on -->
+  <h3>Listado de contenidos</h3>
+  <button type="button"
+          class="btn btn-success"
+          onclick="window.location.href='{% url 'crear_contenido' %}'"
+          {% if not permisoCrear %}disabled{% endif %}>Nuevo contenido</button>
+</div>
+{% if messages %}
+  <div class="alert alert-success">
+    {% for message in messages %}{{ message }}{% endfor %}
+  </div>
+{% endif %}
+<!-- Formulario de búsqueda -->
+<form method="get" action="{% url 'lista_contenidos' %}">
+  {{ form.as_p }}
+  <input type="text"
+         name="q"
+         placeholder="Buscar contenido"
+         value="{{ consulta }}" />
+  <button type="submit">Buscar</button>
+</form>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Título</th>
+      <th>Fecha creación</th>
+      <th>Fecha modificación</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for contenido in contenidos %}
+      <tr>
+        <td>{{ contenido.id }}</td>
+        <td>{{ contenido.titulo }}</td>
+        <td>{{ contenido.fecha_creacion }}</td>
+        <td>{{ contenido.fecha_modificacion }}</td>
+        <td>
+          <div class="button-group">
+            <!-- Botón Eliminar -->
+            <form method="post" action="{% url 'eliminar_contenido' contenido.id %}">
+              {% csrf_token %}
+              <button type="submit"
+                      class="btn btn-danger"
+                      onclick="return confirm('¿Estás seguro de que deseas eliminar este artículo?');"
+                      {% if not permisoEliminar %}disabled{% endif %}>Eliminar</button>
+            </form>
+            <!-- Botón Editar -->
+            <button type="button"
+                    class="btn btn-primary"
+                    {% if not permisoEditar %}disabled{% endif %}>Editar</button>
+          </div>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% if consulta %}<p>Resultados para "{{ consulta }}"</p>{% endif %}
+<!-- Modal para Editar Categoría -->
+{% comment %} <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+          <h4 class="modal-title" id="editModalLabel">Editar Categoría</h4>
+        </div>
+        <div class="modal-body">
+          <form id="editForm" method="post">
+            {% csrf_token %}
+            <input type="hidden" id="categoriaId" name="id_categoria" />
+            <div class="form-group">
+              <label for="nombre">Nombre</label>
+              <input type="text" class="form-control" id="nombre" name="nombre" required />
+            </div>
+            <div class="form-group">
+              <label for="descripcion">Descripción</label>
+              <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+          </form>
+        </div>
+      </div>
+    </div>
+</div> {% endcomment %}
+{% comment %} <script>
+    function redirigirUrl(categoriaId) {
+      // Obtener la URL actual
+      let currentUrl = window.location.href
+      
+      // Reemplazar '/lista/' con '/adminsub/lista/' y añadir el ID de la categoría
+      let newUrl = currentUrl.replace(
+        '/cont/',
+        `/adminsub/lista/${categoriaId}`
+        )
+
+        // Redirigir a la nueva URL
+        window.location.href = newUrl
+      }
+
+    $('#crearModal').on('hidden.bs.modal', function () {
+      $(this).find('form').trigger('reset')
+    })
+
+    $('#editModal').on('show.bs.modal', function (event) {
+      var button = $(event.relatedTarget) // Botón que abrió el modal
+      var id = button.data('id') // Extrae el ID de los datos del botón
+      var nombre = button.data('nombre') // Extrae el nombre de los datos del botón
+      var descripcion = button.data('descripcion') // Extrae la descripción de los datos del botón
+      
+      var modal = $(this)
+      modal.find('#categoriaId').val(id)
+      modal.find('#nombre').val(nombre)
+      modal.find('#descripcion').val(descripcion)
+      
+      // Actualiza la URL del formulario en el modal
+      var actionUrl = "{% url 'editar_categoria' 0 %}".replace('0', id)
+      modal.find('form').attr('action', actionUrl)
+    })
+</script> {% endcomment %}
+<style>
+      .button-group {
+        display: flex;
+        gap: 10px;
+      }
+</style>
+{% endblock content %}
