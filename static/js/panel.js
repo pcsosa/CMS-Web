@@ -39,13 +39,3 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   })
 })
-function dirigir(){
-  // Obtener la URL actual
-  let currentUrl = window.location.href;
-
-  // Reemplazar '/lista/' con '/adminsub/lista/' y añadir el ID de la categoría
-  let newUrl = currentUrl.replace('/panel/', `/admincat`);
-
-  // Redirigir a la nueva URL
-  window.location.href = newUrl;
-}

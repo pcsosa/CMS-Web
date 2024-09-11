@@ -3,7 +3,7 @@ from django.http import HttpResponseForbidden
 from django.conf import settings
 from keycloak import KeycloakOpenID
 from .services.keycloak_service import KeycloakService
-from .utils.utils import comprobarToken, obtener_roles_desde_token
+from .utils.utils import obtener_roles_desde_token, obtenerTokenActivo
 
 kc = KeycloakService()
 
@@ -12,7 +12,7 @@ def roles_requeridos(*required_roles):
         @wraps(view_func)
         def _wrapped_view(request, *args, **kwargs):
             token = request.session.get('token')
-            token = comprobarToken(request, token, kc)
+            token = obtenerTokenActivo(request, token)
             if token:
                 user_roles = obtener_roles_desde_token(token)
                 if any(element in user_roles for element in required_roles):

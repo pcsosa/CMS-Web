@@ -13,10 +13,10 @@ from django.http import HttpResponse
 from keycloak import KeycloakOpenID
 from django.conf import settings
 from urllib.parse import urlencode
-import os
+import os, json, jwt
 from dotenv import load_dotenv
 from .services.keycloak_service import KeycloakService
-from .utils.utils import comprobarToken, obtener_roles_desde_token
+from .utils.utils import comprobarToken, obtener_roles_desde_token, decode_token, obtenerTokenActivo, obtenerUserId
 load_dotenv()
 
 
@@ -78,25 +78,35 @@ def home(request):
   """
   return render(request, 'home.html')
 
-@roles_requeridos("Administrador", "Editor")
+# @roles_requeridos("Administrador", "Editor")
 def panel(request):
   """
   Vista para la página del panel de administración.
 
   Esta vista renderiza la plantilla 'panel.html'.
   """
-  kc = KeycloakService()
+  kc = KeycloakService.get_instance()
   token = request.session.get('token')
-  user_roles = obtener_roles_desde_token(token)
-  contexto = {'user_roles':user_roles}
-  if token:
-    try:
-      token = comprobarToken(request, token, kc)
-    except Exception as e:
-      return HttpResponse("Su inicio de sesión ha expirado, intente iniciar sesión de nuevo.")
-    user_info = kc.openid.userinfo(token['access_token'])
-    contexto = {**contexto, 'user_info':user_info}
-  return render(request, 'panel.html', contexto)
+  token = comprobarToken(request, token) # Comprueba si el token sigue siendo valido y si no genera uno nuevo
+  
+  # print("ACCESS TOKEN")
+  # print(token['access_token'])
+  
+  # print("DECODED TOKEN")
+  # print(json.dumps(decode_token(token['access_token']), indent=2, ensure_ascii=False))
+  
+  # aux = kc.tienePermiso(token, ("Categoria#Crear", "Categoria#Editar", "Categoria#Eliminar"))
+  
+  # print("RPT TOKEN")
+  # rpt = kc.get_rpt_token(token)
+  # print(json.dumps(decode_token(rpt), indent=2, ensure_ascii=False))
+
+  user_info = kc.openid.userinfo(token['access_token'])
+  # permisos = kc.get_permisos(token)
+  # print("PERMISOS")
+  # print(json.dumps(permisos, indent=2))
+
+  return render(request, 'panel.html', user_info)
 
 class Search(TemplateView):
     """
@@ -130,29 +140,33 @@ class Crear(TemplateView):
     """
     template_name = "crear_categoria.html"
 
-def administrar_categorias(request):
+def lista_categorias(request):
     """
-    Administra categorías.
+    Muestra una lista de todas las categorías.
 
-    Si se envía una solicitud POST con datos válidos, se crea una nueva categoría.
-    En caso contrario, se muestra un formulario para crear una nueva categoría junto
-    con la lista de categorías existentes.
+    Esta vista consulta todas las categorías de la base de datos y las muestra
+    en la plantilla 'lista_categorias.html'.
 
     :param request: La solicitud HTTP.
     :type request: HttpRequest
-    :return: HttpResponse.
+    :return: HttpResponse: La respuesta renderizada con la lista de categorías.
     """
-    if request.method == 'POST':
-        if 'create' in request.POST:
-            form = CategoriaForm(request.POST)
-            if form.is_valid():
-                form.save()
-                return redirect('administrar_categorias')
-    else:
-        form = CategoriaForm()
     
-    categorias = Categoria.objects.all()
-    return render(request, 'administrar_categorias.html', {'categorias': categorias, 'form': form})
+    consulta = request.GET.get('q')
+    consulta = quitar_acentos(consulta)
+    categorias = []
+
+    if consulta != "" and consulta is not None:
+        categorias = Categoria.objects.filter(Q(nombre__icontains=consulta))
+    else:
+        categorias = Categoria.objects.all()
+        
+    contexto = {
+        'categorias': categorias,
+        'consulta': consulta
+    }
+    
+    return render(request, 'lista_categorias.html', contexto)
 
 @roles_requeridos("Administrador")
 def crear_categoria(request):
@@ -172,24 +186,7 @@ def crear_categoria(request):
             form.save()
             return redirect('lista_categorias')
     else:
-        form = CategoriaForm()
-    
-    return render(request, 'crear_categoria.html', {'form': form})
-
-def lista_categorias(request):
-    """
-    Muestra una lista de todas las categorías.
-
-    Esta vista consulta todas las categorías de la base de datos y las muestra
-    en la plantilla 'lista_categorias.html'.
-
-    :param request: La solicitud HTTP.
-    :type request: HttpRequest
-    :return: HttpResponse: La respuesta renderizada con la lista de categorías.
-    """
-    categorias = Categoria.objects.all()
-    print(categorias) 
-    return render(request, 'lista_categorias.html', {'categorias': categorias})
+        return HttpResponse('Error: Método no permitido', status=405)
 
 def eliminar_categoria(request, pk):
     """
@@ -210,8 +207,8 @@ def eliminar_categoria(request, pk):
         categoria.delete()
         messages.success(request, f'La categoría "{categoria.nombre}" ha sido eliminada correctamente.')
         return redirect('lista_categorias')
-    
-    return render(request, 'eliminar_categoria.html', {'categoria': categoria})
+    else:
+        return HttpResponse('Error: Método no permitido', status=405)
 
 def editar_categoria(request,pk):
     """Editar campos de categoria
@@ -229,14 +226,13 @@ def editar_categoria(request,pk):
         form = CategoriaForm(request.POST, instance=categoria)
         if form.is_valid():
             form.save()
+            messages.success(request, f'La categoría "{categoria.nombre}" ha sido modificado correctamente.')
             return redirect('lista_categorias')  
     else:
-        form = CategoriaForm(instance=categoria)
-    
-    return render(request, 'editar_categoria.html', {'form': form, 'categoria': categoria})
+        return HttpResponse('Error: Método no permitido', status=405)
 
 def login(request):
-    kc = KeycloakService()
+    kc = KeycloakService.get_instance()
     authorization_url = kc.openid.auth_url(
         redirect_uri = os.getenv('DJ_URL') + ':' + os.getenv('DJ_PORT') + '/callback/',
         scope='openid profile email'
@@ -248,20 +244,15 @@ def callback(request):
     if not code:
         return HttpResponse('Error: No code provided', status=400)
 
-    kc = KeycloakService()
+    kc = KeycloakService.get_instance()
     token = kc.get_token(code)
     request.session['token'] = token
     return redirect('panel')
 
 def logout(request):
-    kc = KeycloakService()
+    kc = KeycloakService.get_instance()
     token = request.session.get('token')
     if token:
       request.session.clear()
       kc.openid.logout(token['refresh_token'])    
     return redirect('home')
-
-def listar_categorias(_request):
-    categorias = list(Categoria.objects.values())
-    data = {'categorias': categorias}
-    return JsonResponse(data)

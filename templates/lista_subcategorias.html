@@ -1,179 +1,229 @@
 <!-- lista_subcategorias.html -->
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Gestión de Categorías</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <style>
-        .button-group {
-            display: flex; /* Usa flexbox para alinear los botones horizontalmente */
-            gap: 10px; /* Espacio entre los botones */
-        }
-        .editable {
-            display: none;
-        }
+      .button-group {
+        display: flex; /* Usa flexbox para alinear los botones horizontalmente */
+        gap: 10px; /* Espacio entre los botones */
+      }
+      .editable {
+        display: none;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <h1 style="text-align: center";>Gestión de Subcategorías de {{ categoria.nombre }}</h1>
-        <form method="post">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h3>Listado de Subcategorias</h3>
-                <button type="button" class="btn btn-success" onclick="alert('Creando categoría'); crearSubcategoria('{{ categoria.id_categoria }}')">Nueva Subcategoria</button>
-            </div>
-            {% csrf_token %}
-        </form>
-        {% if messages %}
-            <div class="alert alert-success">
-                {% for message in messages %}
-                    {{ message }}
-                {% endfor %}
-            </div>
-        {% endif %}
-        
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-        
-            <tbody>
-                {% for subcategoria in subcategorias %}
-                    <tr id="row-{{ subcategoria.id_subcategoria }}">
-                        <td>{{ subcategoria.id_subcategoria }}</td>
-                        <td>
-                            <span id="name-{{ subcategoria.id_subcategoria }}">{{ subcategoria.nombre }}</span>
-                            <input type="text" class="editable" id="input-name-{{ subcategoria.id_subcategoria }}" value="{{ subcategoria.nombre }}" />
-                        </td>
-                        <td>
-                            <div class="button-group">
-                                <button type="button" class="btn btn-primary" onclick="editSubcategoria('{{ subcategoria.id_subcategoria }}')">Editar</button>
-                                <button type="button" class="btn btn-success editable" onclick="saveSubcategoria('{{ subcategoria.id_subcategoria }}')">Guardar</button>
-                                <form method="post" action="{% url 'eliminar_subcategoria' subcategoria.id_subcategoria %}" style="display: inline;">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar esta subcategoría?');">Eliminar</button>
-                                </form>
-                            </div>
-                        </td>      
-                    </tr>     
-                {% endfor %}
-            </tbody>
-            
-        </table> 
-        <button type="button" class="btn btn-success" onclick="volver()">volver</button>
-            
+      <h1 style="text-align: center" ;>
+        Gestión de Subcategorías de {{ categoria.nombre }}
+      </h1>
+      <form method="post">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <h3>Listado de Subcategorias</h3>
+          <button
+            type="button"
+            class="btn btn-success"
+            onclick="alert('Creando categoría'); crearSubcategoria('{{ categoria.id_categoria }}')"
+          >
+            Nueva Subcategoria
+          </button>
+        </div>
+        {% csrf_token %}
+      </form>
+      {% if messages %}
+      <div class="alert alert-success">
+        {% for message in messages %} {{ message }} {% endfor %}
+      </div>
+      {% endif %}
+
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for subcategoria in subcategorias %}
+          <tr id="row-{{ subcategoria.id_subcategoria }}">
+            <td>{{ subcategoria.id_subcategoria }}</td>
+            <td>
+              <span id="name-{{ subcategoria.id_subcategoria }}"
+                >{{ subcategoria.nombre }}</span
+              >
+              <input
+                type="text"
+                class="editable"
+                id="input-name-{{ subcategoria.id_subcategoria }}"
+                value="{{ subcategoria.nombre }}"
+              />
+            </td>
+            <td>
+              <div class="button-group">
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  onclick="editSubcategoria('{{ subcategoria.id_subcategoria }}')"
+                >
+                  Editar
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-success editable"
+                  onclick="saveSubcategoria('{{ subcategoria.id_subcategoria }}')"
+                >
+                  Guardar
+                </button>
+                <form
+                  method="post"
+                  action="{% url 'eliminar_subcategoria' subcategoria.id_subcategoria %}"
+                  style="display: inline"
+                >
+                  {% csrf_token %}
+                  <button
+                    type="submit"
+                    class="btn btn-danger"
+                    onclick="return confirm('¿Estás seguro de que deseas eliminar esta subcategoría?');"
+                  >
+                    Eliminar
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <button type="button" class="btn btn-success" onclick="volver()">
+        volver
+      </button>
     </div>
     <script>
-        function volver(){
-            // Obtener la URL actual
-            let currentUrl = window.location.href;
-            // Reemplazar '/lista/' con '/adminsub/lista/' y añadir el ID de la categoría
-            
-            let newUrl = currentUrl.replace(/\/adminsub\/lista\/\d+/, '/admincat');
+      function volver() {
+        // Obtener la URL actual
+        let currentUrl = window.location.href
+        // Reemplazar '/lista/' con '/adminsub/lista/' y añadir el ID de la categoría
 
-            // Redirigir a la nueva URL
-            window.location.href = newUrl;
+        let newUrl = currentUrl.replace(/\/adminsub\/lista\/\d+/, '/cat')
 
+        // Redirigir a la nueva URL
+        window.location.href = newUrl
+      }
+      function editSubcategoria(id) {
+        document.getElementById('name-' + id).style.display = 'none'
+        document.getElementById('input-name-' + id).style.display = 'inline'
+        document.querySelector('#row-' + id + ' .btn-primary').style.display =
+          'none'
+        document.querySelector('#row-' + id + ' .btn-success').style.display =
+          'inline'
+        document.querySelector('#row-' + id + ' .btn-danger').style.display =
+          'none'
+      }
+
+      function saveSubcategoria(id) {
+        var newName = document.getElementById('input-name-' + id).value
+        var row = document.getElementById('row-' + id)
+
+        // Crear un formulario temporal para enviar los datos
+        var form = document.createElement('form')
+        form.method = 'POST'
+        form.action = "{% url 'actualizar_subcategoria' %}" // Asegúrate de tener una URL configurada para actualizar
+
+        // Agregar campos ocultos para el ID de la subcategoría y el nuevo nombre
+        var inputId = document.createElement('input')
+        inputId.type = 'hidden'
+        inputId.name = 'id'
+        inputId.value = id
+        form.appendChild(inputId)
+
+        var inputNombre = document.createElement('input')
+        inputNombre.type = 'hidden'
+        inputNombre.name = 'nombre'
+        inputNombre.value = newName
+        form.appendChild(inputNombre)
+
+        // Agregar CSRF token
+        var csrfToken = document.querySelector(
+          '[name=csrfmiddlewaretoken]'
+        ).value
+        var inputCsrfToken = document.createElement('input')
+        inputCsrfToken.type = 'hidden'
+        inputCsrfToken.name = 'csrfmiddlewaretoken'
+        inputCsrfToken.value = csrfToken
+        form.appendChild(inputCsrfToken)
+
+        document.body.appendChild(form)
+        form.submit()
+
+        // Actualizar la vista para mostrar el nuevo nombre
+        document.getElementById('name-' + id).textContent = newName
+        document.getElementById('name-' + id).style.display = 'inline'
+        document.getElementById('input-name-' + id).style.display = 'none'
+        row.querySelector('.btn-primary').style.display = 'inline'
+        row.querySelector('.btn-success').style.display = 'none'
+        row.querySelector('.btn-danger').style.display = 'inline'
+      }
+
+      function crearSubcategoria(categoriaId) {
+        // Mostrar un cuadro de entrada para solicitar el nombre de la nueva subcategoría
+        var nombre = prompt('Ingrese el nombre de la nueva subcategoría:')
+
+        // Verificar si el usuario ingresó un nombre
+        if (nombre) {
+          // Crear un formulario temporal para enviar el dato
+          var form = document.createElement('form')
+          form.method = 'POST'
+
+          // Aquí debes usar comillas invertidas para interpolar variables
+          let currentUrl = window.location.href
+          let newUrl = currentUrl.replace(/\/lista\/\d+/, `/crear`)
+
+          form.action = newUrl
+
+          // Crear un campo oculto para el nombre de la subcategoría
+          var inputNombre = document.createElement('input')
+          inputNombre.type = 'hidden'
+          inputNombre.name = 'nombre'
+          inputNombre.value = nombre
+          form.appendChild(inputNombre)
+
+          // Crear un campo oculto para el ID de la categoría
+          var inputCategoriaId = document.createElement('input')
+          inputCategoriaId.type = 'hidden'
+          inputCategoriaId.name = 'categoria_id'
+          inputCategoriaId.value = categoriaId
+          form.appendChild(inputCategoriaId)
+
+          // Agregar CSRF token si estás usando Django
+          var csrfToken = document.querySelector(
+            '[name=csrfmiddlewaretoken]'
+          ).value
+          var inputCsrfToken = document.createElement('input')
+          inputCsrfToken.type = 'hidden'
+          inputCsrfToken.name = 'csrfmiddlewaretoken'
+          inputCsrfToken.value = csrfToken
+          form.appendChild(inputCsrfToken)
+
+          // Añadir el formulario al cuerpo del documento y enviarlo
+          document.body.appendChild(form)
+          form.submit()
         }
-        function editSubcategoria(id) {
-            document.getElementById('name-' + id).style.display = 'none';
-            document.getElementById('input-name-' + id).style.display = 'inline';
-            document.querySelector('#row-' + id + ' .btn-primary').style.display = 'none';
-            document.querySelector('#row-' + id + ' .btn-success').style.display = 'inline';
-            document.querySelector('#row-' + id + ' .btn-danger').style.display = 'none';
-        }
-
-        function saveSubcategoria(id) {
-            var newName = document.getElementById('input-name-' + id).value;
-            var row = document.getElementById('row-' + id);
-            
-            // Crear un formulario temporal para enviar los datos
-            var form = document.createElement("form");
-            form.method = "POST";
-            form.action = "{% url 'actualizar_subcategoria' %}";  // Asegúrate de tener una URL configurada para actualizar
-            
-            // Agregar campos ocultos para el ID de la subcategoría y el nuevo nombre
-            var inputId = document.createElement("input");
-            inputId.type = "hidden";
-            inputId.name = "id";
-            inputId.value = id;
-            form.appendChild(inputId);
-
-            var inputNombre = document.createElement("input");
-            inputNombre.type = "hidden";
-            inputNombre.name = "nombre";
-            inputNombre.value = newName;
-            form.appendChild(inputNombre);
-
-            // Agregar CSRF token
-            var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-            var inputCsrfToken = document.createElement("input");
-            inputCsrfToken.type = "hidden";
-            inputCsrfToken.name = "csrfmiddlewaretoken";
-            inputCsrfToken.value = csrfToken;
-            form.appendChild(inputCsrfToken);
-
-            document.body.appendChild(form);
-            form.submit();
-
-            // Actualizar la vista para mostrar el nuevo nombre
-            document.getElementById('name-' + id).textContent = newName;
-            document.getElementById('name-' + id).style.display = 'inline';
-            document.getElementById('input-name-' + id).style.display = 'none';
-            row.querySelector('.btn-primary').style.display = 'inline';
-            row.querySelector('.btn-success').style.display = 'none';
-            row.querySelector('.btn-danger').style.display = 'inline';
-        }
-
-        function crearSubcategoria(categoriaId) {
-            // Mostrar un cuadro de entrada para solicitar el nombre de la nueva subcategoría
-            var nombre = prompt("Ingrese el nombre de la nueva subcategoría:");
-            
-            // Verificar si el usuario ingresó un nombre
-            if (nombre) {
-                // Crear un formulario temporal para enviar el dato
-                var form = document.createElement("form");
-                form.method = "POST";
-
-                // Aquí debes usar comillas invertidas para interpolar variables
-                let currentUrl = window.location.href;
-                let newUrl = currentUrl.replace(/\/lista\/\d+/, `/crear`);
-
-                form.action = newUrl;
-
-                // Crear un campo oculto para el nombre de la subcategoría
-                var inputNombre = document.createElement("input");
-                inputNombre.type = "hidden";
-                inputNombre.name = "nombre";
-                inputNombre.value = nombre;
-                form.appendChild(inputNombre);
-
-                // Crear un campo oculto para el ID de la categoría
-                var inputCategoriaId = document.createElement("input");
-                inputCategoriaId.type = "hidden";
-                inputCategoriaId.name = "categoria_id";
-                inputCategoriaId.value = categoriaId;
-                form.appendChild(inputCategoriaId);
-
-                // Agregar CSRF token si estás usando Django
-                var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-                var inputCsrfToken = document.createElement("input");
-                inputCsrfToken.type = "hidden";
-                inputCsrfToken.name = "csrfmiddlewaretoken";
-                inputCsrfToken.value = csrfToken;
-                form.appendChild(inputCsrfToken);
-
-                // Añadir el formulario al cuerpo del documento y enviarlo
-                document.body.appendChild(form);
-                form.submit();
-            }
-        }
+      }
     </script>
-</body>
+  </body>
 </html>
