@@ -232,6 +232,19 @@ def editar_categoria(request,pk):
         return HttpResponse('Error: Método no permitido', status=405)
 
 def login(request):
+    """
+    Maneja el inicio de sesión del usuario.
+
+    Esta función redirige al usuario a la página de autenticación de Keycloak.
+    Se genera una URL de autorización con los permisos solicitados ('openid', 'profile', 'email') 
+    y la redirección después del inicio de sesión exitoso es manejada por la URI proporcionada.
+
+    :param request: El objeto HTTP request de Django que contiene los detalles de la solicitud.
+    :type request: HttpRequest
+    :return: Redirige al usuario a la página de inicio de sesión de Keycloak.
+    :rtype: HttpResponse
+    """
+    
     kc = KeycloakService.get_instance()
     authorization_url = kc.openid.auth_url(
         redirect_uri = os.getenv('DJ_URL') + ':' + os.getenv('DJ_PORT') + '/callback/',
@@ -240,6 +253,19 @@ def login(request):
     return redirect(authorization_url)
 
 def callback(request):
+    """
+    Maneja el callback de Keycloak después del inicio de sesión.
+
+    Recibe el código de autorización de Keycloak, lo intercambia por un token de acceso 
+    y lo guarda en la sesión del usuario. Si no se proporciona un código, devuelve un error.
+
+    :param request: El objeto HTTP request de Django que contiene los detalles de la solicitud.
+    :type request: HttpRequest
+    :return: Si se proporciona un código válido, redirige al usuario al panel de control. 
+             Si no se proporciona el código, devuelve un error HTTP 400.
+    :rtype: HttpResponse
+    """
+    
     code = request.GET.get('code')
     if not code:
         return HttpResponse('Error: No code provided', status=400)
@@ -250,6 +276,18 @@ def callback(request):
     return redirect('panel')
 
 def logout(request):
+    """
+    Maneja el cierre de sesión del usuario.
+
+    Limpia la sesión del usuario y llama al servicio de Keycloak para cerrar la sesión
+    de forma remota. Luego, redirige al usuario a la página de inicio.
+
+    :param request: El objeto HTTP request de Django que contiene los detalles de la solicitud.
+    :type request: HttpRequest
+    :return: Redirige al usuario a la página de inicio después de cerrar la sesión.
+    :rtype: HttpResponse
+    """
+
     kc = KeycloakService.get_instance()
     token = request.session.get('token')
     if token:
