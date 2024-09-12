@@ -1,35 +1,51 @@
-# views.py
+from django.contrib.auth.models import User  # Para manejar el publicador
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect
 from .models_cont import ContenidoForm, Contenido
+from appcms.models import Categoria
+from appcms.utils.utils import obtenerUserId()
 
 def crear_contenido(request):
-    """if request.method == 'POST':
-        form = ContenidoForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('lista_contenidos')  # Redirige a donde lo necesites
-    else:
-        form = ContenidoForm()
-    return render(request, 'crear_contenido.html', {'form': form})"""
     if request.method == 'POST':
         # Obtener datos del formulario
         title = request.POST.get('title')
         content = request.POST.get('content')
         image = request.FILES.get('image')
+        categoria_id = request.POST.get('categoria')
+        subcategoria_id = request.POST.get('subcategoria')
 
         # Verificar que los campos requeridos no estén vacíos
-        if not title or not content:
+        if not title or not content or not categoria_id:
             return render(request, 'crear_contenido.html', {
-                'error': 'Título y contenido son campos requeridos.'
+                'error': 'Título, contenido y categoría son campos requeridos.'
             })
+
+        # Obtener la categoría obligatoria
+        categoria = Categoria.objects.get(id=categoria_id)
+
+        # Obtener la subcategoría opcional si se proporciona
+        subcategoria = Categoria.objects.get(id=subcategoria_id) if subcategoria_id else None
+
+        # Obtener el usuario actual como el publicador
+        token = request.session.get("token")
+        autor = obtenerUserId(token)
+
+        # Obtener el usuario actual como el publicador
+        editor = request.user if request.user.is_authenticated else None
+
+        # Obtener el usuario actual como el publicador
+        publicador = request.user if request.user.is_authenticated else None
 
         # Crear y guardar el nuevo contenido
         nuevo_contenido = Contenido(
             titulo=title,
             texto=content,
-            imagen=image  # Asigna la imagen si se proporciona
+            imagen=image,  # Asigna la imagen si se proporciona
+            categoria=categoria,
+            subcategoria=subcategoria,
+            publicador=publicador,  # Asigna el publicador automáticamente
+            estado='Borrador'  # Estado inicial automático
         )
         nuevo_contenido.save()
 
@@ -37,25 +53,12 @@ def crear_contenido(request):
         return redirect('lista_contenidos')
 
     # Renderizar el formulario si la solicitud no es POST
-    return render(request, 'crear_contenido.html')
-
-
+    categorias = Categoria.objects.all()  # Obtener todas las categorías para mostrarlas en el formulario
+    return render(request, 'crear_contenido.html', {'categorias': categorias})
 
 def lista_contenidos(request):
-    contenidos = Contenido.objects.all()
-    return render(request, 'lista_contenidos.html', {'contenidos': contenidos})
-  
-def gestion_contenido(request):
-    contenidos = Contenido.objects.all()
-    return render(request, 'gestion_contenido.html', {'contenidos': contenidos})
-  
-def editar_contenido(request):
-  # Falta codigo para editar contenido
-  return render(request, 'editar_contenido.html')
-
-def eliminar_contenido(request):
-  # Falta codigo para eliminar contenido
-  return render(request, 'eliminar_contenido.html')
+    contenidos = Contenido.objects.all()  # Obtén todos los contenidos
+    return render(request, 'listar_contenidos.html', {'contenidos': contenidos})
 
 @csrf_exempt
 def upload_image(request):
