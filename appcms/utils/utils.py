@@ -45,7 +45,7 @@ def obtener_roles_desde_token(token):
   roles = kc.admin.get_all_roles_of_user(userId)
   # print("-----------------ROLES--------------")
   #  print(json.dumps(roles['realmMappings'], indent=2, ensure_ascii=False))
-  role_names = [role['name'] for role in roles['realmMappings']]
+  role_names = [role['name'] for role in roles['realmMappings'] if role['name'] != 'default-roles-cmsweb']
   return role_names
 
 def quitar_acentos(texto):

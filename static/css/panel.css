@@ -142,7 +142,15 @@ h1,
   -webkit-flex-grow: 2;
   -ms-flex-positive: 2;
   flex-grow: 2;
-  margin-top: 84px;
+}
+
+.dashboard-app header {
+  height: 90px;
+  padding: 0 40px;
+  text-align: right;
+  width: 100%;
+  background-color: #443ea2;
+  color: #fff;
 }
 
 .dashboard-content {
@@ -150,7 +158,7 @@ h1,
   -webkit-flex-grow: 2;
   -ms-flex-positive: 2;
   flex-grow: 2;
-  padding: 25px;
+  padding: 40px;
 }
 
 .dashboard-nav {
