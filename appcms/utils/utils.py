@@ -6,6 +6,21 @@ import textwrap
 from ..services.keycloak_service import KeycloakService
 import json
 import re
+from keycloak import KeycloakAdmin
+
+# Configura tu cliente Keycloak
+keycloak_admin = KeycloakAdmin(server_url="https://your-keycloak-server/auth/",
+                               username='admin',
+                               password='password',
+                               realm_name='your-realm',
+                               client_id='admin-cli',
+                               verify=True)
+
+def obtener_editores():
+    # Asumiendo que tienes un rol de "editor" en Keycloak
+    usuarios_editores = keycloak_admin.get_users_of_role(role_name='editor')
+    return usuarios_editores
+
 
 def obtenerUserId(token):
     if token is not None:
