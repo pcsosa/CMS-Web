@@ -138,7 +138,7 @@
             }
         }
         // Cargar subcategorías basadas en la categoría seleccionada
-        function cargarSubcategorias(categoriaId) {
+        /*function cargarSubcategorias(categoriaId) {
             const subcategoriasSelect = document.getElementById('subcategoria');
             subcategoriasSelect.innerHTML = ''; // Limpiar opciones anteriores
 
@@ -157,14 +157,14 @@
                     subcategoriasSelect.appendChild(option);
                 });
             }
-        }
+        }*/
 
         // Habilitar o deshabilitar el botón "Enviar al Editor"
-        function verificarEditor() {
+        /*function verificarEditor() {
             const editorSelect = document.getElementById('editor');
             const enviarButton = document.getElementById('enviar-editor');
             enviarButton.disabled = !editorSelect.value;
-        }
+        }*/
     </script>
 </head>
 
@@ -175,13 +175,13 @@
         <div class="template-options">
             <button class="template-option" onclick="selectTemplate('blog')" aria-label="Seleccionar plantilla de blog">
                 <h2>Plantilla Blog</h2>
-                <img src="blog-template-preview.jpg" alt="Vista previa de plantilla de blog">
+                <img src="C:\Users\HP\Downloads" alt="Vista previa de plantilla de blog">
                 <p>Una plantilla simple para artículos de blog.</p>
             </button>
             <button class="template-option" onclick="selectTemplate('multimedia')"
                 aria-label="Seleccionar plantilla multimedia">
                 <h2>Plantilla Multimedia</h2>
-                <img src="multimedia-template-preview.jpg" alt="Vista previa de plantilla multimedia">
+                <img src="C:\Users\HP\Downloads" alt="Vista previa de plantilla multimedia">
                 <p>Una plantilla avanzada para contenido multimedia con imágenes.</p>
             </button>
         </div>
@@ -198,7 +198,7 @@
                 <textarea id="blog-content" name="content" rows="10"></textarea>
 
                 <label for="categoria">Categoría:</label>
-                <select id="categoria" name="categoria" required onchange="cargarSubcategorias(this.value)">
+                <select id="categoria" name="categoria" required onchange="cargarSubcategorias()">
                     <option value="">Selecciona una categoría</option>
                     {% for categoria in categorias %}
                     <option value="{{ categoria.id }}">{{ categoria.nombre }}</option>
@@ -244,33 +244,50 @@
     <!-- Incluye el código JavaScript para la carga dinámica de subcategorías y la verificación del editor -->
     <script>
         // Cargar subcategorías basadas en la categoría seleccionada
-        function cargarSubcategorias(categoriaId) {
+        function cargarSubcategorias() {
+            const categoriaId = 1  //get_object_or_404(Categoria, pk = categoriaId)
             const subcategoriasSelect = document.getElementById('subcategoria');
-            subcategoriasSelect.innerHTML = ''; // Limpiar opciones anteriores
-
+            subcategoriasSelect.innerHTML = 'HOLA'; // Limpiar subcategorias anteriores
+            print("*************************************************ENTRO AL JAVASCRIPT")
             if (categoriaId) {
-                // Simular la carga dinámica de subcategorías (reemplazar con una solicitud AJAX si es necesario)
-                const subcategorias = {
-                    1: ['Subcat 1.1', 'Subcat 1.2'],
-                    2: ['Subcat 2.1', 'Subcat 2.2']
-                };
-
-                const opciones = subcategorias[categoriaId] || [];
-                opciones.forEach(subcat => {
-                    const option = document.createElement('option');
-                    option.value = subcat;
-                    option.text = subcat;
-                    subcategoriasSelect.appendChild(option);
-                });
+                /*fetch(`/obtener_subcategorias/${categoriaId}/`)  // URL a tu vista que maneja la solicitud
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.subcategorias) {
+                            data.subcategorias.forEach(subcat => {
+                                const option = document.createElement('option');
+                                option.value = subcat.id;
+                                option.text = subcat.nombre;
+                                subcategoriasSelect.appendChild(option);
+                            });
+                        } else {
+                            const option = document.createElement('option');
+                            option.text = 'No hay subcategorías disponibles';
+                            subcategoriasSelect.appendChild(option);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error al cargar subcategorías:', error);
+                        const option = document.createElement('option');
+                        option.text = 'Error al cargar subcategorías';
+                        subcategoriasSelect.appendChild(option);
+                    });*/
+                subcategorias = Subcategoria.objects.filter(categoria = categoria)
+                var subcategoria = document.getElementById('subcategoria');
+                print(subcategorias)
+            } else {
+                const option = document.createElement('option');
+                option.text = 'Selecciona una categoría primero';
+                subcategoriasSelect.appendChild(option);
             }
         }
-
         // Habilitar o deshabilitar el botón "Enviar al Editor"
         function verificarEditor() {
             const editorSelect = document.getElementById('editor');
             const enviarButton = document.getElementById('enviar-editor');
             enviarButton.disabled = !editorSelect.value;
         }
+
     </script>
 </body>
 

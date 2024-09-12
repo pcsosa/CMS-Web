@@ -28,7 +28,9 @@ urlpatterns = [
     path('logout/', views.logout, name='logout'),
     path('crear_cont/', views_cont.crear_contenido, name='crear_contenido'),
     path('list_cont/', views_cont.lista_contenidos, name='lista_contenidos'),
+    path('obtener_subcategorias/<int:categoria_id>/', views_cont.obtener_subcategorias, name='obtener_subcategorias'),
 ]
+
 """    path('crear_cont/', views_cont.crear_contenido, name='crear_contenido'),
     path('list_cont/', views_cont.lista_contenidos, name='lista_contenidos'),"""
 if settings.DEBUG:

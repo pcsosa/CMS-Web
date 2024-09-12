@@ -79,3 +79,4 @@ def quitar_acentos(texto):
     texto_normalizado = unicodedata.normalize('NFD', texto)
     texto_sin_acentos = ''.join(char for char in texto_normalizado if unicodedata.category(char) != 'Mn')
     return texto_sin_acentos
+
