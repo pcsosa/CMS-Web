@@ -13,6 +13,8 @@
     <link rel="stylesheet" type="text/css" href={% static 'css/panel.css' %}>
     <link rel="stylesheet"
           href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   </head>
@@ -20,11 +22,8 @@
     <div class="dashboard">
       <div class="dashboard-nav">
         <header>
-          <a href="#!" class="menu-toggle">
-            <i class="fas fa-bars"></i>
-          </a>
           <a href="#" class="brand-logo">
-            <i class="fas fa-anchor"></i>
+            <i class="fas fa-blog"></i>
             <span>CMS WEB</span>
           </a>
         </header>
@@ -39,7 +38,7 @@
           </a>
           {% if permisoCont %}
             <a href={% url 'gestion_contenido' %} class="dashboard-nav-item active">
-              <i class="fas fa-tachometer-alt"></i>
+              <i class="fas fa-newspaper"></i>
               Artículos
             </a>
           {% endif %}
@@ -57,12 +56,12 @@
           </div> {% endcomment %}
           {% if permisoCat %}
             <a href={% url 'lista_categorias' %} class="dashboard-nav-item">
-              <i class="fas fa-file-upload"></i>
+              <i class="fas fa-icons"></i>
               Categorías
             </a>
           {% endif %}
           <a href="#" class="dashboard-nav-item">
-            <i class="fas fa-file-upload"></i>
+            <i class="fas fa-key"></i>
             Keycloak
           </a>
           <a href="#" class="dashboard-nav-item">
@@ -81,17 +80,25 @@
         </nav>
       </div>
       <div class="dashboard-app">
-        <header class="dashboard-toolbar">
-          <a href="#!" class="menu-toggle">
-            <i class="fas fa-bars"></i>
-          </a>
-          <p>{{ username }} {{ name }}</p>
+        <header class="container-fluid">
+          <h3>
+            {% if user_info.name %}
+              {{ user_info.name }}
+            {% else %}
+              {{ user_info.username }}
+            {% endif %}
+          </h3>
+          <p>
+            {% for rol in roles %}
+              {% if not forloop.first and not forloop.last %},{% endif %}
+              <!-- No pone coma antes del primer y ultimo elemento -->
+              {{ rol }}
+            {% endfor %}
+          </p>
         </header>
         <div class="dashboard-content">
-          <div class="container">
-            {% block content %}
-            {% endblock content %}
-          </div>
+          {% block content %}
+          {% endblock content %}
         </div>
       </div>
     </div>

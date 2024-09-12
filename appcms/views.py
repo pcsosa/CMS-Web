@@ -26,27 +26,7 @@ def panel(request):
 
   Esta vista renderiza la plantilla 'panel.html'.
   """
-  kc = KeycloakService.get_instance()
-  token = request.session.get('token')
-  
-  # print("ACCESS TOKEN")
-  # print(token['access_token'])
-  
-  # print("DECODED TOKEN")
-  # print(json.dumps(decode_token(token['access_token']), indent=2, ensure_ascii=False))
-  
-  # aux = kc.tienePermiso(token, ("Categoria#Crear", "Categoria#Editar", "Categoria#Eliminar"))
-  
-  # print("RPT TOKEN")
-  # rpt = kc.get_rpt_token(token)
-  # print(json.dumps(decode_token(rpt), indent=2, ensure_ascii=False))
-
-  user_info = kc.openid.userinfo(token['access_token'])
-  # permisos = kc.get_permisos(token)
-  # print("PERMISOS")
-  # print(json.dumps(permisos, indent=2))
-
-  return render(request, 'panel.html', user_info)
+  return render(request, 'panel.html')
 
 
 # --------------- CATEGORIAS ----------------
