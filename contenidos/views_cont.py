@@ -2,9 +2,9 @@ from django.contrib.auth.models import User  # Para manejar el publicador
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect
-from .models_cont import ContenidoForm, Contenido
+from .models_cont import ContenidoForm, Contenido, Categoria
 from appcms.models import Categoria
-from appcms.utils.utils import obtenerUserId()
+from appcms.utils.utils import obtenerUserId, obtener_editores
 
 def crear_contenido(request):
     if request.method == 'POST':
@@ -15,24 +15,37 @@ def crear_contenido(request):
         categoria_id = request.POST.get('categoria')
         subcategoria_id = request.POST.get('subcategoria')
 
+        # Obtener el usuario autenticado
+        usuario_autenticado = request.user
+
+
         # Verificar que los campos requeridos no estén vacíos
         if not title or not content or not categoria_id:
             return render(request, 'crear_contenido.html', {
-                'error': 'Título, contenido y categoría son campos requeridos.'
+                'error': 'Título, contenido y categoría son campos requeridos.',
+                'categorias': categorias
             })
 
         # Obtener la categoría obligatoria
         categoria = Categoria.objects.get(id=categoria_id)
+        print("================================================================= CATEGORIAS")
+        print(categoria)
 
         # Obtener la subcategoría opcional si se proporciona
         subcategoria = Categoria.objects.get(id=subcategoria_id) if subcategoria_id else None
+        print("================================================================= SUBCATEGORIAS")
+        print(subcategoria)
+
+        editores = obtener_editores()
+        print("================================================================= SUBCATEGORIAS")
+        print(editores)
 
         # Obtener el usuario actual como el publicador
         token = request.session.get("token")
         autor = obtenerUserId(token)
 
-        # Obtener el usuario actual como el publicador
-        editor = request.user if request.user.is_authenticated else None
+# Obtener el usuario actual como el publicador
+        #editor = request.user if request.user.is_authenticated else None
 
         # Obtener el usuario actual como el publicador
         publicador = request.user if request.user.is_authenticated else None
@@ -46,6 +59,7 @@ def crear_contenido(request):
             subcategoria=subcategoria,
             publicador=publicador,  # Asigna el publicador automáticamente
             estado='Borrador'  # Estado inicial automático
+            
         )
         nuevo_contenido.save()
 
@@ -54,7 +68,7 @@ def crear_contenido(request):
 
     # Renderizar el formulario si la solicitud no es POST
     categorias = Categoria.objects.all()  # Obtener todas las categorías para mostrarlas en el formulario
-    return render(request, 'crear_contenido.html', {'categorias': categorias})
+    return render(request, 'crear_contenido.html', {'editores': editores,'categorias': categorias})
 
 def lista_contenidos(request):
     contenidos = Contenido.objects.all()  # Obtén todos los contenidos

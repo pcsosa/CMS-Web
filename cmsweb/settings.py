@@ -188,3 +188,20 @@ USE_TZ = True
 
 # Tipo de dato predeterminado para los id de los modelos
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# settings.py <- Para guardar automáticamente el autor del contenido pero desde su cuenta
+AUTHENTICATION_BACKENDS = [
+    'keycloak_auth.backend.KeycloakOpenIDBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+KEYCLOAK_OIDC_PROFILE_MODEL = 'yourapp.YourCustomProfile'
+KEYCLOAK_OIDC_ID_TOKEN = 'your_keycloak_id_token'
+KEYCLOAK_OIDC_AUTHORIZATION = {
+    'BEARER_TOKEN': 'your_bearer_token',
+}
+
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
