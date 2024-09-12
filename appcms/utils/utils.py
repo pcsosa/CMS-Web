@@ -22,9 +22,9 @@ def decode_token(token):
 def obtenerTokenActivo(request, token):
     kc = KeycloakService.get_instance()
     if not kc.isActive(token['access_token']):
-      print("RENOVANDO TOKEN...")
       newToken = kc.renovarToken(token)
       request.session['token'] = newToken
+      print("TOKEN RENOVADO")
       return newToken
     else:
       print("TOKEN SIGUE ACTIVO")
@@ -32,12 +32,7 @@ def obtenerTokenActivo(request, token):
     
 def comprobarToken(request, token):
   if token:
-    try:
       return obtenerTokenActivo(request, token)
-    except Exception as e:
-      return HttpResponse("Su inicio de sesión ha expirado, intente iniciar sesión de nuevo.")
-  else:
-    return HttpResponse("No se ha iniciado sesión.")
     
 def obtener_roles_desde_token(token):
   kc = KeycloakService()
