@@ -7,7 +7,8 @@ def datos_basicos(request):
     
     if token is None:
         return {}
-      
+    
+    print("Obteniendo datos básicos")
     user_info = kc.openid.userinfo(token['access_token'])
     roles = obtener_roles_desde_token(token)
     print(roles)
