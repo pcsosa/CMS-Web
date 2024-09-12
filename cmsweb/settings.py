@@ -2,6 +2,9 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url
+# middleware.py
+from django.utils.deprecation import MiddlewareMixin
+import requests
 
 #-------------------------------------------------
 #------------------- PATHS ----------------------
@@ -205,3 +208,29 @@ KEYCLOAK_OIDC_AUTHORIZATION = {
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+
+class KeycloakMiddleware(MiddlewareMixin):
+    def process_request(self, request):
+        token = request.META.get('HTTP_AUTHORIZATION')
+        if token:
+            token = token.replace('Bearer ', '')
+            user_info = self.get_user_info_from_keycloak(token)
+            request.user_info = user_info
+
+    def get_user_info_from_keycloak(self, token):
+        # URL de tu Keycloak para obtener información del usuario
+        user_info_url = 'https://<your-keycloak-server>/auth/realms/<your-realm>/protocol/openid-connect/userinfo'
+        headers = {'Authorization': f'Bearer {token}'}
+        response = requests.get(user_info_url, headers=headers)
+        if response.status_code == 200:
+            return response.json()
+        return {}
+
+# Agregar middleware a tu configuración
+# settings.py
+MIDDLEWARE = [
+    # ...
+    'path.to.KeycloakMiddleware',
+    # ...
+]
