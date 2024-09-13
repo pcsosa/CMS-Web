@@ -2,10 +2,17 @@ import unicodedata
 from django.conf import settings
 from django.http import HttpResponse
 import jwt
-import textwrap
 from ..services.keycloak_service import KeycloakService
-import json
 import re
+
+def obtenerUsersConRol(rol):
+    kc = KeycloakService()
+    users = kc.admin.get_realm_role_members(rol)
+    
+    # Usar comprensión de lista para extraer solo los campos 'id' y 'username'
+    filtered_data = [{'id': user['id'], 'username': user['username']} for user in users]
+    
+    return filtered_data
 
 def obtenerUserId(token):
     if token is not None:
@@ -22,9 +29,9 @@ def decode_token(token):
 def obtenerTokenActivo(request, token):
     kc = KeycloakService.get_instance()
     if not kc.isActive(token['access_token']):
-      print("RENOVANDO TOKEN...")
       newToken = kc.renovarToken(token)
       request.session['token'] = newToken
+      print("TOKEN RENOVADO")
       return newToken
     else:
       print("TOKEN SIGUE ACTIVO")
@@ -32,12 +39,7 @@ def obtenerTokenActivo(request, token):
     
 def comprobarToken(request, token):
   if token:
-    try:
       return obtenerTokenActivo(request, token)
-    except Exception as e:
-      return HttpResponse("Su inicio de sesión ha expirado, intente iniciar sesión de nuevo.")
-  else:
-    return HttpResponse("No se ha iniciado sesión.")
     
 def obtener_roles_desde_token(token):
   kc = KeycloakService()
@@ -64,3 +66,4 @@ def quitar_acentos(texto):
     texto_normalizado = unicodedata.normalize('NFD', texto)
     texto_sin_acentos = ''.join(char for char in texto_normalizado if unicodedata.category(char) != 'Mn')
     return texto_sin_acentos
+

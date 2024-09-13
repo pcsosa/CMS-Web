@@ -12,7 +12,18 @@ class KeycloakTokenMiddleware:
 
     def __call__(self, request):
         print("Middleware de token ejecutado")
+        
+        # Omitir la verificación del token en la ruta de logout
+        if request.path == '/logout/':
+            return self.get_response(request)
+        
         # Obtener tokens de la sesión
         token = request.session.get('token')
-        comprobarToken(request, token)
+        
+        try:
+          comprobarToken(request, token)
+        except Exception as e:
+          print("El token ya expiró, redirigiendo a la página de inicio")
+          return redirect('logout')
+          
         return self.get_response(request)   
