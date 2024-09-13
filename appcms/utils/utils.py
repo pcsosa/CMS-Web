@@ -2,25 +2,17 @@ import unicodedata
 from django.conf import settings
 from django.http import HttpResponse
 import jwt
-import textwrap
 from ..services.keycloak_service import KeycloakService
-import json
 import re
-from keycloak import KeycloakAdmin
 
-# Configura tu cliente Keycloak
-keycloak_admin = KeycloakAdmin(server_url="https://your-keycloak-server/auth/",
-                               username='admin',
-                               password='password',
-                               realm_name='your-realm',
-                               client_id='admin-cli',
-                               verify=True)
-
-def obtener_editores():
-    # Asumiendo que tienes un rol de "editor" en Keycloak
-    usuarios_editores = keycloak_admin.get_users_of_role(role_name='editor')
-    return usuarios_editores
-
+def obtenerUsersConRol(rol):
+    kc = KeycloakService()
+    users = kc.admin.get_realm_role_members(rol)
+    
+    # Usar comprensión de lista para extraer solo los campos 'id' y 'username'
+    filtered_data = [{'id': user['id'], 'username': user['username']} for user in users]
+    
+    return filtered_data
 
 def obtenerUserId(token):
     if token is not None:

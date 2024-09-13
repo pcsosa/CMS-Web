@@ -1,12 +1,7 @@
 from django.db import models
 from django import forms
-
-class Categoria(models.Model):
-    nombre = models.CharField(max_length=100)
-    descripcion = models.TextField(blank=True, null=True)
-    
-    def __str__(self):
-        return self.nombre
+from appcms.models import Categoria
+from subcategorias.models import Subcategoria
 
 class Contenido(models.Model):
     """Representa el contenido que puede ser de tipo Blog o Multimedia."""
@@ -33,7 +28,7 @@ class Contenido(models.Model):
     imagen = models.ImageField(upload_to='multimedia/', blank=True, null=True)  # Para imágenes subidas
     imagen_url = models.URLField(blank=True, null=True)  # Para imágenes desde una URL externa
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, related_name='contenidos')  # Categoría obligatoria
-    subcategoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, blank=True, null=True, related_name='subcontenidos')  # Subcategoría opcional
+    subcategoria = models.ForeignKey(Subcategoria, on_delete=models.SET_NULL, blank=True, null=True, related_name='subcontenidos')  # Subcategoría opcional
     id_historial_mod = models.IntegerField(null=True, blank=True)  # ID del historial de modificaciones
     publicador_id = models.CharField(max_length=255, null=True, blank=True)  # Almacena el ID de Keycloak
     autor_id = models.CharField(max_length=255, null=True, blank=True)
@@ -50,7 +45,6 @@ class Contenido(models.Model):
     class Meta:
         verbose_name_plural = "Contenidos"
         app_label = 'contenidos'
-        db_table = 'contenidos_contenido'
 
     def __str__(self):
         return self.titulo

@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
-
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seleccionar Plantilla</title>
@@ -93,8 +92,7 @@
     </style>
     <!-- TinyMCE CDN -->
     <script src="https://cdn.tiny.cloud/1/igaej58ezdtpg4plti7ea4161ei2n0dg99q3lolqa4zdba33/tinymce/6/tinymce.min.js"
-        referrerpolicy="origin"></script>
-
+            referrerpolicy="origin"></script>
     <script>
         // TinyMCE para el blog (sin media, pero con copiar/cortar/pegar)
         function initTinyMCEBlog() {
@@ -166,129 +164,136 @@
             enviarButton.disabled = !editorSelect.value;
         }*/
     </script>
-</head>
-
-<body>
-
+  </head>
+  <body>
     <div class="container">
-        <h1>Crear Nuevo Contenido</h1>
-        <div class="template-options">
-            <button class="template-option" onclick="selectTemplate('blog')" aria-label="Seleccionar plantilla de blog">
-                <h2>Plantilla Blog</h2>
-                <img src="C:\Users\HP\Downloads" alt="Vista previa de plantilla de blog">
-                <p>Una plantilla simple para artículos de blog.</p>
-            </button>
-            <button class="template-option" onclick="selectTemplate('multimedia')"
+      <h1>Crear Nuevo Contenido</h1>
+      <div class="template-options">
+        <button class="template-option"
+                onclick="selectTemplate('blog')"
+                aria-label="Seleccionar plantilla de blog">
+          <h2>Plantilla Blog</h2>
+          <img src="C:\Users\HP\Downloads" alt="Vista previa de plantilla de blog">
+          <p>Una plantilla simple para artículos de blog.</p>
+        </button>
+        <button class="template-option"
+                onclick="selectTemplate('multimedia')"
                 aria-label="Seleccionar plantilla multimedia">
-                <h2>Plantilla Multimedia</h2>
-                <img src="C:\Users\HP\Downloads" alt="Vista previa de plantilla multimedia">
-                <p>Una plantilla avanzada para contenido multimedia con imágenes.</p>
-            </button>
-        </div>
-
-        <!-- Formulario de Blog -->
-        <div id="blog-form" class="form-container">
-            <h2>Crear Blog</h2>
-            <form method="POST" action="{% url 'crear_contenido' %}">
-                {% csrf_token %}
-                <label for="blog-title">Título:</label>
-                <input type="text" id="blog-title" name="title">
-
-                <label for="blog-content">Contenido:</label>
-                <textarea id="blog-content" name="content" rows="10"></textarea>
-
-                <label for="categoria">Categoría:</label>
-                <select id="categoria" name="categoria" required onchange="cargarSubcategorias()">
-                    <option value="">Selecciona una categoría</option>
-                    {% for categoria in categorias %}
-                    <option value="{{ categoria.id }}">{{ categoria.nombre }}</option>
-                    {% endfor %}
-                </select>
-
-                <label for="subcategoria">Subcategoría:</label>
-                <select id="subcategoria" name="subcategoria">
-                    <option value="">Selecciona una subcategoría</option>
-                    <!-- Las opciones se cargarán dinámicamente según la categoría -->
-                </select>
-
-                <label for="editor">Editor:</label>
-                <select id="editor" name="editor" required>
-                    <option value="">Selecciona un editor</option>
-                    {% for editor in editores %}
-                    <option value="{{ editor.id }}">{{ editor.nombre }}</option>
-                    {% endfor %}
-                </select>
-
-                <!-- Botones para guardar y enviar -->
-                <button type="submit">Guardar Blog</button>
-                <button type="button" id="enviar-editor" disabled>Enviar al Editor</button>
-
-            </form>
-        </div>
-
-        <!-- Formulario de Contenido Multimedia -->
-        <div id="multimedia-form" class="form-container">
-            <h2>Crear Contenido Multimedia</h2>
-            <form method="POST" action="{% url 'crear_contenido' %}" enctype="multipart/form-data">
-                {% csrf_token %}
-                <label for="media-title">Título:</label>
-                <input type="text" id="media-title" name="title">
-                <label for="media-description">Descripción:</label>
-                <textarea id="media-description" name="description" rows="10"></textarea>
-                <label for="media-image">Adjuntar Imagen:</label>
-                <input type="file" id="media-image" name="image">
-                <button type="submit">Guardar Multimedia</button>
-            </form>
-        </div>
+          <h2>Plantilla Multimedia</h2>
+          <img src="C:\Users\HP\Downloads"
+               alt="Vista previa de plantilla multimedia">
+          <p>Una plantilla avanzada para contenido multimedia con imágenes.</p>
+        </button>
+      </div>
+      <!-- Formulario de Blog -->
+      <div id="blog-form" class="form-container">
+        <h2>Crear Blog</h2>
+        <form method="POST" action="{% url 'crear_contenido' %}">
+          {% csrf_token %}
+          <label for="blog-title">Título:</label>
+          <input type="text" id="blog-title" name="title">
+          <label for="blog-content">Contenido:</label>
+          <textarea id="blog-content" name="content" rows="10"></textarea>
+          <label for="categoria">Categoría:</label>
+          <select id="categoria"
+                  name="categoria"
+                  required
+                  onchange="cargarSubcategorias()">
+            <option value="">Selecciona una categoría</option>
+            {% for categoria in categorias %}
+              <option value="{{ categoria.id_categoria }}">{{ categoria.nombre }}</option>
+            {% endfor %}
+          </select>
+          <label for="subcategoria">Subcategoría:</label>
+          <select id="subcategoria" name="subcategoria">
+            <option value="">Selecciona una subcategoría</option>
+            <!-- Las opciones se cargarán dinámicamente según la categoría -->
+          </select>
+          <label for="editor">Editor:</label>
+          <select id="editor" name="editor" required>
+            <option value="">Selecciona un editor</option>
+            {% for editor in editores %}<option value="{{ editor.id }}">{{ editor.username }}</option>{% endfor %}
+          </select>
+          <!-- Botones para guardar y enviar -->
+          <button type="submit">Guardar Blog</button>
+          <button type="button" id="enviar-editor" disabled>Enviar al Editor</button>
+        </form>
+      </div>
+      <!-- Formulario de Contenido Multimedia -->
+      <div id="multimedia-form" class="form-container">
+        <h2>Crear Contenido Multimedia</h2>
+        <form method="POST"
+              action="{% url 'crear_contenido' %}"
+              enctype="multipart/form-data">
+          {% csrf_token %}
+          <label for="media-title">Título:</label>
+          <input type="text" id="media-title" name="title">
+          <label for="media-description">Descripción:</label>
+          <textarea id="media-description" name="description" rows="10"></textarea>
+          <label for="media-image">Adjuntar Imagen:</label>
+          <input type="file" id="media-image" name="image">
+          <button type="submit">Guardar Multimedia</button>
+        </form>
+      </div>
     </div>
-    <!-- Incluye el código JavaScript para la carga dinámica de subcategorías y la verificación del editor -->
+    <!-- Transformar los datos de subcategorías en formato JSON -->
+    <script type="application/json" id="subcategorias-data">{{ sub_json|safe }}</script>
     <script>
-        // Cargar subcategorías basadas en la categoría seleccionada
-        function cargarSubcategorias() {
-            const categoriaId = 1  //get_object_or_404(Categoria, pk = categoriaId)
-            const subcategoriasSelect = document.getElementById('subcategoria');
-            subcategoriasSelect.innerHTML = 'HOLA'; // Limpiar subcategorias anteriores
-            print("*************************************************ENTRO AL JAVASCRIPT")
-            if (categoriaId) {
-                /*fetch(`/obtener_subcategorias/${categoriaId}/`)  // URL a tu vista que maneja la solicitud
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.subcategorias) {
-                            data.subcategorias.forEach(subcat => {
-                                const option = document.createElement('option');
-                                option.value = subcat.id;
-                                option.text = subcat.nombre;
-                                subcategoriasSelect.appendChild(option);
-                            });
-                        } else {
-                            const option = document.createElement('option');
-                            option.text = 'No hay subcategorías disponibles';
-                            subcategoriasSelect.appendChild(option);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error al cargar subcategorías:', error);
-                        const option = document.createElement('option');
-                        option.text = 'Error al cargar subcategorías';
-                        subcategoriasSelect.appendChild(option);
-                    });*/
-                subcategorias = Subcategoria.objects.filter(categoria = categoria)
-                var subcategoria = document.getElementById('subcategoria');
-                print(subcategorias)
-            } else {
-                const option = document.createElement('option');
-                option.text = 'Selecciona una categoría primero';
-                subcategoriasSelect.appendChild(option);
-            }
+      // Cargar subcategorías basadas en la categoría seleccionada
+      function cargarSubcategorias() {
+        const categoriaId = parseInt(document.getElementById('categoria').value);
+        const subcategoriasSelect = document.getElementById('subcategoria');
+        
+        let subcategorias = [];
+        
+        try {
+          aux = document.getElementById('subcategorias-data').textContent
+          subcategorias = JSON.parse(aux); 
+          console.log("Datos de subcategorías:", subcategorias);  
+        } catch (e) {
+            console.error("Error al parsear el JSON de subcategorías:", e);
+            return;
         }
-        // Habilitar o deshabilitar el botón "Enviar al Editor"
-        function verificarEditor() {
-            const editorSelect = document.getElementById('editor');
-            const enviarButton = document.getElementById('enviar-editor');
-            enviarButton.disabled = !editorSelect.value;
+        
+        console.log("Categoría seleccionada:", categoriaId);
+        console.log("Subcategorías disponibles:", subcategorias);
+        
+        // Filtrar subcategorías por categoría seleccionada
+        const subcategoriasFiltradas = subcategorias.filter(subcategoria => subcategoria.fields.categoria === categoriaId);
+        
+        console.log("Subcategorías filtradas:", subcategoriasFiltradas);
+        
+        // Limpiar el select de subcategorías y agregar opción predeterminada
+        subcategoriasSelect.innerHTML = '';
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = 'Seleccione una subcategoría';
+        subcategoriasSelect.appendChild(defaultOption);
+        
+        // Verificar si el valor de la categoría es un número válido
+        if (isNaN(categoriaId)) {
+            console.error("El valor de la categoría seleccionada no es un número válido.");
+            return;
         }
 
+        // Si no hay subcategorías filtradas, mostrar mensaje "sin subcategorías"
+        if (subcategoriasFiltradas.length === 0) {
+          subcategoriasSelect.innerHTML = '';
+          const noSubcategoriasOption = document.createElement('option');
+          noSubcategoriasOption.value = '';
+          noSubcategoriasOption.textContent = 'Sin subcategorías';
+          subcategoriasSelect.appendChild(noSubcategoriasOption);
+          return;
+      }
+        
+        // Agregar las subcategorías filtradas al select
+        subcategoriasFiltradas.forEach(subcategoria => {
+          const option = document.createElement('option');
+          option.value = subcategoria.pk;
+          option.textContent = subcategoria.fields.nombre;
+          subcategoriasSelect.appendChild(option);
+        });
+      }
     </script>
-</body>
-
+  </body>
 </html>
