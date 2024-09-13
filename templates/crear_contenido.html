@@ -230,6 +230,26 @@
           <input type="text" id="media-title" name="title">
           <label for="media-description">Descripción:</label>
           <textarea id="media-description" name="description" rows="10"></textarea>
+          <label for="categoria">Categoría:</label>
+          <select id="categoria"
+                  name="categoria"
+                  required
+                  onchange="cargarSubcategorias()">
+            <option value="">Selecciona una categoría</option>
+            {% for categoria in categorias %}
+              <option value="{{ categoria.id_categoria }}">{{ categoria.nombre }}</option>
+            {% endfor %}
+          </select>
+          <label for="subcategoria">Subcategoría:</label>
+          <select id="subcategoria" name="subcategoria">
+            <option value="">Selecciona una subcategoría</option>
+            <!-- Las opciones se cargarán dinámicamente según la categoría -->
+          </select>
+          <label for="editor">Editor:</label>
+          <select id="editor" name="editor" required>
+            <option value="">Selecciona un editor</option>
+            {% for editor in editores %}<option value="{{ editor.id }}">{{ editor.username }}</option>{% endfor %}
+          </select>
           <label for="media-image">Adjuntar Imagen:</label>
           <input type="file" id="media-image" name="image">
           <button type="submit">Guardar Multimedia</button>

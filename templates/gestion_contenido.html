@@ -57,10 +57,11 @@
                       onclick="return confirm('¿Estás seguro de que deseas eliminar este artículo?');"
                       {% if not permisoEliminar %}disabled{% endif %}>Eliminar</button>
             </form>
-            <!-- Botón Editar -->
-            <button type="button"
-                    class="btn btn-primary"
-                    {% if not permisoEditar %}disabled{% endif %}>Editar</button>
+            <!-- Botón Editar.    -->
+            <a href={% url 'editar_contenido' contenido.id %}>
+            Editar
+            </a>
+            
           </div>
         </td>
       </tr>
