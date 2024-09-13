@@ -15,6 +15,5 @@ Sistema de gestion de contenidos para la materia is2
 
    modulesf/appcms/index.rst
    modulesf/subcategorias/index.rst
-   modulesf/tests/index.rst
-   
+   modulesf/contenidos/index.rst
 
