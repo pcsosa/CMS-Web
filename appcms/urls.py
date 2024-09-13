@@ -26,11 +26,11 @@ urlpatterns = [
     path('login/', views.login, name='login'),
     path('callback/', views.callback, name='callback'),
     path('logout/', views.logout, name='logout'),
-    path('articulos/', views_cont.lista_contenidos, name='lista_contenidos'),
-    path('articulos/gestion', views_cont.gestion_contenido, name='gestion_contenido'),
-    path('articulos/crear', views_cont.crear_contenido, name='crear_contenido'),
-    path('articulos/editar/<int:pk>/', views_cont.editar_contenido, name='editar_contenido'),
-    path('articulos/eliminar/<int:pk>/', views_cont.eliminar_contenido, name='eliminar_contenido'),
+    path('articulos/', views.lista_contenidos, name='lista_contenidos'),
+    #path('articulos/gestion', views.gestion_contenido, name='gestion_contenido'),
+    path('articulos/crear', views.crear_contenido, name='crear_contenido'),
+    #path('articulos/editar/<int:pk>/', views.editar_contenido, name='editar_contenido'),
+    #path('articulos/eliminar/<int:pk>/', views.eliminar_contenido, name='eliminar_contenido'),
 ]
 
 if settings.DEBUG:
