@@ -12,6 +12,7 @@ import requests, json
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse, HttpResponseForbidden
 
+
 def crear_contenido(request):
   
     editores = obtenerUsersConRol('Editor') # Obtener todos los usuarios con el rol de Editor
@@ -27,7 +28,10 @@ def crear_contenido(request):
         # Obtener datos del formulario
         title = request.POST.get('title')
         content = request.POST.get('content')
-        content = content.replace('<p>', '').replace('</p>', '')
+        if content:
+            content = content.replace('<p>', '').replace('</p>', '')
+        else:
+            content = ''  # O puedes decidir usar un valor predeterminado
         image = request.FILES.get('image')
         categoria = request.POST.get('categoria')
         subcategoria = request.POST.get('subcategoria')
@@ -96,7 +100,7 @@ def crear_contenido(request):
         nuevo_contenido.save()
 
         # Redireccionar después de guardar
-        return redirect('lista_contenidos')
+        return redirect('gestion_contenido')
 
     contexto = {
         'editores': editores,
@@ -138,4 +142,61 @@ def eliminar_contenido(request, pk):
         return redirect('lista_contenidos')
     except Contenido.DoesNotExist:
         return JsonResponse({'error': 'Contenido no encontrado'}, status=404)
+
+
+def editar_contenido(request, pk):
+    contenido = get_object_or_404(Contenido, id=pk)  # Obtener el contenido por ID o lanzar un error 404
+    editores = obtenerUsersConRol('Editor')  # Obtener los usuarios con el rol 'Editor'
+    categorias = Categoria.objects.all()  # Obtener todas las categorías
+    subcategorias = Subcategoria.objects.all()  # Obtener todas las subcategorías
+    sub_json = serialize('json', subcategorias)
+
+    if request.method == 'POST':
+        # Obtener datos del formulario
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        image = request.FILES.get('image')
+        categoria = request.POST.get('categoria')
+        subcategoria = request.POST.get('subcategoria')
+        editor_id = request.POST.get('editor')
+
+        # Validar y limpiar el contenido
+        if content:
+            content = content.replace('<p>', '').replace('</p>', '')
+        else:
+            content = contenido.texto  # Mantener el contenido original si no se proporciona uno nuevo
+
+        # Obtener el usuario actual como el autor
+        token = request.session.get("token")
+        autor_id = obtenerUserId(token)
+        
+        # Obtener la categoría y subcategoría
+        categoria_obj = Categoria.objects.get(id_categoria=categoria)
+        subcategoria_obj = Subcategoria.objects.get(id_subcategoria=subcategoria) if subcategoria else None
+
+        # Actualizar el contenido con los nuevos datos
+        contenido.titulo = title
+        contenido.texto = content
+        contenido.imagen = image if image else contenido.imagen  # Mantener la imagen original si no se sube una nueva
+        contenido.categoria = categoria_obj
+        contenido.subcategoria = subcategoria_obj
+        contenido.editor_id = editor_id
+        contenido.autor_id = autor_id  # Mantener el autor actual
+
+        # Guardar los cambios en el contenido
+        contenido.save()
+
+        # Redireccionar a la lista de contenidos después de guardar
+        return redirect('gestion_contenido')
+
+    contexto = {
+        'contenido': contenido,
+        'editores': editores,
+        'categorias': categorias,
+        'sub_json': sub_json,
+    }
+
+    # Renderizar el formulario de edición con los datos actuales del contenido
+    return render(request, 'editar_contenido.html', contexto)
+
 
