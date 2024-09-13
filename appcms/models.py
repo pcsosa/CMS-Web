@@ -38,12 +38,6 @@ class Contenido(models.Model):
     fecha_creacion = models.DateTimeField(auto_now_add=True)  # Fecha de creación automática
     fecha_actualizacion = models.DateTimeField(auto_now=True)  # Fecha de actualización automática
 
-    class Meta:
-        verbose_name_plural = "Contenidos"
-        app_label = 'contenidos'
-        db_table = 'contenidos_contenido'
-
-
     def __str__(self):
         return self.titulo
 

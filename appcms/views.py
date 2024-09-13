@@ -265,7 +265,7 @@ def crear_contenido(request):
     return render(request, 'crear_contenido.html', {'editores': editores,'categorias': categorias})
 def lista_contenidos(request):
     contenidos = Contenido.objects.all()  # Obtén todos los contenidos
-    return render(request, 'listar_contenidos.html', {'contenidos': contenidos})
+    return render(request, 'lista_contenidos.html', {'contenidos': contenidos})
 
 def obtener_subcategorias(categoria_id):
     # Obtener la categoría seleccionada
