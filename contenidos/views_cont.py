@@ -9,6 +9,9 @@ from appcms.utils.utils import obtenerUserId, obtenerUsersConRol
 from django.core.serializers import serialize
 import requests, json
 
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse, HttpResponseForbidden
+
 def crear_contenido(request):
   
     editores = obtenerUsersConRol('Editor') # Obtener todos los usuarios con el rol de Editor
@@ -116,10 +119,6 @@ def editar_contenido(request):
   # Falta codigo para editar contenido
   return render(request, 'editar_contenido.html')
 
-def eliminar_contenido(request):
-  # Falta codigo para eliminar contenido
-  return render(request, 'eliminar_contenido.html')
-
 
 @csrf_exempt
 def upload_image(request):
@@ -129,3 +128,14 @@ def upload_image(request):
         image_url = 'ruta/donde/guardas/la/imagen/' + image.name
         # Retornar la URL de la imagen
         return JsonResponse({'location': image_url})
+    
+
+@csrf_exempt
+def eliminar_contenido(request, pk):
+    try:
+        contenido = Contenido.objects.get(pk=pk)
+        contenido.delete()
+        return redirect('lista_contenidos')
+    except Contenido.DoesNotExist:
+        return JsonResponse({'error': 'Contenido no encontrado'}, status=404)
+
