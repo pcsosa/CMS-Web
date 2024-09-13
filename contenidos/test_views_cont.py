@@ -88,3 +88,4 @@ class ContenidoViewsTest(TestCase):
         self.assertEqual(response.status_code, 302)  # Redirección después de eliminar
         with self.assertRaises(Contenido.DoesNotExist):
             Contenido.objects.get(id=self.contenido.id)
+
