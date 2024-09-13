@@ -1,7 +1,7 @@
 # appcms/forms.py
 # appcms/forms.py
 from django import forms
-from .models import Categoria
+from .models import Categoria,Contenido
 
 class CategoriaForm(forms.ModelForm):
     """
@@ -13,3 +13,8 @@ class CategoriaForm(forms.ModelForm):
     class Meta:
         model = Categoria
         fields = ['nombre', 'descripcion']
+
+class ContenidoForm(forms.ModelForm):
+    class Meta:
+        model = Contenido
+        fields = ['titulo', 'texto', 'imagen']
