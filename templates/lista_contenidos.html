@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ contenido.titulo }}</title>
@@ -60,33 +60,36 @@
             color: #65676B;
         }
     </style>
-</head>
-<body>
-  <div class="posts-container">
-    {% for contenido in contenidos%}
-      <div class="post">
+  </head>
+  <body>
+    <div class="posts-container">
+      {% for contenido in contenidos %}
+        <div class="post">
           <div class="post-header">
-              <div class="post-title">{{ contenido.titulo }}</div>
-              <div class="post-meta">
-                  {% if contenido.fecha_creacion %} · {{ contenido.fecha_creacion|date:"d/m/Y H:i" }}{% endif %}
-              </div>
+            <div class="post-title">{{ contenido.titulo }}</div>
+            <div class="post-meta">
+              {% if contenido.fecha_creacion %}· {{ contenido.fecha_creacion|date:"d/m/Y H:i" }}{% endif %}
+            </div>
           </div>
           <div class="post-content">
-              <div class="post-text">{{ contenido.texto|linebreaks }}</div>
-              {% if contenido.imagen %}
-                  <img src="{{ contenido.imagen.url }}" alt="{{ contenido.titulo }}" class="post-image">
-              {% elif contenido.imagen_url %}
-                  <img src="{{ contenido.imagen_url }}" alt="{{ contenido.titulo }}" class="post-image">
-              {% endif %}
-              
+            <div class="post-text">{{ contenido.texto|safe }}</div>
+            {% if contenido.imagen %}
+              <img src="{{ contenido.imagen.url }}"
+                   alt="{{ contenido.titulo }}"
+                   class="post-image">
+            {% elif contenido.imagen_url %}
+              <img src="{{ contenido.imagen_url }}"
+                   alt="{{ contenido.titulo }}"
+                   class="post-image">
+            {% endif %}
           </div>
           <div class="post-footer">
-              Categoría: {{ contenido.categoria }}
-              {% if contenido.subcategoria %} · Subcategoría: {{ contenido.subcategoria }}{% endif %}
-              <br>
+            Categoría: {{ contenido.categoria }}
+            {% if contenido.subcategoria %}· Subcategoría: {{ contenido.subcategoria }}{% endif %}
+            <br>
           </div>
-      </div>
-    {% endfor %}
+        </div>
+      {% endfor %}
     </div>
-</body>
+  </body>
 </html>
