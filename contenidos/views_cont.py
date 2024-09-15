@@ -8,9 +8,6 @@ from subcategorias.models import Subcategoria
 from appcms.utils.utils import obtenerUserId, obtenerUsersConRol
 from django.core.serializers import serialize
 import requests, json
-from django.shortcuts import get_object_or_404
-from django.http import JsonResponse, HttpResponseForbidden
-
 
 def crear_contenido(request):
   
@@ -133,31 +130,3 @@ def upload_image(request):
         image_url = 'ruta/donde/guardas/la/imagen/' + image.name
         # Retornar la URL de la imagen
         return JsonResponse({'location': image_url})
-
-
-
-
-@csrf_exempt
-def eliminar_contenido(request, id_contenido):
-    """
-    Elimina un contenido del sistema basado en su ID.
-    
-    :param request: La solicitud HTTP
-    :param id_contenido: El ID del contenido a eliminar
-    :return: Redirección a la lista de contenidos o un mensaje de error si no se puede eliminar
-    """
-    if request.method == 'POST':
-        # Verificar si el usuario tiene permiso para eliminar el contenido
-        token = request.session.get('token')
-        autor_id = obtenerUserId(token)
-        
-        # Obtener el contenido a eliminar o lanzar un 404 si no existe
-        contenido = get_object_or_404(Contenido, id_contenido=id_contenido)
-
-        # Verificar si el usuario es el autor del contenido o tiene permisos para eliminar
-        if contenido.autor_id == autor_id or obtenerUsersConRol('Admin'):  # Puedes ajustar los permisos según sea necesario
-            contenido.delete()
-            return JsonResponse({'message': 'Contenido eliminado correctamente'}, status=200)
-        else:
-            return HttpResponseForbidden("No tienes permiso para eliminar este contenido.")
-    return JsonResponse({'error': 'Método no permitido'}, status=405)
