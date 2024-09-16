@@ -25,6 +25,14 @@ def crear_contenido(request):
     
     
     """
+    Crea un nuevo contenido en el sistema a partir de los datos enviados a través del formulario.
+
+    :param request: Objeto HttpRequest que contiene los datos de la solicitud.
+    :return: Si la solicitud es POST y los datos son válidos, redirige a 'lista_contenidos'. 
+             Si hay errores, renderiza el formulario con mensajes de error.
+    :rtype: HttpResponse
+    """
+    """
         if request.method == 'POST':
         form = ContenidoForm(request.POST, request.FILES)
         if form.is_valid():
@@ -122,20 +130,60 @@ def crear_contenido(request):
     return render(request, 'crear_contenido.html', contexto)
 
 def lista_contenidos(request):
+    """
+    Muestra una lista de todos los contenidos en el sistema.
+
+    :param request: Objeto HttpRequest que contiene los datos de la solicitud.
+    :return: Respuesta renderizada con la plantilla 'lista_contenidos.html' y el contexto que incluye los contenidos.
+    :rtype: HttpResponse
+    """
+    contenidos = Contenido.objects.all()
     contenidos = Contenido.objects.all()  # Obtén todos los contenidos
     return render(request, 'lista_contenidos.html', {'contenidos': contenidos})
 
 def gestion_contenido(request):
+    """
+    Muestra la página de gestión de contenidos, que incluye todos los contenidos disponibles.
+
+    :param request: Objeto HttpRequest que contiene los datos de la solicitud.
+    :return: Respuesta renderizada con la plantilla 'gestion_contenido.html' y el contexto que incluye los contenidos.
+    :rtype: HttpResponse
+    """
     contenidos = Contenido.objects.all()
     return render(request, 'gestion_contenido.html', {'contenidos': contenidos})
   
 def editar_contenido(request):
-  # Falta codigo para editar contenido
-  return render(request, 'editar_contenido.html')
+    """
+    Muestra la página para editar un contenido específico.
 
+    :param request: Objeto HttpRequest que contiene los datos de la solicitud.
+    :return: Respuesta renderizada con la plantilla 'editar_contenido.html'.
+    :rtype: HttpResponse
+    """
+
+    # Falta codigo para editar contenido
+    return render(request, 'editar_contenido.html')
+
+def eliminar_contenido(request):
+    """
+    Muestra la página para eliminar un contenido específico.
+
+    :param request: Objeto HttpRequest que contiene los datos de la solicitud.
+    :return: Respuesta renderizada con la plantilla 'eliminar_contenido.html'.
+    :rtype: HttpResponse
+    """
+    # Falta codigo para eliminar contenido
+    return render(request, 'eliminar_contenido.html')
 
 @csrf_exempt
 def upload_image(request):
+    """
+    Sube una imagen al servidor y retorna su URL.
+
+    :param request: Objeto HttpRequest que contiene los datos de la solicitud.
+    :return: Un JsonResponse con la URL de la imagen subida.
+    :rtype: JsonResponse
+    """
     if request.method == 'POST':
         image = request.FILES['file']
         # Guardar la imagen en el servidor
