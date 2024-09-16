@@ -148,7 +148,8 @@ def editar_contenido(request, pk):
     contenido = get_object_or_404(Contenido, id=pk)  # Obtener el contenido por ID o lanzar un error 404
     editores = obtenerUsersConRol('Editor')  # Obtener los usuarios con el rol 'Editor'
     categorias = Categoria.objects.all()  # Obtener todas las categorías
-    subcategorias = Subcategoria.objects.all()  # Obtener todas las subcategorías
+    
+    subcategorias = Subcategoria.objects.filter( categoria = contenido.categoria)  # Obtener todas las subcategorías
     sub_json = serialize('json', subcategorias)
 
     if request.method == 'POST':
@@ -193,6 +194,7 @@ def editar_contenido(request, pk):
         'contenido': contenido,
         'editores': editores,
         'categorias': categorias,
+        'subcategorias':subcategorias,
         'sub_json': sub_json,
     }
 

@@ -135,7 +135,9 @@
             
             <label for="subcategoria">Subcategoría:</label>
             <select id="subcategoria" name="subcategoria">
-                <option value="">Selecciona una subcategoría</option>
+                {% for subcategoria in subcategorias %}
+                    <option value="{{ subcategoria.id_subcategoria }}" {% if contenido.subcategoria.id_subcategoria == subcategoria.id_subcategoria %}selected{% endif %}>{{ subcategoria.nombre }}</option>
+                {% endfor %}
                 <!-- Las opciones se cargarán dinámicamente según la categoría -->
             </select>
             
