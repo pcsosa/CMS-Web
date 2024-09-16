@@ -113,7 +113,7 @@ def crear_contenido(request):
 
 def lista_contenidos(request):
     contenidos = Contenido.objects.all()  # Obtén todos los contenidos
-    return render(request, 'listar_contenidos.html', {'contenidos': contenidos})
+    return render(request, 'lista_contenidos.html', {'contenidos': contenidos})
 
 def gestion_contenido(request):
     contenidos = Contenido.objects.all()
