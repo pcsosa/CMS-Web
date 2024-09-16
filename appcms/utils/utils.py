@@ -4,6 +4,7 @@ from django.http import HttpResponse
 import jwt
 from ..services.keycloak_service import KeycloakService
 import re
+import time
 
 def obtenerUsersConRol(rol):
     kc = KeycloakService()
@@ -42,13 +43,30 @@ def comprobarToken(request, token):
       return obtenerTokenActivo(request, token)
     
 def obtener_roles_desde_token(token):
-  kc = KeycloakService()
-  userId = kc.get_userId(token)
-  roles = kc.admin.get_all_roles_of_user(userId)
-  # print("-----------------ROLES--------------")
-  #  print(json.dumps(roles['realmMappings'], indent=2, ensure_ascii=False))
-  role_names = [role['name'] for role in roles['realmMappings'] if role['name'] != 'default-roles-cmsweb']
-  return role_names
+    kc = KeycloakService.get_instance()
+    
+    # Medir tiempo para obtener userId
+    user_id_start = time.time()
+    userId = kc.get_userId(token)
+    user_id_end = time.time()
+    user_id_elapsed = user_id_end - user_id_start
+    print(f"Tiempo tomado para obtener userId: {user_id_elapsed:.4f} segundos")
+    
+    # Medir tiempo para obtener roles
+    roles_start = time.time()
+    roles = kc.admin.get_all_roles_of_user(userId)
+    roles_end = time.time()
+    roles_elapsed = roles_end - roles_start
+    print(f"Tiempo tomado para obtener roles: {roles_elapsed:.4f} segundos")
+    
+    # Medir tiempo para filtrar roles
+    filter_roles_start = time.time()
+    role_names = [role['name'] for role in roles['realmMappings'] if role['name'] != 'default-roles-cmsweb']
+    filter_roles_end = time.time()
+    filter_roles_elapsed = filter_roles_end - filter_roles_start
+    print(f"Tiempo tomado para filtrar roles: {filter_roles_elapsed:.4f} segundos")
+    
+    return role_names
 
 def quitar_acentos(texto):
     """

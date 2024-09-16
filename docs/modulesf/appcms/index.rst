@@ -9,3 +9,6 @@ appcms
    models.rst
    forms.rst
    apps.rst
+   services.rst
+   utils.rst
+   decorators.rst
