@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.contrib import messages
 from django.db.models import Q
 from .forms import CategoriaForm
-from .models import Categoria, Contenido
+from .models import Categoria
 from .services.keycloak_service import KeycloakService
 from .utils.utils import quitar_acentos
 from dotenv import load_dotenv
@@ -13,7 +13,8 @@ from appcms.utils.utils import obtenerUserId
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User  # Para manejar el publicador
-
+from contenidos.models_cont import Contenido
+from subcategorias.models import Subcategoria
 
 load_dotenv()
 
@@ -99,11 +100,23 @@ def eliminar_categoria(request, pk):
     :return: HttpResponse.
     """
     categoria = get_object_or_404(Categoria, pk=pk)
+    articulos = Contenido.objects.filter( categoria = pk)
+    subcategorias = Subcategoria.objects.filter( categoria = pk )
     
     if request.method == 'POST':
-        categoria.delete()
-        messages.success(request, f'La categoría "{categoria.nombre}" ha sido eliminada correctamente.')
-        return redirect('lista_categorias')
+        if (not articulos) and (not subcategorias):
+            categoria.delete()
+            messages.success(request, f'La categoría "{categoria.nombre}" ha sido eliminada correctamente.')
+            return redirect('lista_categorias')
+        elif (articulos) and ( not subcategorias) :
+            messages.error(request, f'La categoría "{categoria.nombre}" no se pudo borrar. Por favor, verifique que no tenga contenidos publicados.')
+            return redirect('lista_categorias')
+        elif (not articulos) and ( subcategorias):
+            messages.error(request, f'La categoría "{categoria.nombre}" no se pudo borrar. Por favor, verifique que no tenga subcategorias diponibles dentro de la categoria.')
+            return redirect('lista_categorias')
+        else:
+            messages.error(request, f'La categoría "{categoria.nombre}" no se pudo borrar.Tiene articulos y subcategorias publicadas')
+            return redirect('lista_categorias')
     else:
         return HttpResponse('Error: Método no permitido', status=405)
 
