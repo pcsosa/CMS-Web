@@ -24,6 +24,16 @@ def crear_contenido(request):
     print(sub_json)
     
     
+    """
+        if request.method == 'POST':
+        form = ContenidoForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('lista_contenidos')  # Redirige a donde lo necesites
+        else:
+            form = ContenidoForm()
+        return render(request, 'crear_contenido.html', {'form': form})
+    """
     if request.method == 'POST':
         # Obtener datos del formulario
         title = request.POST.get('title')
