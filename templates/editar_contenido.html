@@ -135,9 +135,7 @@
             
             <label for="subcategoria">Subcategoría:</label>
             <select id="subcategoria" name="subcategoria">
-                {% for subcategoria in subcategorias %}
-                    <option value="{{ subcategoria.id_subcategoria }}" {% if contenido.subcategoria.id_subcategoria == subcategoria.id_subcategoria %}selected{% endif %}>{{ subcategoria.nombre }}</option>
-                {% endfor %}
+                <option value="">Selecciona una subcategoría</option>
                 <!-- Las opciones se cargarán dinámicamente según la categoría -->
             </select>
             
@@ -153,5 +151,62 @@
         </form>
     </div>
     <script type="application/json" id="subcategorias-data">{{ sub_json|safe }}</script>
+    <script>
+      // Cargar subcategorías basadas en la categoría seleccionada
+        function cargarSubcategorias() {
+            const categoriaId = parseInt(document.getElementById('categoria').value);
+            const subcategoriasSelect = document.getElementById('subcategoria');
+            
+            let subcategorias = [];
+            
+            try {
+            aux = document.getElementById('subcategorias-data').textContent
+            subcategorias = JSON.parse(aux); 
+            console.log("Datos de subcategorías:", subcategorias);  
+            } catch (e) {
+                console.error("Error al parsear el JSON de subcategorías:", e);
+                return;
+            }
+            
+            console.log("Categoría seleccionada:", categoriaId);
+            console.log("Subcategorías disponibles:", subcategorias);
+            
+            // Filtrar subcategorías por categoría seleccionada
+            const subcategoriasFiltradas = subcategorias.filter(subcategoria => subcategoria.fields.categoria === categoriaId);
+            
+            console.log("Subcategorías filtradas:", subcategoriasFiltradas);
+            
+            // Limpiar el select de subcategorías y agregar opción predeterminada
+            subcategoriasSelect.innerHTML = '';
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'Seleccione una subcategoría';
+            subcategoriasSelect.appendChild(defaultOption);
+            
+            // Verificar si el valor de la categoría es un número válido
+            if (isNaN(categoriaId)) {
+                console.error("El valor de la categoría seleccionada no es un número válido.");
+                return;
+            }
+
+            // Si no hay subcategorías filtradas, mostrar mensaje "sin subcategorías"
+            if (subcategoriasFiltradas.length === 0) {
+            subcategoriasSelect.innerHTML = '';
+            const noSubcategoriasOption = document.createElement('option');
+            noSubcategoriasOption.value = '';
+            noSubcategoriasOption.textContent = 'Sin subcategorías';
+            subcategoriasSelect.appendChild(noSubcategoriasOption);
+            return;
+        }
+            
+            // Agregar las subcategorías filtradas al select
+            subcategoriasFiltradas.forEach(subcategoria => {
+            const option = document.createElement('option');
+            option.value = subcategoria.pk;
+            option.textContent = subcategoria.fields.nombre;
+            subcategoriasSelect.appendChild(option);
+            });
+        }
+    </script>
 </body>
 </html>
