@@ -12,5 +12,4 @@ def tienePermiso(context, resource, scopes_to_check):
   request = context['request']
   token = utils.obtenerToken(request)
   result = utils.tienePermiso(token, resource, list_scopes)
-  print("TIENE PERMISOS DE ", resource, ":", result)
   return result
