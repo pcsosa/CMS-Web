@@ -1,12 +1,6 @@
 from functools import wraps
 from django.http import HttpResponseForbidden
-from django.conf import settings
-from django.core.cache import cache
-from keycloak import KeycloakOpenID
-from appcms.services.keycloak_service import KeycloakService
-from appcms.utils.utils import obtener_roles_desde_token, obtenerTokenActivo, obtenerToken
-
-kc = KeycloakService()
+from appcms.utils.utils import obtenerRolesUser, obtenerToken, comprobarToken
 
 def roles_requeridos(*required_roles):
     """
@@ -50,12 +44,12 @@ def roles_requeridos(*required_roles):
             
             token = obtenerToken(request)
 
-            token = obtenerTokenActivo(request, token)
+            token = comprobarToken(request, token)
             
             if not token:
               return HttpResponseForbidden("No tienes permiso para acceder a esta página.")
             
-            user_roles = obtener_roles_desde_token(token)
+            user_roles = obtenerRolesUser(token)
             if any(element in user_roles for element in required_roles):
                 return view_func(request, *args, **kwargs)
             
