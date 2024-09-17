@@ -5,7 +5,7 @@ from django.db.models import Q
 from .forms import CategoriaForm
 from .models import Categoria
 from .services.keycloak_service import KeycloakService
-from .utils.utils import quitar_acentos
+from .utils.utils import quitar_acentos, obtenerRPT 
 from dotenv import load_dotenv
 import os
 load_dotenv()
@@ -141,7 +141,7 @@ def login(request):
     kc = KeycloakService.get_instance()
     authorization_url = kc.openid.auth_url(
         redirect_uri = os.getenv('DJ_URL') + ':' + os.getenv('DJ_PORT') + '/callback/',
-        scope='openid profile email'
+        scope='openid profile email',
     )
     return redirect(authorization_url)
 
@@ -165,6 +165,7 @@ def callback(request):
 
     kc = KeycloakService.get_instance()
     token = kc.get_token(code)
+    token = obtenerRPT(token)
     request.session['token'] = token
     return redirect('panel')
 
