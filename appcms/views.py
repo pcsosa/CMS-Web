@@ -210,15 +210,15 @@ def logout(request):
 
     kc = KeycloakService.get_instance()
     
-    token = cache.get('refresh_token')
+    refresh_token = cache.get('refresh_token')
     
-    if not token:
-      token = request.session.get('refresh_token')
+    if not refresh_token:
+      refresh_token = request.session.get('refresh_token')
 
-    if token:
+    if refresh_token:
       request.session.clear()
       cache.clear()
-      kc.openid.logout(token['refresh_token'])    
+      kc.openid.logout(refresh_token)    
       
     return redirect('home')
 

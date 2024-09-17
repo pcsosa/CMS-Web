@@ -12,31 +12,18 @@ class KeycloakTokenMiddleware:
         print("Middleware de token ejecutado")
 
         # Omitir la verificación del token en la ruta de logout
-        start_time = time.time()
         if request.path == '/logout/':
             return self.get_response(request)
-
-        end_time = time.time()
-        elapsed_time = end_time - start_time
-        print(f"Tiempo en verificar la ruta de logout: {elapsed_time} segundos")
         
         # Obtener token de la cache o la sesión
-        start_time = time.time()
         token = obtenerToken(request)
-        end_time = time.time()
-        elapsed_time = end_time - start_time
-        print(f"Tiempo en obtener tokens de la sesión: {elapsed_time} segundos")
 
         # Verificar el token
-        start_time = time.time()
         try:
             comprobarToken(request, token)
         except Exception as e:
             print("El token ya expiró, redirigiendo a la página de inicio")
             return redirect('logout')
-        end_time = time.time()
-        elapsed_time = end_time - start_time
-        print(f"Tiempo en verificar el token: {elapsed_time} segundos")
 
         total_end_time = time.time()
         total_elapsed_time = total_end_time - total_start_time

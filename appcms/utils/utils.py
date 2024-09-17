@@ -96,11 +96,12 @@ def obtenerTokenActivo(request, token):
         cache.set('refresh_token', refresh_token, timeout=1800)
         
       newToken = kc.renovarToken(refresh_token)
-      request.session['access_token'] = newToken['access_token']
-      cache.set('access_token', newToken['access_token'], timeout=300)
+      newToken = obtenerRPT(newToken['access_token'])
+      request.session['access_token'] = newToken
+      cache.set('access_token', newToken, timeout=300)
       
       print("TOKEN RENOVADO")
-      return newToken['access_token']
+      return newToken
     else:
       print("TOKEN SIGUE ACTIVO")
       return token
