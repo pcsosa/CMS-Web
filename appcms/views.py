@@ -1,11 +1,12 @@
 from django.shortcuts import get_object_or_404, redirect, render
+from django.core.cache import cache
 from django.http import HttpResponse
 from django.contrib import messages
 from django.db.models import Q
 from .forms import CategoriaForm
 from .models import Categoria
 from .services.keycloak_service import KeycloakService
-from .utils.utils import quitar_acentos, obtenerRPT 
+from .utils.utils import obtenerToken, quitar_acentos, obtenerRPT 
 from dotenv import load_dotenv
 from appcms.mixins import KeycloakRoleRequiredMixin
 import os
@@ -178,9 +179,20 @@ def callback(request):
         return HttpResponse('Error: No code provided', status=400)
 
     kc = KeycloakService.get_instance()
-    token = kc.get_token(code)
-    token = obtenerRPT(token)
-    request.session['token'] = token
+    token = kc.get_token(code) # Obtener token normal sin permisos
+    token = obtenerRPT(token['access_token']) # Obtener token con permisos incluidos
+    
+    access_token = token['access_token'] # Token normal
+    refresh_token = token['refresh_token'] # Token con permisos
+    
+    # Guardar tokens en la sesión
+    request.session['access_token'] = access_token
+    request.session['refresh_token'] = refresh_token
+    
+    # Cachear los tokens para mayor rendimiento
+    cache.set('access_token', access_token, timeout=300)
+    cache.set('refresh_token', refresh_token, timeout=1800)
+    
     return redirect('panel')
 
 def logout(request):
@@ -197,10 +209,17 @@ def logout(request):
     """
 
     kc = KeycloakService.get_instance()
-    token = request.session.get('token')
+    
+    token = cache.get('refresh_token')
+    
+    if not token:
+      token = request.session.get('refresh_token')
+
     if token:
       request.session.clear()
+      cache.clear()
       kc.openid.logout(token['refresh_token'])    
+      
     return redirect('home')
 
 

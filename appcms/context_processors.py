@@ -1,6 +1,6 @@
 import time, asyncio
 from appcms.services.keycloak_service import KeycloakService
-from appcms.utils.utils import obtener_roles_desde_token
+from appcms.utils.utils import obtener_roles_desde_token, obtenerToken
 
 def datos_basicos(request):
     """
@@ -25,16 +25,17 @@ def datos_basicos(request):
     :rtype: dict
     """
     kc = KeycloakService.get_instance()
-    token = request.session.get('token')
     
-    if token is None:
+    token = obtenerToken(request)
+    
+    if not token:
         return {}
     
     print("Obteniendo datos básicos")
     
     # Medir tiempo para obtener user_info
     user_info_start = time.time()
-    user_info = kc.openid.userinfo(token['access_token'])
+    user_info = kc.openid.userinfo(token)
     user_info_end = time.time()
     user_info_elapsed = user_info_end - user_info_start
     print(f"Tiempo tomado para obtener user_info: {user_info_elapsed:.4f} segundos")

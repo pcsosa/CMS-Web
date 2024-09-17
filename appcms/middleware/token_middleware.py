@@ -1,35 +1,45 @@
-from django.shortcuts import redirect
-from appcms.services.keycloak_service import KeycloakService
-from django.conf import settings
-from appcms.utils.utils import comprobarToken
 import time
-
-kc = KeycloakService.get_instance()
+from ..utils.utils import comprobarToken, obtenerToken
+from django.shortcuts import redirect
 
 # Middleware que verifica el token antes de cada solicitud
 class KeycloakTokenMiddleware:
-  def __init__(self, get_response):
-    self.get_response = get_response
+    def __init__(self, get_response):
+        self.get_response = get_response
 
-  def __call__(self, request):
-    start_time = time.time()
-    print("Middleware de token ejecutado")
+    def __call__(self, request):
+        total_start_time = time.time()
+        print("Middleware de token ejecutado")
 
-    # Omitir la verificación del token en la ruta de logout
-    if request.path == '/logout/':
-      return self.get_response(request)
+        # Omitir la verificación del token en la ruta de logout
+        start_time = time.time()
+        if request.path == '/logout/':
+            return self.get_response(request)
 
-    # Obtener tokens de la sesión
-    token = request.session.get('token')
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        print(f"Tiempo en verificar la ruta de logout: {elapsed_time} segundos")
+        
+        # Obtener token de la cache o la sesión
+        start_time = time.time()
+        token = obtenerToken(request)
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        print(f"Tiempo en obtener tokens de la sesión: {elapsed_time} segundos")
 
-    try:
-      comprobarToken(request, token)
-    except Exception as e:
-      print("El token ya expiró, redirigiendo a la página de inicio")
-      return redirect('logout')
+        # Verificar el token
+        start_time = time.time()
+        try:
+            comprobarToken(request, token)
+        except Exception as e:
+            print("El token ya expiró, redirigiendo a la página de inicio")
+            return redirect('logout')
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        print(f"Tiempo en verificar el token: {elapsed_time} segundos")
 
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    print(f"Tiempo transcurrido en el middleware: {elapsed_time} segundos")
+        total_end_time = time.time()
+        total_elapsed_time = total_end_time - total_start_time
+        print(f"Tiempo total en el middleware: {total_elapsed_time} segundos")
 
-    return self.get_response(request)
+        return self.get_response(request)

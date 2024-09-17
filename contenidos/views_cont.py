@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from .models_cont import ContenidoForm, Contenido, Categoria
 from appcms.models import Categoria
 from subcategorias.models import Subcategoria
-from appcms.utils.utils import obtenerUserId, obtenerUsersConRol
+from appcms.utils.utils import obtenerToken, obtenerUserId, obtenerUsersConRol
 from django.core.serializers import serialize
 import requests, json
 
@@ -44,7 +44,7 @@ def crear_contenido(request):
         editor_id = request.POST.get('editor')
 
         # Obtener el usuario actual como el autor
-        token = request.session.get("token")
+        token = obtenerToken(request)
         autor_id = obtenerUserId(token)
         
         # Obtener el publicador
@@ -213,7 +213,7 @@ def editar_contenido(request, pk):
             content = contenido.texto  # Mantener el contenido original si no se proporciona uno nuevo
 
         # Obtener el usuario actual como el autor
-        token = request.session.get("token")
+        token = obtenerToken(request)
         autor_id = obtenerUserId(token)
         
         # Obtener la categoría y subcategoría
