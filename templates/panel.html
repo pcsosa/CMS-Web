@@ -1,7 +1,7 @@
 {% load static %}
 {% load permisos %}
-{% tienePermiso 'categoria#ver' as permisoCat %}
-{% tienePermiso 'contenido#ver' as permisoCont %}
+{% tienePermiso 'contenido' '["ver"]' as permisoCont %}
+{% tienePermiso 'categoria' '["ver"]' as permisoCat %}
 <!DOCTYPE html>
 <html lang="es">
   <head>
@@ -36,7 +36,7 @@
             <i class="fas fa-tachometer-alt"></i>
             Dashboard
           </a>
-          {% if permisoCont %}
+          {% if permisoCont.ver %}
             <a href={% url 'gestion_contenido' %} class="dashboard-nav-item active">
               <i class="fas fa-newspaper"></i>
               Artículos
@@ -54,7 +54,7 @@
               <a href="#" class="dashboard-nav-dropdown-item">Eliminar artículos</a>
             </div>
           </div> {% endcomment %}
-          {% if permisoCat %}
+          {% if permisoCat.ver %}
             <a href={% url 'lista_categorias' %} class="dashboard-nav-item">
               <i class="fas fa-icons"></i>
               Categorías

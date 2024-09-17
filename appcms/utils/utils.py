@@ -1,11 +1,54 @@
-import unicodedata
-from django.conf import settings
-from django.http import HttpResponse
-import jwt
 from ..services.keycloak_service import KeycloakService
-import re
-import time
+import time, requests, unicodedata, jwt, re
+from django.conf import settings
 
+def tienePermiso(token, resource, scopes_to_check):
+    if not token:
+        return {scope: False for scope in scopes_to_check}
+    
+    decoded_token = decode_token(token['access_token'])
+    authorization = decoded_token['authorization']
+    permissions = authorization['permissions']
+    results = {}
+    
+    for scope_to_check in scopes_to_check:
+        has_permission = False
+        for permission in permissions:
+            if permission['rsname'] == resource and scope_to_check in permission['scopes']:
+                has_permission = True
+                break
+        results[scope_to_check] = has_permission
+    
+    return results
+  
+def obtenerRPT(token):
+  if token:
+    host = settings.KEYCLOAK_SERVER_URL
+    realm = settings.KEYCLOAK_REALM
+    client_id = settings.KEYCLOAK_CLIENT_ID
+    endpoint = f'{host}/realms/{realm}/protocol/openid-connect/token'
+    
+    # Crear el payload para la solicitud de RPT
+    payload = {
+        'grant_type': 'urn:ietf:params:oauth:grant-type:uma-ticket',
+        'audience': client_id,
+    }
+    
+    # Crear el encabezado de la solicitud
+    headers = {
+        'Authorization': f'Bearer {token["access_token"]}',
+        'Content-Type': 'application/x-www-form-urlencoded',
+    }
+    
+    # Realizar la solicitud de RPT
+    response = requests.post(endpoint, data=payload, headers=headers)
+    
+    # Verificar si la solicitud fue exitosa
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return {'error': 'No se pudo obtener el RPT'}
+    
 def obtenerUsersConRol(rol):
     kc = KeycloakService()
     users = kc.admin.get_realm_role_members(rol)
