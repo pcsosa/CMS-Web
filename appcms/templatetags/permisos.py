@@ -9,7 +9,8 @@ register = Library()
 @register.simple_tag(takes_context=True)
 def tienePermiso(context, resource, scopes_to_check):
   list_scopes = ast.literal_eval(scopes_to_check)
-  token = context['request'].session.get('token')
+  request = context['request']
+  token = utils.obtenerToken(request)
   result = utils.tienePermiso(token, resource, list_scopes)
   print("TIENE PERMISOS DE ", resource, ":", result)
   return result

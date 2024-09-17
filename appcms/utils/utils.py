@@ -1,12 +1,20 @@
 from ..services.keycloak_service import KeycloakService
 import time, requests, unicodedata, jwt, re
+from django.core.cache import cache
 from django.conf import settings
+
+def obtenerToken(request):
+    token = cache.get('access_token')
+    if not token:
+      token = request.session.get('access_token')
+      cache.set('access_token', token, timeout=300)
+    return token
 
 def tienePermiso(token, resource, scopes_to_check):
     if not token:
         return {scope: False for scope in scopes_to_check}
     
-    decoded_token = decode_token(token['access_token'])
+    decoded_token = decode_token(token)
     authorization = decoded_token['authorization']
     permissions = authorization['permissions']
     results = {}
@@ -22,32 +30,34 @@ def tienePermiso(token, resource, scopes_to_check):
     return results
   
 def obtenerRPT(token):
-  if token:
-    host = settings.KEYCLOAK_SERVER_URL
-    realm = settings.KEYCLOAK_REALM
-    client_id = settings.KEYCLOAK_CLIENT_ID
-    endpoint = f'{host}/realms/{realm}/protocol/openid-connect/token'
-    
-    # Crear el payload para la solicitud de RPT
-    payload = {
-        'grant_type': 'urn:ietf:params:oauth:grant-type:uma-ticket',
-        'audience': client_id,
-    }
-    
-    # Crear el encabezado de la solicitud
-    headers = {
-        'Authorization': f'Bearer {token["access_token"]}',
-        'Content-Type': 'application/x-www-form-urlencoded',
-    }
-    
-    # Realizar la solicitud de RPT
-    response = requests.post(endpoint, data=payload, headers=headers)
-    
-    # Verificar si la solicitud fue exitosa
-    if response.status_code == 200:
-        return response.json()
-    else:
-        return {'error': 'No se pudo obtener el RPT'}
+  if not token:
+    return None
+  
+  host = settings.KEYCLOAK_SERVER_URL
+  realm = settings.KEYCLOAK_REALM
+  client_id = settings.KEYCLOAK_CLIENT_ID
+  endpoint = f'{host}/realms/{realm}/protocol/openid-connect/token'
+  
+  # Crear el payload para la solicitud de RPT
+  payload = {
+      'grant_type': 'urn:ietf:params:oauth:grant-type:uma-ticket',
+      'audience': client_id,
+  }
+  
+  # Crear el encabezado de la solicitud
+  headers = {
+      'Authorization': f'Bearer {token}',
+      'Content-Type': 'application/x-www-form-urlencoded',
+  }
+  
+  # Realizar la solicitud de RPT
+  response = requests.post(endpoint, data=payload, headers=headers)
+  
+  # Verificar si la solicitud fue exitosa
+  if response.status_code == 200:
+      return response.json()
+  else:
+      return {'error': 'No se pudo obtener el RPT'}
     
 def obtenerUsersConRol(rol):
     kc = KeycloakService()
@@ -59,28 +69,42 @@ def obtenerUsersConRol(rol):
     return filtered_data
 
 def obtenerUserId(token):
-    if token is not None:
-        payload = decode_token(token['access_token'])
-        return payload['sub']
-    else:
+    if not token:
         return None
+    payload = decode_token(token)
+    return payload['sub']
 
-def decode_token(token):
+
+def decode_token(token, audience="cmsweb", verify_exp=True):
     public_key = settings.KEYCLOAK_RS256_PUBLIC_KEY
     public_key = re.sub(r'\\n', '\n', public_key)
-    return jwt.decode(token, public_key, algorithms=["RS256"], audience="account")
+    return jwt.decode(token, public_key, algorithms=["RS256"], audience=audience, options={"verify_exp": verify_exp})
 
+def expiroToken(token):
+    if not token:
+      return None
+    decoded_token = decode_token(token, verify_exp=False)
+    return decoded_token['exp'] < time.time()
+  
 def obtenerTokenActivo(request, token):
-    kc = KeycloakService.get_instance()
-    if not kc.isActive(token['access_token']):
-      newToken = kc.renovarToken(token)
-      request.session['token'] = newToken
+    if expiroToken(token):
+      kc = KeycloakService.get_instance()
+      
+      refresh_token = cache.get('refresh_token')
+      if not refresh_token:
+        refresh_token = request.session.get('refresh_token')
+        cache.set('refresh_token', refresh_token, timeout=1800)
+        
+      newToken = kc.renovarToken(refresh_token)
+      request.session['access_token'] = newToken['access_token']
+      cache.set('access_token', newToken['access_token'], timeout=300)
+      
       print("TOKEN RENOVADO")
-      return newToken
+      return newToken['access_token']
     else:
       print("TOKEN SIGUE ACTIVO")
       return token
-    
+  
 def comprobarToken(request, token):
   if token:
       return obtenerTokenActivo(request, token)

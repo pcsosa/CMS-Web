@@ -87,7 +87,7 @@ class KeycloakService:
       :return: El ID del usuario.
       :rtype: str
       """  
-    user_info = self.openid.userinfo(token['access_token'])
+    user_info = self.openid.userinfo(token)
     return user_info.get('sub')
   
   def isActive(self, token):
@@ -103,7 +103,7 @@ class KeycloakService:
     """
     return self.openid.introspect(token).get('active')
     
-  def renovarToken(self, token):
+  def renovarToken(self, refresh_token):
     """
     Renueva el token de acceso usando el token de actualización.
 
@@ -114,7 +114,7 @@ class KeycloakService:
     :return: Un diccionario con el nuevo token de acceso y otros datos relacionados.
     :rtype: dict
     """
-    return self.openid.refresh_token(token['refresh_token'])
+    return self.openid.refresh_token(refresh_token)
   
   def get_permisos(self, token):
-    return self.openid.uma_permissions(token['access_token'])
+    return self.openid.uma_permissions(token)

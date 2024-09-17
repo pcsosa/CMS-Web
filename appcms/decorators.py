@@ -1,9 +1,10 @@
 from functools import wraps
 from django.http import HttpResponseForbidden
 from django.conf import settings
+from django.core.cache import cache
 from keycloak import KeycloakOpenID
-from .services.keycloak_service import KeycloakService
-from .utils.utils import obtener_roles_desde_token, obtenerTokenActivo
+from appcms.services.keycloak_service import KeycloakService
+from appcms.utils.utils import obtener_roles_desde_token, obtenerTokenActivo, obtenerToken
 
 kc = KeycloakService()
 
@@ -46,12 +47,17 @@ def roles_requeridos(*required_roles):
                      o una respuesta de prohibición de acceso si no los tiene.
             :rtype: django.http.HttpResponse
             """
-            token = request.session.get('token')
+            
+            token = obtenerToken(request)
+
             token = obtenerTokenActivo(request, token)
-            if token:
-                user_roles = obtener_roles_desde_token(token)
-                if any(element in user_roles for element in required_roles):
-                    return view_func(request, *args, **kwargs)
-            return HttpResponseForbidden("No tienes permiso para acceder a esta página.")
+            
+            if not token:
+              return HttpResponseForbidden("No tienes permiso para acceder a esta página.")
+            
+            user_roles = obtener_roles_desde_token(token)
+            if any(element in user_roles for element in required_roles):
+                return view_func(request, *args, **kwargs)
+            
         return _wrapped_view
     return decorator
