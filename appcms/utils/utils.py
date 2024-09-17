@@ -1,11 +1,28 @@
-from ..services.keycloak_service import KeycloakService
-import time, requests, unicodedata, jwt, re
+from appcms.services.keycloak_service import KeycloakService
 from django.core.cache import cache
 from django.conf import settings
+import time, requests, unicodedata, jwt, re
 
+def obtenerUserInfo(token):
+  if not token:
+    return None
+  
+  decoded_token = decode_token(token)
+  
+  user_info = {
+      'email': decoded_token['email'],
+      'name': decoded_token['name'],
+      'preferred_username': decoded_token['preferred_username'],
+      'given_name': decoded_token['given_name'],
+      'family_name': decoded_token['family_name'],
+  }
+  
+  return user_info
+  
 def obtenerToken(request):
     token = cache.get('access_token')
     if not token:
+      print("Token obtenido de la sesión")
       token = request.session.get('access_token')
       cache.set('access_token', token, timeout=300)
     return token
@@ -74,7 +91,6 @@ def obtenerUserId(token):
     payload = decode_token(token)
     return payload['sub']
 
-
 def decode_token(token, audience="cmsweb", verify_exp=True):
     public_key = settings.KEYCLOAK_RS256_PUBLIC_KEY
     public_key = re.sub(r'\\n', '\n', public_key)
@@ -86,55 +102,38 @@ def expiroToken(token):
     decoded_token = decode_token(token, verify_exp=False)
     return decoded_token['exp'] < time.time()
   
-def obtenerTokenActivo(request, token):
-    if expiroToken(token):
-      kc = KeycloakService.get_instance()
-      
-      refresh_token = cache.get('refresh_token')
-      if not refresh_token:
-        refresh_token = request.session.get('refresh_token')
-        cache.set('refresh_token', refresh_token, timeout=1800)
-        
-      newToken = kc.renovarToken(refresh_token)
-      newToken = obtenerRPT(newToken['access_token'])
-      request.session['access_token'] = newToken
-      cache.set('access_token', newToken, timeout=300)
-      
-      print("TOKEN RENOVADO")
-      return newToken
-    else:
-      print("TOKEN SIGUE ACTIVO")
-      return token
-  
 def comprobarToken(request, token):
-  if token:
-      return obtenerTokenActivo(request, token)
+  if not token:
+    return None
+  
+  if not expiroToken(token):
+    return token
+  
+  kc = KeycloakService.get_instance()
+  
+  refresh_token = cache.get('refresh_token')
+  if not refresh_token:
+    refresh_token = request.session.get('refresh_token')
+    cache.set('refresh_token', refresh_token, timeout=1800)
     
-def obtener_roles_desde_token(token):
-    kc = KeycloakService.get_instance()
+  newToken = kc.renovarToken(refresh_token)
+  newToken = obtenerRPT(newToken['access_token'])
+  request.session['access_token'] = newToken['access_token']
+  cache.set('access_token', newToken['access_token'], timeout=300)
+  
+  print("TOKEN RENOVADO")
+  return newToken['access_token']
     
-    # Medir tiempo para obtener userId
-    user_id_start = time.time()
-    userId = kc.get_userId(token)
-    user_id_end = time.time()
-    user_id_elapsed = user_id_end - user_id_start
-    print(f"Tiempo tomado para obtener userId: {user_id_elapsed:.4f} segundos")
-    
-    # Medir tiempo para obtener roles
-    roles_start = time.time()
-    roles = kc.admin.get_all_roles_of_user(userId)
-    roles_end = time.time()
-    roles_elapsed = roles_end - roles_start
-    print(f"Tiempo tomado para obtener roles: {roles_elapsed:.4f} segundos")
-    
-    # Medir tiempo para filtrar roles
-    filter_roles_start = time.time()
-    role_names = [role['name'] for role in roles['realmMappings'] if role['name'] != 'default-roles-cmsweb']
-    filter_roles_end = time.time()
-    filter_roles_elapsed = filter_roles_end - filter_roles_start
-    print(f"Tiempo tomado para filtrar roles: {filter_roles_elapsed:.4f} segundos")
-    
-    return role_names
+def obtenerRolesUser(token):
+    decoded_token = decode_token(token)
+    roles = decoded_token['realm_access'].get('roles', [])
+
+    roles = [rol for rol in roles
+             if 'default-roles-cmsweb' not in rol
+             and 'offline_access' not in rol
+             and 'uma_authorization' not in rol]
+
+    return roles
 
 def quitar_acentos(texto):
     """
