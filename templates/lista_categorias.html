@@ -1,9 +1,7 @@
 {% extends "panel.html" %}
 {% block content %}
   {% load permisos %}
-  {% tienePermiso 'categoria#crear' as permisoCrear %}
-  {% tienePermiso 'categoria#eliminar' as permisoEliminar %}
-  {% tienePermiso 'categoria#editar' as permisoEditar %}
+  {% tienePermiso 'categoria' '["crear", "editar", "eliminar"]' as permisosCat %}
   <h1 class="text-center">Gestión de Categorías</h1>
   <div class="modal fade"
        id="crearModal"
@@ -41,16 +39,16 @@
     </div>
   </div>
   <!-- djlint:off -->
-                <div style="display: flex;
-                justify-content: space-between;
-                align-items: center">
+    <div style="display: flex;
+    justify-content: space-between;
+    align-items: center">
   <!-- djlint:on -->
   <h3>Listado de Categorías</h3>
   <button type="button"
           class="btn btn-success"
           data-toggle="modal"
           data-target="#crearModal"
-          {% if not permisoCrear %}disabled{% endif %}>Nueva Categoría</button>
+          {% if not permisosCat.crear %}disabled{% endif %}>Nueva Categoría</button>
 </div>
 {% if messages %}
   <div class="alert alert-success">
@@ -90,7 +88,7 @@
               <button type="submit"
                       class="btn btn-danger"
                       onclick="return confirm('¿Estás seguro de que deseas eliminar esta categoría?');"
-                      {% if not permisoEliminar %}disabled{% endif %}>Eliminar</button>
+                      {% if not permisosCat.eliminar %}disabled{% endif %}>Eliminar</button>
             </form>
             <!-- Botón Editar -->
             <button type="button"
@@ -100,7 +98,7 @@
                     data-id="{{ categoria.id_categoria }}"
                     data-nombre="{{ categoria.nombre }}"
                     data-descripcion="{{ categoria.descripcion }}"
-                    {% if not permisoEditar %}disabled{% endif %}>Editar</button>
+                    {% if not permisosCat.editar %}disabled{% endif %}>Editar</button>
             <button type="button"
                     class="btn btn-celeste"
                     onclick="redirigirUrl('{{ categoria.pk }}')">Subcategorias</button>
