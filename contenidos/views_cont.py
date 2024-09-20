@@ -8,6 +8,10 @@ from subcategorias.models import Subcategoria
 from appcms.utils.utils import obtenerToken, obtenerUserId, obtenerUsersConRol
 from django.core.serializers import serialize
 import requests, json
+from django.db.models import Q  # Para realizar búsquedas
+
+from django.core.paginator import Paginator
+
 
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse, HttpResponseForbidden
@@ -118,16 +122,51 @@ def crear_contenido(request):
     return render(request, 'crear_contenido.html', contexto)
 
 def lista_contenidos(request):
-    """
-    Muestra una lista de todos los contenidos en el sistema.
-
-    :param request: Objeto HttpRequest que contiene los datos de la solicitud.
-    :return: Respuesta renderizada con la plantilla 'lista_contenidos.html' y el contexto que incluye los contenidos.
-    :rtype: HttpResponse
-    """
+    # Obtener todos los contenidos inicialmente
     contenidos = Contenido.objects.all()
-    contenidos = Contenido.objects.all()  # Obtén todos los contenidos
-    return render(request, 'lista_contenidos.html', {'contenidos': contenidos})
+    autores = obtenerUsersConRol('Autor')
+
+    # Obtener los parámetros del filtro desde la solicitud
+    orden = request.GET.get('orden', 'desc')  # Por defecto descendente
+    categoria_id = request.GET.get('categoria')
+    autor_id = request.GET.get('autor')
+    busqueda = request.GET.get('busqueda', '')
+
+    # Filtrar por categoría si se proporciona
+    if categoria_id:
+        contenidos = contenidos.filter(categoria_id=categoria_id)
+    
+    # Filtrar por autor si se proporciona
+    if autor_id:
+        
+        contenidos = contenidos.filter(autor_id=autor_id)
+
+
+    # Filtrar por búsqueda en el título o el contenido
+    if busqueda:
+        contenidos = contenidos.filter(Q(titulo__icontains=busqueda) | Q(texto__icontains=busqueda))
+
+    # Ordenar por fecha de creación
+    if orden == 'asc':
+        contenidos = contenidos.order_by('fecha_modificacion')
+    else:
+        contenidos = contenidos.order_by('-fecha_modificacion')
+
+    # Pasar la lista de contenidos y categorías al contexto
+    categorias = Categoria.objects.all()
+    paginator = Paginator(contenidos, 10)  # 10 contenidos por página
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    contexto = {
+        'page_obj': page_obj,
+        'contenidos': contenidos,
+        'categorias': categorias,
+        'busqueda': busqueda,
+        'autores' : autores,
+    }
+    
+    return render(request, 'lista_contenidos.html', contexto)
 
 def gestion_contenido(request):
     """
