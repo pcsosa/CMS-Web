@@ -64,11 +64,11 @@
   <body>
     <div class="posts-container">
       {% for contenido in contenidos %}
-        <div class="post">
+        <div class="post">  
           <div class="post-header">
             <div class="post-title">{{ contenido.titulo }}</div>
             <div class="post-meta">
-              {% if contenido.fecha_creacion %}· {{ contenido.fecha_creacion|date:"d/m/Y H:i" }}{% endif %}
+              {% if contenido.fecha_modificacion %}· {{ contenido.fecha_modificacion|date:"d/m/Y H:i" }}{% endif %}
             </div>
           </div>
           <div class="post-content">
