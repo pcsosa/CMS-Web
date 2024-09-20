@@ -43,8 +43,9 @@
       <tr>
         <td>{{ contenido.id }}</td>
         <td>{{ contenido.titulo }}</td>
-        <td>{{ contenido.fecha_creacion }}</td>
-        <td>{{ contenido.fecha_modificacion }}</td>
+        <td>{{ contenido.fecha_creacion|date:"d M Y H:i" }}</td>
+        <td>{{ contenido.fecha_modificacion|date:"d M Y H:i" }}</td>
+
         <td>
           <div class="button-group">
             <!-- Botón Eliminar -->

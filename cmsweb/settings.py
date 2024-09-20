@@ -197,9 +197,10 @@ AUTH_PASSWORD_VALIDATORS = [
 # -------------------------------------------------
 
 LANGUAGE_CODE = "es"
-TIME_ZONE = "UTC"
+TIME_ZONE = 'America/Asuncion'  # O la zona horaria correcta para tu ubicación
+USE_TZ = True  # Asegúrate de que esté habilitado el uso de zonas horarias
 USE_I18N = True
-USE_TZ = True
+
 
 # -------------------------------------------------
 # --------------- OTRAS CONFIGURACIONES------------
