@@ -1,18 +1,14 @@
-import os
-
+from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from dotenv import load_dotenv
 
 from .forms import CategoriaForm
 from .models import Categoria
 from .services.keycloak_service import KeycloakService
 from .utils.utils import obtenerRPT, obtenerToken, quitar_acentos
-
-load_dotenv()
 
 # --------------- PRINCIPAL----------------
 
@@ -154,7 +150,7 @@ def login(request):
 
     kc = KeycloakService.get_instance()
     authorization_url = kc.openid.auth_url(
-        redirect_uri=os.getenv("DJ_URL") + ":" + os.getenv("DJ_PORT") + "/callback/",
+        redirect_uri=settings.DJ_URL + ":" + settings.DJ_PORT + "/callback/",
         scope="openid profile email",
     )
     return redirect(authorization_url)
