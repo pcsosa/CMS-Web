@@ -108,12 +108,21 @@ class KeycloakService:
 
         Solicita un nuevo token de acceso utilizando el token de actualización proporcionado.
 
-        :param token: El token de actualización de Keycloak.
-        :type token: dict
-        :return: Un diccionario con el nuevo token de acceso y otros datos relacionados.
-        :rtype: dict
-        """
-        return self.openid.refresh_token(refresh_token)
-
-    def get_permisos(self, token):
-        return self.openid.uma_permissions(token)
+    :param token: El token de actualización de Keycloak.
+    :type token: dict
+    :return: Un diccionario con el nuevo token de acceso y otros datos relacionados.
+    :rtype: dict
+    """
+    return self.openid.refresh_token(token['refresh_token'])
+  
+  def get_permisos(self, token):
+    return self.openid.uma_permissions(token['access_token'])
+  
+  def tienePermiso(self, token, permiso):
+    # permisos = json.dumps(self.get_permisos(token), indent=2)
+    # print("PERMISOS: ", permisos)
+    # missing = self.openid.has_uma_access(token['access_token'], permiso).missing_permissions
+    # print("MISSING: ", missing)
+    if token is None:
+      return False
+    return self.openid.has_uma_access(token['access_token'], permiso).is_authorized

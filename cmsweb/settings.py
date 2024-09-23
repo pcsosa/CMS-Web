@@ -161,15 +161,17 @@ AUTHENTICATION_BACKENDS = [
 # }
 
 # PostgreSQL desde URL
-DATABASES = {"default": dj_database_url.parse(DATABASE_URL)}
+#DATABASES = {
+#     'default': dj_database_url.parse(os.getenv('DATABASE_URL'))
+#}
 
 # SQLite en memoria (para pruebas)
-# DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': ':memory:',
-#    }
-# }
+DATABASES = {
+   'default': {
+       'ENGINE': 'django.db.backends.sqlite3',
+       'NAME': ':memory:',
+   }
+}
 
 # SQLite archivo local
 # DATABASES = {

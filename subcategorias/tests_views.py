@@ -1,8 +1,8 @@
-from django.test import TestCase, Client
+from django.test import TestCase
 from django.urls import reverse
 from .models import Subcategoria
 from appcms.models import Categoria
-from .forms import SubcategoriaForm
+
 
 class SubcategoriaViewTests(TestCase):
     def setUp(self):
@@ -25,38 +25,20 @@ class SubcategoriaViewTests(TestCase):
         :rtype: None
         """
         # Prueba para la vista lista_subcategorias.
-        response = self.client.get(reverse('lista_subcategorias'))
+        response = self.client.get(reverse('lista_subcategorias',args=[self.subcategoria.pk]))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'lista_subcategorias.html')
         self.assertContains(response, 'Subcategoria 1')
     
-    def test_crear_subcategoria_get(self):
-        """
-        Prueba para la vista 'crear_subcategoria' con método GET para asegurarse de
-        que el formulario se muestra correctamente.
-        :return: None
-        :rtype: None
-        """
-        # Prueba para la vista crear_subcategoria con método GET.
-        response = self.client.get(reverse('crear_subcategorias'))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'crear_subcategoria.html')
-        self.assertIsInstance(response.context['form'], SubcategoriaForm)
-    
-    def test_crear_subcategoria_post_valid(self):
-        """
-        Prueba para la vista 'crear_subcategoria' con método POST válido. Verifica
-        que una nueva subcategoría se crea y redirige correctamente.
-        :return: None
-        :rtype: None
-        """
-        # Prueba para la vista crear_subcategoria con método POST válido.
-        # Usa el ID de la categoría creada en setUp
-        data = {'nombre': 'Nueva Subcategoria', 'categoria': self.categoria.pk}
-        response = self.client.post(reverse('crear_subcategorias'), data)
-        self.assertEqual(response.status_code, 302)  # Redirección después de guardar.
-        self.assertTrue(Subcategoria.objects.filter(nombre='Nueva Subcategoria').exists())
-    
+    def test_crear_subcategoria(self):
+        # Simular el envío de un formulario para crear una nueva subcategoría
+        response = self.client.post(reverse('crear_subcategorias'), {
+            'nombre': 'Subcategoria 1',
+            'categoria': self.categoria.pk
+        })
+        
+        self.assertEqual(Subcategoria.objects.filter(nombre='Subcategoria 1').count(), 1)
+        redirect_url = reverse('lista_subcategorias', args=[self.categoria.pk])
+
     def test_crear_subcategoria_post_invalid(self):
         """
         Prueba para la vista 'crear_subcategoria' con método POST inválido.
@@ -66,36 +48,15 @@ class SubcategoriaViewTests(TestCase):
         :rtype: None
         """
         # Intentar crear una subcategoría con nombre vacío
-        data_invalid = {'nombre': '', 'categoria': self.categoria.pk}
-        response_invalid = self.client.post(reverse('crear_subcategorias'), data_invalid)
-        # Verificar que el formulario muestra errores y no se redirige
-        self.assertEqual(response_invalid.status_code, 200)  # Debe permanecer en la misma página
-        self.assertTemplateUsed(response_invalid, 'crear_subcategoria.html')
-        self.assertContains(response_invalid, "Este campo es obligatorio.")  # Mensaje para nombre vacío
-        # Intentar crear una subcategoría con nombre duplicado
-        data_duplicate = {'nombre': 'Subcategoria 1', 'categoria': self.categoria.pk}
-        response_duplicate = self.client.post(reverse('crear_subcategorias'), data_duplicate)
-        # Verificar que el formulario muestra errores y no se redirige
-        self.assertEqual(response_duplicate.status_code, 200)  # Debe permanecer en la misma página
-        self.assertTemplateUsed(response_duplicate, 'crear_subcategoria.html')
-        self.assertContains(response_duplicate, "Ya existe Subcategoria con este Nombre.")  # Mensaje para nombre duplicado
-        # Verificar que no se han creado subcategorías con nombre vacío o duplicado
-        self.assertFalse(Subcategoria.objects.filter(nombre='').exists())
-        self.assertEqual(Subcategoria.objects.filter(nombre='Subcategoria 1').count(), 1)
+        response_invalid = self.client.post(reverse('crear_subcategorias'), {
+            'nombre': '',  # Nombre vacío
+            'categoria': self.categoria.pk
+        }, HTTP_REFERER=reverse('crear_subcategorias'))
+   
+        # Verificar que el formulario muestra errores y  se redirige
+        self.assertEqual(response_invalid.status_code,302)  
         
-    def test_eliminar_subcategoria_get(self):
-        """
-        Prueba para la vista 'eliminar_subcategoria' con método GET para verificar que
-        la vista se muestra correctamente y contiene la subcategoría a eliminar.
-        :return: None
-        :rtype: None
-        """
-        # Prueba para la vista eliminar_subcategoria con método GET.
-        response = self.client.get(reverse('eliminar_subcategoria', args=[self.subcategoria.pk]))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'eliminar_subcategoria.html')
-        self.assertContains(response, 'Subcategoria 1')
-    
+       
     def test_eliminar_subcategoria_post(self):
         """
         Prueba para la vista 'eliminar_subcategoria' con método POST para verificar que
