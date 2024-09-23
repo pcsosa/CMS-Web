@@ -124,4 +124,6 @@ class KeycloakService:
     # print("PERMISOS: ", permisos)
     # missing = self.openid.has_uma_access(token['access_token'], permiso).missing_permissions
     # print("MISSING: ", missing)
+    if token is None:
+      return False
     return self.openid.has_uma_access(token['access_token'], permiso).is_authorized
