@@ -66,15 +66,16 @@ ALLOWED_HOSTS = [
 # -------------------------------------------------
 
 INSTALLED_APPS = [
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-    "appcms",
-    "contenidos",
-    "subcategorias",
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'appcms',
+    'contenidos',
+    'subcategorias',
+    'comentarios',
 ]
 
 # -------------------------------------------------
@@ -161,17 +162,17 @@ AUTHENTICATION_BACKENDS = [
 # }
 
 # PostgreSQL desde URL
-#DATABASES = {
-#     'default': dj_database_url.parse(os.getenv('DATABASE_URL'))
-#}
+DATABASES = {
+     'default': dj_database_url.parse(os.getenv('DATABASE_URL'))
+}
 
 # SQLite en memoria (para pruebas)
-DATABASES = {
-   'default': {
-       'ENGINE': 'django.db.backends.sqlite3',
-       'NAME': ':memory:',
-   }
-}
+#DATABASES = {
+ #  'default': {
+ #      'ENGINE': 'django.db.backends.sqlite3',
+#       'NAME': ':memory:',
+#   }
+#}
 
 # SQLite archivo local
 # DATABASES = {
