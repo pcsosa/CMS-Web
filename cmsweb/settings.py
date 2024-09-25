@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'appcms',
     'contenidos',
     'subcategorias',
+    'comentarios',
 ]
 
 #-------------------------------------------------
@@ -142,17 +143,17 @@ KEYCLOAK_RS256_PUBLIC_KEY = os.getenv('KEYCLOAK_RS256_PUBLIC_KEY')
 # }
 
 # PostgreSQL desde URL
-#DATABASES = {
-#     'default': dj_database_url.parse(os.getenv('DATABASE_URL'))
-#}
+DATABASES = {
+     'default': dj_database_url.parse(os.getenv('DATABASE_URL'))
+}
 
 # SQLite en memoria (para pruebas)
-DATABASES = {
-   'default': {
-       'ENGINE': 'django.db.backends.sqlite3',
-       'NAME': ':memory:',
-   }
-}
+#DATABASES = {
+ #  'default': {
+ #      'ENGINE': 'django.db.backends.sqlite3',
+#       'NAME': ':memory:',
+#   }
+#}
 
 # SQLite archivo local
 #DATABASES = {
