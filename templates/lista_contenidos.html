@@ -66,13 +66,17 @@
       {% for contenido in contenidos %}
         <div class="post">
           <div class="post-header">
-            <div class="post-title">{{ contenido.titulo }}</div>
+            <div class="post-title">
+              <a href="{% url 'visualizar_contenido' contenido.id %}">{{ contenido.titulo }}</a>
+            </div>
             <div class="post-meta">
               {% if contenido.fecha_creacion %}· {{ contenido.fecha_creacion|date:"d/m/Y H:i" }}{% endif %}
             </div>
           </div>
           <div class="post-content">
-            <div class="post-text">{{ contenido.texto|safe }}</div>
+            <div class="post-text">
+              {{ contenido.texto|safe }}
+            </div>
             {% if contenido.imagen %}
               <img src="{{ contenido.imagen.url }}"
                    alt="{{ contenido.titulo }}"
