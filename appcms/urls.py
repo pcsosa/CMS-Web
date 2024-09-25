@@ -31,6 +31,7 @@ urlpatterns = [
     path('articulos/crear', views_cont.crear_contenido, name='crear_contenido'),
     path('articulos/editar/<int:pk>/', views_cont.editar_contenido, name='editar_contenido'),
     path('articulos/eliminar/<int:pk>/', views_cont.eliminar_contenido, name='eliminar_contenido'),
+    path('articulos/visualizar/<int:pk>/',views_cont.visualizar_contenido, name="visualizar_contenido"),
 ]
 
 if settings.DEBUG:
