@@ -103,15 +103,9 @@ def eliminar_categoria(request, pk):
     subcategorias = Subcategoria.objects.filter( categoria = pk )
     
     if request.method == 'POST':
-        if (not articulos) and (not subcategorias):
+        if (not articulos) :
             categoria.delete()
             messages.success(request, f'La categoría "{categoria.nombre}" ha sido eliminada correctamente.')
-            return redirect('lista_categorias')
-        elif (articulos) and ( not subcategorias) :
-            messages.error(request, f'La categoría "{categoria.nombre}" no se pudo borrar. Por favor, verifique que no tenga contenidos publicados.')
-            return redirect('lista_categorias')
-        elif (not articulos) and ( subcategorias):
-            messages.error(request, f'La categoría "{categoria.nombre}" no se pudo borrar. Por favor, verifique que no tenga subcategorias diponibles dentro de la categoria.')
             return redirect('lista_categorias')
         else:
             messages.error(request, f'La categoría "{categoria.nombre}" no se pudo borrar.Tiene articulos y subcategorias publicadas')
