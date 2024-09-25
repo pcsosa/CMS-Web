@@ -200,3 +200,10 @@ def editar_contenido(request, pk):
     return render(request, 'editar_contenido.html', contexto)
 
 
+def visualizar_contenido(request, pk):
+    try:
+        contenido = Contenido.objects.get(pk=pk)
+        return render(request,'contenido.html',{'contenido':contenido})
+    except Contenido.DoesNotExist:
+        return JsonResponse({'error': 'Contenido no encontrado'}, status=404)
+    
