@@ -201,6 +201,15 @@ def editar_contenido(request, pk):
 
 
 def visualizar_contenido(request, pk):
+    """
+    Despliega la informacion de un solo contenido y los comentarios para ese contenido
+    
+    :param request: La solicitud HTTP.
+    :type request: HttpRequest
+    :param pk: La clave primaria del contenido a ser desplegado
+    :type pk: int
+    :return: HttpResponse: La respuesta renderizada con la lista de categorías.
+    """
     try:
         contenido = Contenido.objects.get(pk=pk)
         return render(request,'contenido.html',{'contenido':contenido})
