@@ -6,15 +6,22 @@ from appcms.models import Categoria
 from .models import Subcategoria
 
 class SubcategoriaModelTests(TestCase):
+    """
+    Pruebas unitarias para el modelo SubcategoriaModelTest
+    """
     def setUp(self):
         """
         Configura el entorno para las pruebas creando una instancia de Categoria.
+        :return: None
+        :rtype: None
         """
         self.categoria = Categoria.objects.create(nombre='Categoria 1')
 
     def test_crear_subcategoria(self):
         """
         Prueba la creación de una instancia de Subcategoria.
+        :return: None
+        :rtype: None
         """
         subcategoria = Subcategoria.objects.create(
             nombre='Subcategoria 1',
@@ -26,6 +33,8 @@ class SubcategoriaModelTests(TestCase):
     def test_nombre_unico(self):
         """
         Prueba que no se pueden crear subcategorías con nombres duplicados.
+        :return: None
+        :rtype: None
         """
         # Crear la primera subcategoría con un nombre único
         Subcategoria.objects.create(
@@ -43,6 +52,8 @@ class SubcategoriaModelTests(TestCase):
     def test_str_metodo(self):
         """
         Prueba que el método __str__() devuelve el nombre de la subcategoría.
+        :return: None
+        :rtype: None
         """
         subcategoria = Subcategoria.objects.create(
             nombre='Subcategoria de Prueba',

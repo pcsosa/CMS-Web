@@ -160,6 +160,7 @@ def gestion_contenido(request):
     :param request: La solicitud HTTP.
     :type request: HttpRequest
     :return: HttpResponse: La respuesta renderizada con la lista de contenidos para gestión.
+    :rtype: HttpResponse
     """
     contenidos = Contenido.objects.all()
     return render(request, 'gestion_contenido.html', {'contenidos': contenidos})
@@ -179,6 +180,7 @@ def upload_image(request):
     :param request: La solicitud HTTP.
     :type request: HttpRequest
     :return: JsonResponse: Contiene la URL de la imagen guardada.
+    :rtype: JsonResponse
     """
     if request.method == 'POST':
         image = request.FILES['file']
@@ -201,6 +203,7 @@ def eliminar_contenido(request, pk):
     :param pk: La clave primaria del contenido a eliminar.
     :type pk: int
     :return: HttpResponse: Redirige a la lista de contenidos después de eliminar.
+    :rtype: HttpResponse
     """
     try:
         contenido = Contenido.objects.get(pk=pk)
@@ -224,6 +227,7 @@ def editar_contenido(request, pk):
     :type pk: int
     :return: HttpResponse: Redirige a la lista de gestión de contenidos si se actualiza con éxito, 
             o renderiza el formulario si la solicitud no es POST.
+    :rtype: HttpResponse
     """
     contenido = get_object_or_404(Contenido, id=pk)  # Obtener el contenido por ID o lanzar un error 404
     editores = obtenerUsersConRol('Editor')  # Obtener los usuarios con el rol 'Editor'

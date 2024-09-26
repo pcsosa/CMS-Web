@@ -76,7 +76,12 @@ class Contenido(models.Model):
         app_label = 'contenidos'
 
     def __str__(self):
+        """
+        Representación en cadena de la subcategoría.
 
+        :return: El titulo del artículo.
+        :rtype: str
+        """
         return self.titulo
 
 class ContenidoForm(forms.ModelForm):

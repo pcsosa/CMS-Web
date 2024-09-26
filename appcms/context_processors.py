@@ -3,6 +3,18 @@ from appcms.services.keycloak_service import KeycloakService
 from appcms.utils.utils import obtener_roles_desde_token
 
 def datos_basicos(request):
+    """
+    Obtiene información básica del usuario y sus roles.
+
+    Esta función utiliza el token de sesión del usuario para obtener información 
+    básica y roles asociados desde el servicio Keycloak. Se mide el tiempo de 
+    ejecución para cada llamada de servicio y se imprime en la consola.
+
+    :param request: El objeto HTTP request de Django que contiene los detalles de la solicitud.
+    :type request: HttpRequest
+    :return: Un diccionario que contiene la información del usuario y sus roles.
+    :rtype: dict
+    """
     start_time = time.time()
     
     kc = KeycloakService.get_instance()

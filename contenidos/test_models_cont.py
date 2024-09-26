@@ -13,7 +13,8 @@ class ContenidoModelTest(TestCase):
         Configuración inicial para las pruebas.
 
         Se crea una categoría y una subcategoría, y se instancia un objeto Contenido.
-
+        :return: None
+        :rtype: None
         """
         self.categoria = Categoria.objects.create(nombre="Tecnología")
         self.subcategoria = Subcategoria.objects.create(nombre="Móviles", categoria=self.categoria)
