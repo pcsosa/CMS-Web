@@ -1,212 +1,66 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Contenido</title>
-    <style>
-        /* Estilos similares al original, sin cambios */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f4;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            text-align: center;
-        }
-        .form-container {
-            margin-top: 20px;
-        }
-        .form-container label {
-            display: block;
-            margin: 10px 0 5px;
-        }
-        .form-container input[type="text"],
-        .form-container textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-        .form-container input[type="file"] {
-            margin-bottom: 10px;
-        }
-        .form-container button {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .form-container button:hover {
-            background-color: #0056b3;
-        }
-    </style>
-    <!-- TinyMCE CDN -->
-    <script src="https://cdn.tiny.cloud/1/igaej58ezdtpg4plti7ea4161ei2n0dg99q3lolqa4zdba33/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
-    <script>
-        function initTinyMCE() {
-            tinymce.init({
-                selector: '#content',
-                plugins: 'link lists code',
-                toolbar: 'undo redo | styleselect | bold italic underline | copy cut paste | alignleft aligncenter alignright | bullist numlist outdent indent | link',
-                menubar: 'file edit view insert format tools table',
-                branding: false,
-                height: 400
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            initTinyMCE();
-        });
-
-        function cargarSubcategorias() {
-            const categoriaId = parseInt(document.getElementById('categoria').value);
-            const subcategoriasSelect = document.getElementById('subcategoria');
-            let subcategorias = [];
-
-            try {
-                aux = document.getElementById('subcategorias-data').textContent;
-                subcategorias = JSON.parse(aux);
-            } catch (e) {
-                console.error("Error al parsear el JSON de subcategorías:", e);
-                return;
-            }
-
-            const subcategoriasFiltradas = subcategorias.filter(subcategoria => subcategoria.fields.categoria === categoriaId);
-
-            subcategoriasSelect.innerHTML = '';
-            const defaultOption = document.createElement('option');
-            defaultOption.value = '';
-            defaultOption.textContent = 'Seleccione una subcategoría';
-            subcategoriasSelect.appendChild(defaultOption);
-
-            if (subcategoriasFiltradas.length === 0) {
-                const noSubcategoriasOption = document.createElement('option');
-                noSubcategoriasOption.value = '';
-                noSubcategoriasOption.textContent = 'Sin subcategorías';
-                subcategoriasSelect.appendChild(noSubcategoriasOption);
-                return;
-            }
-
-            subcategoriasFiltradas.forEach(subcategoria => {
-                const option = document.createElement('option');
-                option.value = subcategoria.pk;
-                option.textContent = subcategoria.fields.nombre;
-                subcategoriasSelect.appendChild(option);
-            });
-        }
-    </script>
-</head>
-<body>
+    <link rel="stylesheet" href="{% static 'css/contenido.css' %}">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.tiny.cloud/1/igaej58ezdtpg4plti7ea4161ei2n0dg99q3lolqa4zdba33/tinymce/6/tinymce.min.js"
+            referrerpolicy="origin"></script>
+    <script src="{% static 'js/contenido.js' %}" defer></script>
+  </head>
+  <body>
     <div class="container">
+      <div id="content-form" class="form-container">
         <h1>Editar Contenido</h1>
-        <form method="POST" action="{% url 'editar_contenido' contenido.id %}" enctype="multipart/form-data">
-            {% csrf_token %}
-            <label for="title">Título:</label>
-            <input type="text" id="title" name="title" value="{{ contenido.titulo }}" required>
-            
-            <label for="content">Contenido:</label>
-            <textarea id="content" name="content" rows="10">{{ contenido.texto }}</textarea>
-            
-            <label for="image">Imagen:</label>
-            <input type="file" id="image" name="image">
-            {% if contenido.imagen %}
-                <img src="{{ contenido.imagen.url }}" alt="Imagen actual" width="100">
-            {% endif %}
-            
-            <label for="categoria">Categoría:</label>
-            <select id="categoria" name="categoria" required onchange="cargarSubcategorias()">
-                <option value="">Selecciona una categoría</option>
-                {% for categoria in categorias %}
-                    <option value="{{ categoria.id_categoria }}" {% if contenido.categoria.id_categoria == categoria.id_categoria %}selected{% endif %}>{{ categoria.nombre }}</option>
-                {% endfor %}
-            </select>
-            
-            <label for="subcategoria">Subcategoría:</label>
-            <select id="subcategoria" name="subcategoria">
-                <option value="">Selecciona una subcategoría</option>
-                <!-- Las opciones se cargarán dinámicamente según la categoría -->
-            </select>
-            
-            <label for="editor">Editor:</label>
-            <select id="editor" name="editor" required>
-                <option value="">Selecciona un editor</option>
-                {% for editor in editores %}
-                    <option value="{{ editor.id }}" {% if contenido.editor_id == editor.id %}selected{% endif %}>{{ editor.username }}</option>
-                {% endfor %}
-            </select>
-            
-            <button type="submit">Guardar Cambios</button>
+        <form method="post"
+              action="{% url 'editar_contenido' contenido.id %}"
+              enctype="multipart/form-data">
+          {% csrf_token %}
+          <label for="title">Título:</label>
+          <input type="text"
+                 id="title"
+                 name="title"
+                 value="{{ contenido.titulo }}"
+                 required>
+          <label for="content">Contenido:</label>
+          <textarea id="content-description" name="content" rows="10" required>{{ contenido.texto }}</textarea>
+          <label for="image">Imagen:</label>
+          <input type="file" id="image" name="image">
+          {% if contenido.imagen %}<img src="{{ contenido.imagen.url }}" alt="Imagen actual" width="100">{% endif %}
+          <label for="categoria">Categoría:</label>
+          <select id="categoria"
+                  name="categoria"
+                  required
+                  onchange="cargarSubcategorias()">
+            <option value="">Selecciona una categoría</option>
+            {% for categoria in categorias %}
+              <option value="{{ categoria.id_categoria }}"
+                      {% if contenido.categoria.id_categoria == categoria.id_categoria %}selected{% endif %}>
+                {{ categoria.nombre }}
+              </option>
+            {% endfor %}
+          </select>
+          <label for="subcategoria">Subcategoría:</label>
+          <select id="subcategoria" name="subcategoria">
+            <option value="">Selecciona una subcategoría</option>
+            <!-- Las opciones se cargarán dinámicamente según la categoría -->
+          </select>
+          <label for="editor">Editor:</label>
+          <select id="editor" name="editor" required>
+            <option value="">Selecciona un editor</option>
+            {% for editor in editores %}
+              <option value="{{ editor.id }}"
+                      {% if contenido.editor_id == editor.id %}selected{% endif %}>{{ editor.username }}</option>
+            {% endfor %}
+          </select>
+          <button type="submit">Guardar Cambios</button>
         </form>
+      </div>
     </div>
     <script type="application/json" id="subcategorias-data">{{ sub_json|safe }}</script>
-    <script>
-      // Cargar subcategorías basadas en la categoría seleccionada
-        function cargarSubcategorias() {
-            const categoriaId = parseInt(document.getElementById('categoria').value);
-            const subcategoriasSelect = document.getElementById('subcategoria');
-            
-            let subcategorias = [];
-            
-            try {
-            aux = document.getElementById('subcategorias-data').textContent
-            subcategorias = JSON.parse(aux); 
-            console.log("Datos de subcategorías:", subcategorias);  
-            } catch (e) {
-                console.error("Error al parsear el JSON de subcategorías:", e);
-                return;
-            }
-            
-            console.log("Categoría seleccionada:", categoriaId);
-            console.log("Subcategorías disponibles:", subcategorias);
-            
-            // Filtrar subcategorías por categoría seleccionada
-            const subcategoriasFiltradas = subcategorias.filter(subcategoria => subcategoria.fields.categoria === categoriaId);
-            
-            console.log("Subcategorías filtradas:", subcategoriasFiltradas);
-            
-            // Limpiar el select de subcategorías y agregar opción predeterminada
-            subcategoriasSelect.innerHTML = '';
-            const defaultOption = document.createElement('option');
-            defaultOption.value = '';
-            defaultOption.textContent = 'Seleccione una subcategoría';
-            subcategoriasSelect.appendChild(defaultOption);
-            
-            // Verificar si el valor de la categoría es un número válido
-            if (isNaN(categoriaId)) {
-                console.error("El valor de la categoría seleccionada no es un número válido.");
-                return;
-            }
-
-            // Si no hay subcategorías filtradas, mostrar mensaje "sin subcategorías"
-            if (subcategoriasFiltradas.length === 0) {
-            subcategoriasSelect.innerHTML = '';
-            const noSubcategoriasOption = document.createElement('option');
-            noSubcategoriasOption.value = '';
-            noSubcategoriasOption.textContent = 'Sin subcategorías';
-            subcategoriasSelect.appendChild(noSubcategoriasOption);
-            return;
-        }
-            
-            // Agregar las subcategorías filtradas al select
-            subcategoriasFiltradas.forEach(subcategoria => {
-            const option = document.createElement('option');
-            option.value = subcategoria.pk;
-            option.textContent = subcategoria.fields.nombre;
-            subcategoriasSelect.appendChild(option);
-            });
-        }
-    </script>
-</body>
+  </body>
 </html>
