@@ -69,56 +69,37 @@
 </head>
 <body>
     <div class="posts-container">
-        {% for contenido in contenidos %}
-            <div class="post">
-                <div class="post-header">
-                    <div class="post-title">{{ contenido.titulo }}</div>
-                    <div class="post-meta">
-                        {% if contenido.fecha_creacion %}· {{ contenido.fecha_creacion|date:"d/m/Y H:i" }}{% endif %}
-                    </div>
-                </div>
-                <div class="post-content">
-                    <div class="post-text">{{ contenido.texto|safe }}</div>
-                    {% if contenido.imagen %}
-                        <img src="{{ contenido.imagen.url }}"
-                             alt="{{ contenido.titulo }}"
-                             class="post-image">
-                    {% elif contenido.imagen_url %}
-                        <img src="{{ contenido.imagen_url }}"
-                             alt="{{ contenido.titulo }}"
-                             class="post-image">
-                    {% endif %}
-                </div>
-                <div class="post-footer">
-                    Categoría: {{ contenido.categoria }}
-                    {% if contenido.subcategoria %}· Subcategoría: {{ contenido.subcategoria }}{% endif %}
-                    <br>
-                </div>
+      {% for contenido in contenidos %}
+        <div class="post">
+          <div class="post-header">
+            <div class="post-title">
+              <a href="{% url 'visualizar_contenido' contenido.id %}">{{ contenido.titulo }}</a>
             </div>
-
-            <!-- Sección de Comentarios -->
-            <div class="comment-section">
-                <h3>Comentarios</h3>
-                <div class="comments">
-                    {% for comment in contenido.comments.all %}
-                        <div class="comment">
-                            <strong>{{ comment.author.username }}</strong>: {{ comment.content }} <br>
-                            <small>{{ comment.created_at|date:"d/m/Y H:i" }}</small>
-                        </div>
-                    {% endfor %}
-                </div>
-
-                <!-- Formulario para agregar un nuevo comentario -->
-                <div class="comment-form">
-                    <h4>Deja un comentario</h4>
-                    <form method="post">
-                        {% csrf_token %}
-                        <textarea name="content" rows="4" required></textarea><br>
-                        <button type="submit">Enviar</button>
-                    </form>
-                </div>
+            <div class="post-meta">
+              {% if contenido.fecha_creacion %}· {{ contenido.fecha_creacion|date:"d/m/Y H:i" }}{% endif %}
             </div>
-        {% endfor %}
+          </div>
+          <div class="post-content">
+            <div class="post-text">
+              {{ contenido.texto|safe }}
+            </div>
+            {% if contenido.imagen %}
+              <img src="{{ contenido.imagen.url }}"
+                   alt="{{ contenido.titulo }}"
+                   class="post-image">
+            {% elif contenido.imagen_url %}
+              <img src="{{ contenido.imagen_url }}"
+                   alt="{{ contenido.titulo }}"
+                   class="post-image">
+            {% endif %}
+          </div>
+          <div class="post-footer">
+            Categoría: {{ contenido.categoria }}
+            {% if contenido.subcategoria %}· Subcategoría: {{ contenido.subcategoria }}{% endif %}
+            <br>
+          </div>
+        </div>
+      {% endfor %}
     </div>
 </body>
 </html>
