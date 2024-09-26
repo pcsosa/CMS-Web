@@ -284,6 +284,26 @@ def editar_contenido(request, pk):
     # Renderizar el formulario de edición con los datos actuales del contenido
     return render(request, 'editar_contenido.html', contexto)
 
+def post_detail(request, slug):
+    post = get_object_or_404(Post, slug=slug)
+    comentarios = post.comentarios.filter(activo=True)
+    nuevo_comentario = None
+
+    if request.method == 'POST':
+        comentario_form = CommentForm(data=request.POST)
+        if comentario_form.is_valid():
+            nuevo_comentario = comentario_form.save(commit=False)
+            nuevo_comentario.post = post
+            nuevo_comentario.save()
+    else:
+        comentario_form = CommentForm()
+
+    return render(request, 'lista_contenidos.html', {
+        'contenido': contenido,
+        'comentarios': comentarios,
+        'nuevo_comentario': nuevo_comentario,
+        'comentario_form': comentario_form,
+    })
 
 def tablero_kanban(request):
     # Obtener artículos filtrados por estado
