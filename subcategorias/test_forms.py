@@ -14,6 +14,8 @@ class SubcategoriaFormTests(TestCase):
 
         :meta: Método de configuración antes de cada prueba.
         :ivar categoria: Instancia de Categoria creada para ser usada en las pruebas.
+        :return: El nombre validado si pasa todas las validaciones.
+        :rtype: str
         """
         self.categoria = Categoria.objects.create(nombre='Categoria 1')
     
@@ -23,6 +25,8 @@ class SubcategoriaFormTests(TestCase):
 
         :meta: Verifica que el formulario es válido con datos correctos.
         :assert: Comprueba que el formulario es válido y que la subcategoría se guarda correctamente.
+        :return: None
+        :rtype: None
         """
         form_data = {'nombre': 'Subcategoria Válida', 'categoria': self.categoria.pk}
         form = SubcategoriaForm(data=form_data)
@@ -36,6 +40,8 @@ class SubcategoriaFormTests(TestCase):
 
         :meta: Verifica que el formulario no es válido con un nombre vacío.
         :assert: Comprueba que se muestra el mensaje de error adecuado cuando el nombre está vacío.
+        :return: None
+        :rtype: None
         """
         form_data = {'nombre': '', 'categoria': self.categoria.pk}
         form = SubcategoriaForm(data=form_data)
@@ -50,6 +56,8 @@ class SubcategoriaFormTests(TestCase):
 
         :meta: Verifica que el formulario no es válido si el nombre ya existe.
         :assert: Comprueba que se muestra el mensaje de error adecuado cuando el nombre está duplicado.
+        :return: None
+        :rtype: None
         """
         Subcategoria.objects.create(nombre='Subcategoria Duplicada', categoria=self.categoria)
         form_data = {'nombre': 'Subcategoria Duplicada', 'categoria': self.categoria.pk}
@@ -64,6 +72,8 @@ class SubcategoriaFormTests(TestCase):
 
         :meta: Verifica que el formulario no es válido si la categoría no está seleccionada.
         :assert: Comprueba que se muestra el mensaje de error adecuado cuando no se selecciona una categoría.
+        :return: None
+        :rtype: None
         """
         form_data = {'nombre': 'Subcategoria Sin Categoria', 'categoria': ''}
         form = SubcategoriaForm(data=form_data)

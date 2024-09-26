@@ -13,6 +13,15 @@ class SubcategoriaForm(forms.ModelForm):
     :fields: Los campos que se incluirán en el formulario.
     """
     class Meta:
+        """
+        Metadatos para el formulario de Subcategoria.
+
+        :param model: El modelo al que se asocia este formulario.
+        :type model: type
+
+        :param fields: Lista de campos que se incluirán en el formulario.
+        :type fields: list
+        """
         model = Subcategoria
         fields = ['nombre', 'categoria']
 
