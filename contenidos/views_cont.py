@@ -32,16 +32,6 @@ def crear_contenido(request):
              Si hay errores, renderiza el formulario con mensajes de error.
     :rtype: HttpResponse
     """
-    """
-        if request.method == 'POST':
-        form = ContenidoForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('lista_contenidos')  # Redirige a donde lo necesites
-        else:
-            form = ContenidoForm()
-        return render(request, 'crear_contenido.html', {'form': form})
-    """
     if request.method == 'POST':
         # Obtener datos del formulario
         title = request.POST.get('title')
