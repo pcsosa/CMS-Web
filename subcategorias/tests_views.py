@@ -9,6 +9,8 @@ class SubcategoriaViewTests(TestCase):
         """
         Configura el entorno de pruebas creando una instancia de Categoria
         y una instancia de Subcategoria asociada a esa categoría.
+        :return: None
+        :rtype: None
         """
         # Crear una instancia de Categoria
         self.categoria = Categoria.objects.create(nombre='Categoria 1')
@@ -19,6 +21,8 @@ class SubcategoriaViewTests(TestCase):
         """
         Prueba para verificar que la vista 'lista_subcategorias' se renderiza correctamente
         y contiene la subcategoría creada.
+        :return: None
+        :rtype: None
         """
         # Prueba para la vista lista_subcategorias.
         response = self.client.get(reverse('lista_subcategorias'))
@@ -30,6 +34,8 @@ class SubcategoriaViewTests(TestCase):
         """
         Prueba para la vista 'crear_subcategoria' con método GET para asegurarse de
         que el formulario se muestra correctamente.
+        :return: None
+        :rtype: None
         """
         # Prueba para la vista crear_subcategoria con método GET.
         response = self.client.get(reverse('crear_subcategorias'))
@@ -41,6 +47,8 @@ class SubcategoriaViewTests(TestCase):
         """
         Prueba para la vista 'crear_subcategoria' con método POST válido. Verifica
         que una nueva subcategoría se crea y redirige correctamente.
+        :return: None
+        :rtype: None
         """
         # Prueba para la vista crear_subcategoria con método POST válido.
         # Usa el ID de la categoría creada en setUp
@@ -54,6 +62,8 @@ class SubcategoriaViewTests(TestCase):
         Prueba para la vista 'crear_subcategoria' con método POST inválido.
         Verifica que no se redirige si el nombre está vacío y que el formulario muestra el error adecuado.
         Además, prueba que el nombre duplicado también genera el mensaje de error correcto.
+        :return: None
+        :rtype: None
         """
         # Intentar crear una subcategoría con nombre vacío
         data_invalid = {'nombre': '', 'categoria': self.categoria.pk}
@@ -77,6 +87,8 @@ class SubcategoriaViewTests(TestCase):
         """
         Prueba para la vista 'eliminar_subcategoria' con método GET para verificar que
         la vista se muestra correctamente y contiene la subcategoría a eliminar.
+        :return: None
+        :rtype: None
         """
         # Prueba para la vista eliminar_subcategoria con método GET.
         response = self.client.get(reverse('eliminar_subcategoria', args=[self.subcategoria.pk]))
@@ -88,6 +100,8 @@ class SubcategoriaViewTests(TestCase):
         """
         Prueba para la vista 'eliminar_subcategoria' con método POST para verificar que
         la subcategoría se elimina correctamente y redirige.
+        :return: None
+        :rtype: None
         """
         # Prueba para la vista eliminar_subcategoria con método POST.
         response = self.client.post(reverse('eliminar_subcategoria', args=[self.subcategoria.pk]))
