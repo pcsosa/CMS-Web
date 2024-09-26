@@ -14,16 +14,6 @@ from django.http import JsonResponse, HttpResponseForbidden
 
 
 def crear_contenido(request):
-  
-    editores = obtenerUsersConRol('Editor') # Obtener todos los usuarios con el rol de Editor
-    categorias = Categoria.objects.all()  # Obtener todas las categorías para mostrarlas en el formulario
-    subcategorias = Subcategoria.objects.all()  # Obtener todas las subcategorías
-    sub_json = serialize('json', subcategorias)
-    
-    print("=============================================SUBCATEGORIAS")
-    print(sub_json)
-    
-    
     """
     Crea un nuevo contenido en el sistema a partir de los datos enviados a través del formulario.
 
@@ -32,6 +22,14 @@ def crear_contenido(request):
              Si hay errores, renderiza el formulario con mensajes de error.
     :rtype: HttpResponse
     """
+    editores = obtenerUsersConRol('Editor') # Obtener todos los usuarios con el rol de Editor
+    categorias = Categoria.objects.all()  # Obtener todas las categorías para mostrarlas en el formulario
+    subcategorias = Subcategoria.objects.all()  # Obtener todas las subcategorías
+    sub_json = serialize('json', subcategorias)
+    
+    print("=============================================SUBCATEGORIAS")
+    print(sub_json)
+    
     if request.method == 'POST':
         # Obtener datos del formulario
         title = request.POST.get('title')
