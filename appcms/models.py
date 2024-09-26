@@ -30,9 +30,3 @@ class Categoria(models.Model):
         :rtype: str
         """
         return self.descripcion
-
-    
-
-
-
-
