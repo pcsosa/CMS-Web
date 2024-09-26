@@ -89,6 +89,21 @@
             <br>
           </div>
         </div>
+        <h2>Comentarios</h2>
+            {% for comentario in comentarios %}
+             <div>
+                <strong>{{ comentario.nombre }}</strong>
+                <p>{{ comentario.cuerpo }}</p>
+                <p><em>{{ comentario.creado_en }}</em></p>
+            </div>
+            {% endfor %}
+
+            <h3>Deja un comentario</h3>
+              <form method="post">
+                {% csrf_token %}
+                 {{ comentario_form.as_p }}
+                 <button type="submit">Enviar</button>
+              </form>
       {% endfor %}
     </div>
   </body>
