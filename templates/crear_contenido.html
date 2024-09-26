@@ -1,169 +1,16 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seleccionar Plantilla</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f4;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            text-align: center;
-        }
-
-        .template-options {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 20px;
-        }
-
-        .template-option {
-            text-align: center;
-            cursor: pointer;
-            border: 2px solid transparent;
-            padding: 10px;
-            border-radius: 8px;
-            transition: border-color 0.3s;
-            background: #fff;
-        }
-
-        .template-option img {
-            max-width: 100%;
-            border-radius: 8px;
-        }
-
-        .template-option:hover,
-        .template-option:focus {
-            border-color: #007bff;
-        }
-
-        .form-container {
-            display: none;
-            margin-top: 20px;
-        }
-
-        .form-container.active {
-            display: block;
-        }
-
-        .form-container label {
-            display: block;
-            margin: 10px 0 5px;
-        }
-
-        .form-container input[type="text"],
-        .form-container textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-
-        .form-container input[type="file"] {
-            margin-bottom: 10px;
-        }
-
-        .form-container button {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .form-container button:hover {
-            background-color: #0056b3;
-        }
-    </style>
-    <!-- TinyMCE CDN -->
+    <title>Crear Nuevo Contenido</title>
+    <link rel="stylesheet" href="{% static 'css/contenido.css' %}">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.tiny.cloud/1/igaej58ezdtpg4plti7ea4161ei2n0dg99q3lolqa4zdba33/tinymce/6/tinymce.min.js"
             referrerpolicy="origin"></script>
-    <script>
-        // TinyMCE para el blog (sin media, pero con copiar/cortar/pegar)
-        function initTinyMCEBlog() {
-            tinymce.init({
-                selector: '#blog-content',  // Selecciona solo el área de texto del blog
-                plugins: 'link lists code',  // Excluye el plugin de imágenes y multimedia
-                toolbar: 'undo redo | styleselect | bold italic underline | copy cut paste | alignleft aligncenter alignright | bullist numlist outdent indent | link',  // Sin la opción de multimedia
-                menubar: 'file edit view insert format tools table',  // Menú superior
-                branding: false,
-                height: 400
-            });
-        }
-
-        // TinyMCE para multimedia (con imágenes y multimedia)
-        function initTinyMCEMultimedia() {
-            tinymce.init({
-                selector: '#media-description',  // Selecciona solo el área de texto multimedia
-                plugins: 'image link media table lists code',  // Permite imágenes y multimedia
-                toolbar: 'undo redo | styleselect | bold italic underline | copy cut paste | alignleft aligncenter alignright | bullist numlist outdent indent | link image media',  // Barra de herramientas con multimedia
-                images_upload_url: '/upload',  // Ruta para subir imágenes
-                menubar: 'file edit view insert format tools table',
-                branding: false,
-                height: 400
-            });
-        }
-
-        function selectTemplate(templateType) {
-            // Ocultar todos los formularios
-            document.querySelectorAll('.form-container').forEach(form => form.classList.remove('active'));
-
-            // Destruir cualquier instancia anterior de TinyMCE
-            tinymce.remove();
-
-            // Mostrar el formulario y cargar TinyMCE según el tipo de plantilla
-            if (templateType === 'blog') {
-                document.getElementById('blog-form').classList.add('active');
-                initTinyMCEBlog();  // Inicializar TinyMCE para el formulario de blog sin multimedia
-            } else if (templateType === 'multimedia') {
-                document.getElementById('multimedia-form').classList.add('active');
-                initTinyMCEMultimedia();  // Inicializar TinyMCE con la opción de multimedia
-            }
-        }
-        // Cargar subcategorías basadas en la categoría seleccionada
-        /*function cargarSubcategorias(categoriaId) {
-            const subcategoriasSelect = document.getElementById('subcategoria');
-            subcategoriasSelect.innerHTML = ''; // Limpiar opciones anteriores
-
-            if (categoriaId) {
-                // Simular la carga dinámica de subcategorías (reemplazar con una solicitud AJAX si es necesario)
-                const subcategorias = {
-                    1: ['Subcat 1.1', 'Subcat 1.2'],
-                    2: ['Subcat 2.1', 'Subcat 2.2']
-                };
-
-                const opciones = subcategorias[categoriaId] || [];
-                opciones.forEach(subcat => {
-                    const option = document.createElement('option');
-                    option.value = subcat;
-                    option.text = subcat;
-                    subcategoriasSelect.appendChild(option);
-                });
-            }
-        }*/
-
-        // Habilitar o deshabilitar el botón "Enviar al Editor"
-        /*function verificarEditor() {
-            const editorSelect = document.getElementById('editor');
-            const enviarButton = document.getElementById('enviar-editor');
-            enviarButton.disabled = !editorSelect.value;
-        }*/
-    </script>
+    <script src="{% static 'js/contenido.js' %}" defer></script>
   </head>
   <body>
     <div class="container">
@@ -172,64 +19,28 @@
         <button class="template-option"
                 onclick="selectTemplate('blog')"
                 aria-label="Seleccionar plantilla de blog">
-          <h2>Plantilla Blog</h2>
-          <img src="C:\Users\HP\Downloads" alt="Vista previa de plantilla de blog">
-          <p>Una plantilla simple para artículos de blog.</p>
+          <h2>
+            <i class="fa-solid fa-newspaper"></i> Plantilla Blog
+          </h2>
         </button>
         <button class="template-option"
                 onclick="selectTemplate('multimedia')"
                 aria-label="Seleccionar plantilla multimedia">
-          <h2>Plantilla Multimedia</h2>
-          <img src="C:\Users\HP\Downloads"
-               alt="Vista previa de plantilla multimedia">
-          <p>Una plantilla avanzada para contenido multimedia con imágenes.</p>
+          <h2>
+            <i class="fa-solid fa-image"></i> Plantilla Multimedia
+          </h2>
         </button>
       </div>
-      <!-- Formulario de Blog -->
-      <div id="blog-form" class="form-container">
-        <h2>Crear Blog</h2>
-        <form method="POST" action="{% url 'crear_contenido' %}">
-          {% csrf_token %}
-          <label for="blog-title">Título:</label>
-          <input type="text" id="blog-title" name="title">
-          <label for="blog-content">Contenido:</label>
-          <textarea id="blog-content" name="content" rows="10"></textarea>
-          <label for="categoria">Categoría:</label>
-          <select id="categoria"
-                  name="categoria"
-                  required
-                  onchange="cargarSubcategorias()">
-            <option value="">Selecciona una categoría</option>
-            {% for categoria in categorias %}
-              <option value="{{ categoria.id_categoria }}">{{ categoria.nombre }}</option>
-            {% endfor %}
-          </select>
-          <label for="subcategoria">Subcategoría:</label>
-          <select id="subcategoria" name="subcategoria">
-            <option value="">Selecciona una subcategoría</option>
-            <!-- Las opciones se cargarán dinámicamente según la categoría -->
-          </select>
-          <label for="editor">Editor:</label>
-          <select id="editor" name="editor" required>
-            <option value="">Selecciona un editor</option>
-            {% for editor in editores %}<option value="{{ editor.id }}">{{ editor.username }}</option>{% endfor %}
-          </select>
-          <!-- Botones para guardar y enviar -->
-          <button type="submit">Guardar Blog</button>
-          <button type="button" id="enviar-editor" disabled>Enviar al Editor</button>
-        </form>
-      </div>
-      <!-- Formulario de Contenido Multimedia -->
-      <div id="multimedia-form" class="form-container">
-        <h2>Crear Contenido Multimedia</h2>
-        <form method="POST"
+      <div id="content-form" class="form-container">
+        <h2 id="form-title">Crear Contenido</h2>
+        <form method="post"
               action="{% url 'crear_contenido' %}"
               enctype="multipart/form-data">
           {% csrf_token %}
-          <label for="media-title">Título:</label>
-          <input type="text" id="media-title" name="title">
-          <label for="media-description">Descripción:</label>
-          <textarea id="media-description" name="content" rows="10"></textarea>
+          <label for="content-title">Título:</label>
+          <input type="text" id="content-title" name="title" required>
+          <label for="content-description">Descripción:</label>
+          <textarea id="content-description" name="content" rows="10" required></textarea>
           <label for="categoria">Categoría:</label>
           <select id="categoria"
                   name="categoria"
@@ -243,77 +54,23 @@
           <label for="subcategoria">Subcategoría:</label>
           <select id="subcategoria" name="subcategoria">
             <option value="">Selecciona una subcategoría</option>
-            <!-- Las opciones se cargarán dinámicamente según la categoría -->
           </select>
           <label for="editor">Editor:</label>
           <select id="editor" name="editor" required>
             <option value="">Selecciona un editor</option>
             {% for editor in editores %}<option value="{{ editor.id }}">{{ editor.username }}</option>{% endfor %}
           </select>
-          <label for="media-image">Adjuntar Imagen:</label>
-          <input type="file" id="media-image" name="image">
-          <button type="submit">Guardar Multimedia</button>
+          <label for="content-image" id="content-image-label" style="display:none;">Adjuntar Imagen:</label>
+          <input type="file"
+                 id="content-image"
+                 name="image"
+                 accept="image/*"
+                 style="display:none">
+          <button type="submit">Guardar Contenido</button>
+          <button type="button" id="enviar-editor" disabled>Enviar al Editor</button>
         </form>
       </div>
+      <script type="application/json" id="subcategorias-data">{{ sub_json|safe }}</script>
     </div>
-    <!-- Transformar los datos de subcategorías en formato JSON -->
-    <script type="application/json" id="subcategorias-data">{{ sub_json|safe }}</script>
-    <script>
-      // Cargar subcategorías basadas en la categoría seleccionada
-      function cargarSubcategorias() {
-        const categoriaId = parseInt(document.getElementById('categoria').value);
-        const subcategoriasSelect = document.getElementById('subcategoria');
-        
-        let subcategorias = [];
-        
-        try {
-          aux = document.getElementById('subcategorias-data').textContent
-          subcategorias = JSON.parse(aux); 
-          console.log("Datos de subcategorías:", subcategorias);  
-        } catch (e) {
-            console.error("Error al parsear el JSON de subcategorías:", e);
-            return;
-        }
-        
-        console.log("Categoría seleccionada:", categoriaId);
-        console.log("Subcategorías disponibles:", subcategorias);
-        
-        // Filtrar subcategorías por categoría seleccionada
-        const subcategoriasFiltradas = subcategorias.filter(subcategoria => subcategoria.fields.categoria === categoriaId);
-        
-        console.log("Subcategorías filtradas:", subcategoriasFiltradas);
-        
-        // Limpiar el select de subcategorías y agregar opción predeterminada
-        subcategoriasSelect.innerHTML = '';
-        const defaultOption = document.createElement('option');
-        defaultOption.value = '';
-        defaultOption.textContent = 'Seleccione una subcategoría';
-        subcategoriasSelect.appendChild(defaultOption);
-        
-        // Verificar si el valor de la categoría es un número válido
-        if (isNaN(categoriaId)) {
-            console.error("El valor de la categoría seleccionada no es un número válido.");
-            return;
-        }
-
-        // Si no hay subcategorías filtradas, mostrar mensaje "sin subcategorías"
-        if (subcategoriasFiltradas.length === 0) {
-          subcategoriasSelect.innerHTML = '';
-          const noSubcategoriasOption = document.createElement('option');
-          noSubcategoriasOption.value = '';
-          noSubcategoriasOption.textContent = 'Sin subcategorías';
-          subcategoriasSelect.appendChild(noSubcategoriasOption);
-          return;
-      }
-        
-        // Agregar las subcategorías filtradas al select
-        subcategoriasFiltradas.forEach(subcategoria => {
-          const option = document.createElement('option');
-          option.value = subcategoria.pk;
-          option.textContent = subcategoria.fields.nombre;
-          subcategoriasSelect.appendChild(option);
-        });
-      }
-    </script>
   </body>
 </html>
