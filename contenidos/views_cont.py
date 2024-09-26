@@ -14,7 +14,33 @@ from django.http import JsonResponse, HttpResponseForbidden
 
 
 def crear_contenido(request):
-  
+    """
+    Crea un nuevo contenido.
+
+    Esta vista maneja la creación de un nuevo contenido, obteniendo datos del formulario
+    enviado. Si la solicitud es de tipo POST, se guarda el nuevo contenido en la base de
+    datos. En caso contrario, se muestra un formulario para crear contenido.
+
+    :param request: Objeto HttpRequest que contiene información sobre la solicitud actual.
+    :type request: HttpRequest
+
+    :param editores: Lista de usuarios que tienen el rol de Editor, obtenidos mediante la función
+                     `obtenerUsersConRol`.
+    :type editores: list
+
+    :param categorias: Lista de todas las categorías disponibles en el sistema, obtenidas de la base de datos.
+    :type categorias: QuerySet
+
+    :param subcategorias: Lista de todas las subcategorías disponibles en el sistema, obtenidas de la base de datos.
+    :type subcategorias: QuerySet
+
+    :param sub_json: Representación en formato JSON de las subcategorías, serializadas para su uso en el frontend.
+    :type sub_json: str
+
+    :return: Redirige a la página de gestión de contenido después de guardar el nuevo contenido
+             o muestra el formulario si la solicitud no es POST.
+    :rtype: HttpResponse
+    """
     editores = obtenerUsersConRol('Editor') # Obtener todos los usuarios con el rol de Editor
     categorias = Categoria.objects.all()  # Obtener todas las categorías para mostrarlas en el formulario
     subcategorias = Subcategoria.objects.all()  # Obtener todas las subcategorías
@@ -112,10 +138,29 @@ def crear_contenido(request):
     return render(request, 'crear_contenido.html', contexto)
 
 def lista_contenidos(request):
+    """
+    Lista todos los contenidos.
+
+    Esta vista consulta todos los contenidos en la base de datos y los muestra en la plantilla
+    'lista_contenidos.html'.
+
+    :param request: La solicitud HTTP.
+    :type request: HttpRequest
+    :return: HttpResponse: La respuesta renderizada con la lista de contenidos.
+    """
     contenidos = Contenido.objects.all()  # Obtén todos los contenidos
     return render(request, 'lista_contenidos.html', {'contenidos': contenidos})
 
 def gestion_contenido(request):
+    """
+    Gestión de contenidos.
+
+    Esta vista muestra todos los contenidos disponibles en la plantilla 'gestion_contenido.html'.
+
+    :param request: La solicitud HTTP.
+    :type request: HttpRequest
+    :return: HttpResponse: La respuesta renderizada con la lista de contenidos para gestión.
+    """
     contenidos = Contenido.objects.all()
     return render(request, 'gestion_contenido.html', {'contenidos': contenidos})
   
@@ -126,6 +171,15 @@ def editar_contenido(request):
 
 @csrf_exempt
 def upload_image(request):
+    """
+    Maneja la carga de imágenes.
+
+    Esta vista recibe una imagen y la guarda en el servidor, devolviendo la URL de la imagen cargada.
+
+    :param request: La solicitud HTTP.
+    :type request: HttpRequest
+    :return: JsonResponse: Contiene la URL de la imagen guardada.
+    """
     if request.method == 'POST':
         image = request.FILES['file']
         # Guardar la imagen en el servidor
@@ -136,6 +190,18 @@ def upload_image(request):
 
 @csrf_exempt
 def eliminar_contenido(request, pk):
+    """
+    Elimina un contenido específico.
+
+    Esta vista permite la eliminación de un contenido a partir de su clave primaria (pk).
+    Redirige a la lista de contenidos después de la eliminación.
+
+    :param request: La solicitud HTTP.
+    :type request: HttpRequest
+    :param pk: La clave primaria del contenido a eliminar.
+    :type pk: int
+    :return: HttpResponse: Redirige a la lista de contenidos después de eliminar.
+    """
     try:
         contenido = Contenido.objects.get(pk=pk)
         contenido.delete()
@@ -145,6 +211,20 @@ def eliminar_contenido(request, pk):
 
 
 def editar_contenido(request, pk):
+    """
+    Edita un contenido existente.
+
+    Esta vista permite editar un contenido específico identificado por su clave primaria (pk).
+    Si la solicitud es POST, se actualizan los datos del contenido; de lo contrario, se muestra
+    un formulario con los datos actuales del contenido.
+
+    :param request: La solicitud HTTP.
+    :type request: HttpRequest
+    :param pk: La clave primaria del contenido a editar.
+    :type pk: int
+    :return: HttpResponse: Redirige a la lista de gestión de contenidos si se actualiza con éxito, 
+            o renderiza el formulario si la solicitud no es POST.
+    """
     contenido = get_object_or_404(Contenido, id=pk)  # Obtener el contenido por ID o lanzar un error 404
     editores = obtenerUsersConRol('Editor')  # Obtener los usuarios con el rol 'Editor'
     categorias = Categoria.objects.all()  # Obtener todas las categorías

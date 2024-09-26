@@ -4,7 +4,24 @@ from appcms.models import Categoria
 from subcategorias.models import Subcategoria
 
 class Contenido(models.Model):
-    """Representa el contenido que puede ser de tipo Blog o Multimedia."""
+    """
+    Modelo que representa el contenido que puede ser de tipo Blog o Multimedia.
+
+    :param id: Clave primaria generada automáticamente para el contenido.
+    :param tipo: Tipo de contenido (Blog o Multimedia).
+    :param estado: Estado del contenido (Borrador, Revisión, A Publicar, Publicado, Inactivo).
+    :param titulo: Título del contenido, con un máximo de 255 caracteres.
+    :param texto: Texto del contenido.
+    :param imagen: Imagen asociada al contenido, que se sube a la carpeta 'multimedia/'.
+    :param imagen_url: URL de una imagen externa asociada al contenido.
+    :param categoria: Relación de clave foránea a la categoría a la que pertenece el contenido.
+    :param subcategoria: Relación de clave foránea a la subcategoría a la que pertenece el contenido (opcional).
+    :param id_historial_mod: ID del historial de modificaciones del contenido (opcional).
+    :param publicador_id: ID del publicador asociado al contenido (opcional).
+    :param autor_id: ID del autor del contenido (opcional).
+    :param editor_id: ID del editor del contenido (opcional).
+    :param fecha_creacion: Fecha y hora de creación automática del contenido.
+    """
     
     # Opciones para el tipo de contenido
     TIPO_CONTENIDO = [
@@ -36,6 +53,12 @@ class Contenido(models.Model):
     fecha_creacion = models.DateTimeField(auto_now_add=True)  # Fecha de creación automática
     
     def obtener_imagen(self):
+        """
+        Obtiene la URL de la imagen asociada al contenido.
+
+        :return: La URL de la imagen si existe; de lo contrario, retorna None.
+        :rtype: str or None
+        """
         if self.imagen:
             return self.imagen.url
         elif self.imagen_url:
@@ -43,13 +66,32 @@ class Contenido(models.Model):
         return None
 
     class Meta:
+        """
+        Clase que define las opciones de configuración para el modelo Contenido.
+
+        :param verbose_name_plural: Nombre plural del modelo en la interfaz de administración.
+        :param app_label: Etiqueta del nombre de la aplicación a la que pertenece el modelo.
+        """
         verbose_name_plural = "Contenidos"
         app_label = 'contenidos'
 
     def __str__(self):
+
         return self.titulo
 
 class ContenidoForm(forms.ModelForm):
+    """
+    Formulario para el modelo Contenido.
+
+    Este formulario permite la creación y edición de instancias del modelo Contenido,
+    incluyendo la validación de los datos proporcionados por el usuario.
+    """
     class Meta:
+        """
+        Clase que define las opciones de configuración para el formulario ContenidoForm.
+
+        :param model: El modelo relacionado con este formulario, en este caso, Contenido.
+        :param fields: Lista de campos que se incluirán en el formulario.
+        """
         model = Contenido
         fields = ['tipo', 'titulo', 'texto', 'imagen', 'imagen_url', 'categoria', 'subcategoria', 'estado', 'autor_id', 'editor_id', 'publicador_id', 'id_historial_mod']
