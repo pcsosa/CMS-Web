@@ -45,10 +45,17 @@
             border-radius: 10px;
         }
         .comments {
-            background-color: white;
+            background-color: #f0f2f5;
             border-radius: 10px;
             padding: 15px;
             margin-top: 15px;
+        }
+        .comment {
+            border-bottom: 1px solid #38444d;
+            padding: 10px 0;
+        }
+        .comment:last-child {
+            border-bottom: none;
         }
         textarea {
             width: 98%;
@@ -146,9 +153,18 @@
         .with-panel .container {
             flex-basis: 70%;
         }
+        a {
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
+    {% if messages %}
+      <div class="">
+        {% for message in messages %} {{ message }} {% endfor %}
+      </div>
+    {% endif %}
+
     <div class="main-content">
         <div class="container">
             <div class="post">
@@ -164,16 +180,22 @@
                 </div>
                 <!-- HASTA ACA-->
                 <div class="dropdown-menu" id="dropdownMenu">
-
                     <ul>
-                        <li onclick="abrirPanelComentarios()">Guardar como borrador</li>
-                        <li>Mandar a edición</li>
-                        <li>Publicar</li>
+                        <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'Revisión' %}"><li> Mandar a edición</li></a>
+                        <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'A Publicar' %}"><li> Mandar a Publicador</li></a>
+                        <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'Publicado' %}"><li>Publicar</li></a>
+                        <li onclick="abrirPanelComentarios()">Enviar a Borrador</li>
+                        <!--<li> <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'Inactivo' %}">Eliminar</a></li>
+                    -->
                     </ul>
                 </div>
-                <div class="title"> {{ contenido.titulo }}</div>
+                <div class="title"> 
+                    {{ contenido.estado }}
+                    <hr>
+                    {{ contenido.titulo }}
+                </div>
                 <div class="content">
-                    <p> {{ contenido.texto }}</p>
+                    <p> {{ contenido.texto }} </p>
                 </div>
                 {% if contenido.imagen %}
                     <img src="{{ contenido.imagen.url }}" alt="{{ contenido.titulo }}">
@@ -188,6 +210,15 @@
                     </div>
                 </div>
                 <button class="reply-button">Comentar</button>
+
+                <div class="comment">
+                    <div class="title">@usuario2</div>
+                    <p>Inspirador mensaje. Gracias por compartir tu experiencia.</p>
+                </div>
+                <div class="comment">
+                    <div class="title">@usuario3</div>
+                    <p>Cada día es una oportunidad para crecer. ¡Sigue adelante!</p>
+                </div>
             </div>
         </div>
 
@@ -226,11 +257,12 @@
         // Función para guardar el comentario
         function guardarComentario() {
             var comentario = document.querySelector('#comentariosPanel textarea').value;
+            const url = "{% url 'cambiar_estado' contenido.pk contenido.estado 'Borrador' %}";
             if (comentario) {
                 alert("Comentario guardado: " + comentario);
                 // Lógica adicional para enviar el comentario al servidor
             } else {
-                alert("Por favor, escribe un comentario antes de guardar.");
+                window.location.href = url;
             }
         }
 
