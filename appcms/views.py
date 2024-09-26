@@ -7,6 +7,7 @@ from .models import Categoria
 from .services.keycloak_service import KeycloakService
 from .utils.utils import quitar_acentos
 from dotenv import load_dotenv
+from appcms.mixins import KeycloakRoleRequiredMixin
 import os
 load_dotenv()
 
@@ -187,3 +188,4 @@ def logout(request):
       request.session.clear()
       kc.openid.logout(token['refresh_token'])    
     return redirect('home')
+
