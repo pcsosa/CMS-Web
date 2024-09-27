@@ -229,86 +229,75 @@
         <div class="post">
           <!--
                     Solo para los que tienen permiso
-            -->
-          {% if permisoBoton.ver %}
-            <div class="menu-icon" onclick="toggleDropdownMenu()">
-              <svg xmlns="http://www.w3.org/2000/svg"
-                   viewBox="0 0 24 24"
-                   stroke="currentColor">
-                <circle cx="12" cy="6" r="1.5"></circle>
-                <circle cx="12" cy="12" r="1.5"></circle>
-                <circle cx="12" cy="18" r="1.5"></circle>
-              </svg>
+                -->
+                <div class="menu-icon" onclick="toggleDropdownMenu()">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor">
+                        <circle cx="12" cy="6" r="1.5"></circle>
+                        <circle cx="12" cy="12" r="1.5"></circle>
+                        <circle cx="12" cy="18" r="1.5"></circle>
+                    </svg>
+                </div>
+                <!-- HASTA ACA-->
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <ul>
+                        <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'Revisión' %}"><li> Mandar a edición</li></a>
+                        <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'A Publicar' %}"><li> Mandar a Publicador</li></a>
+                        <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'Publicado' %}"><li>Publicar</li></a>
+                        <li onclick="abrirPanelComentarios()">Enviar a Borrador</li>
+                        <!--<li> <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'Inactivo' %}">Eliminar</a></li>
+                    -->
+                    </ul>
+                </div>
+                <div class="title"> 
+                    {{ contenido.estado }}
+                    <hr>
+                    {{ contenido.titulo }}
+                </div>
+                <div class="content">
+                    <p> {{ contenido.texto }} </p>
+                </div>
+                {% if contenido.imagen %}
+                    <img src="{{ contenido.imagen.url }}" alt="{{ contenido.titulo }}">
+                {% endif %}
             </div>
-          {% endif %}
-          <!-- HASTA ACA-->
-          <div class="dropdown-menu" id="dropdownMenu">
-            <ul>
-              {% if permisoBoton.enviar_revision and contenido.estado != 'Revisión' and contenido.estado != 'Publicado' %}
-                <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'Revisión' %}">
-                  <li>Mandar a edición</li>
-                </a>
-              {% endif %}
-              {% if permisoBoton.enviar_aPublicar and contenido.estado != 'Borrador' and contenido.estado != 'A Publicar' %}
-                <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'A Publicar' %}">
-                  <li>Mandar a Publicador</li>
-                </a>
-              {% endif %}
-              {% if permisoBoton.enviar_publicar and contenido.estado != 'Revisión' and contenido.estado != 'Borrador' and contenido.estado != 'Publicado' %}
-                <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'Publicado' %}">
-                  <li>Publicar</li>
-                </a>
-              {% endif %}
-              {% if permisoBoton.enviar_borrador and contenido.estado != 'Borrador' and contenido.estado != 'A Publicar' and contenido.estado != 'Publicado' %}
-                <li onclick="abrirPanelComentarios()">Enviar a Borrador</li>
-              {% endif %}
-              {% if contenido.estado != 'Inactivo' %}
-                <li>
-                  <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'Inactivo' %}">Inactivar</a>
-                </li>
-              {% endif %}
-            </ul>
-          </div>
-          {% if permisoEstado.ver %}<div class="estado">{{ contenido.estado }}</div>{% endif %}
-          <div class="title">{{ contenido.titulo }}</div>
-          <div class="content">
-            <p>{{ contenido.texto }}</p>
-          </div>
-          {% if contenido.imagen %}<img src="{{ contenido.imagen.url }}" alt="{{ contenido.titulo }}">{% endif %}
+
+            <div class="comments">
+                <h3 style="border-bottom:1px solid #38444d; padding: 10px 0; border-top:1px solid #38444d">Comentarios</h3>
+                <div class="comentar-body">
+                    {% for comment in comments %}
+                    <div class="comment">
+                        <strong>{{ comment.usuario }}</strong>: {{ comment.comentario }} <br>
+                        <small>{{ comment.fecha|date:"d/m/Y H:i" }}</small>
+                    </div>
+                    {% empty %}
+                        <p>No hay comentarios aún. ¡Sé el primero en comentar!</p>
+                    {% endfor %}
+                </div>
+
+                <h4>Deja un comentario</h4>
+                <textarea rows="5" cols="10"></textarea><br><br>
+                <form method="post" action="{% url 'dejar_comentario' contenido.id %}">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit">Comentar</button>
+                </form>
+                
+            </div>
+            
+                
         </div>
-        {% if contenido.estado == 'Publicado' %}
-          <div class="comments">
-            <h3 style="border-bottom:1px solid #38444d;
-                       padding: 10px 0;
-                       border-top:1px solid #38444d">Comentarios</h3>
-            <div class="comentar-body">
-              <div class="comment-content">
-                <textarea placeholder="Comenta la publicación"></textarea>
-              </div>
+
+        <!-- Panel lateral de comentarios -->
+        <div id="comentariosPanel">
+            <div class="close-icon" onclick="cerrarPanelComentarios()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M18 6L6 18M6 6l12 12" stroke="#333" stroke-width="2" fill="none"/>
+                </svg>
             </div>
-            <button class="reply-button">Comentar</button>
-            <div class="comment">
-              <div class="title">@usuario2</div>
-              <p>Inspirador mensaje. Gracias por compartir tu experiencia.</p>
-            </div>
-            <div class="comment">
-              <div class="title">@usuario3</div>
-              <p>Cada día es una oportunidad para crecer. ¡Sigue adelante!</p>
-            </div>
-          </div>
-        {% endif %}
-      </div>
-      <!-- Panel lateral de comentarios -->
-      <div id="comentariosPanel">
-        <div class="close-icon" onclick="cerrarPanelComentarios()">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M18 6L6 18M6 6l12 12" stroke="#333" stroke-width="2" fill="none" />
-          </svg>
+            <h3>Comentarios para el autor</h3>
+            <textarea placeholder="Escribe tus comentarios..."></textarea>
+            <button onclick="guardarComentario()">Enviar Comentario</button>
         </div>
-        <h3>Comentarios para el autor</h3>
-        <textarea placeholder="Escribe tus comentarios..."></textarea>
-        <button onclick="guardarComentario()">Enviar Comentario</button>
-      </div>
     </div>
     <script>
         function toggleDropdownMenu() {
