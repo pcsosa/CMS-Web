@@ -252,7 +252,7 @@
                         {% if permisoBoton.enviar_aPublicar and contenido.estado != 'Borrador' and contenido.estado != 'A Publicar'%}
                         <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'A Publicar' %}"><li> Mandar a Publicador</li></a>
                         {% endif %}
-                        {% if permisoBoton.enviar_publicar and contenido.estado != 'Revisión' and contenido.estado != 'Borrador'%}
+                        {% if permisoBoton.enviar_publicar and contenido.estado != 'Revisión' and contenido.estado != 'Borrador' and contenido.estado != 'Publicado'%}
                         <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'Publicado' %}"><li>Publicar</li></a>
                         {% endif %}
                         {% if permisoBoton.enviar_borrador and contenido.estado != 'Borrador' and contenido.estado != 'A Publicar' and contenido.estado != 'Publicado' %}
