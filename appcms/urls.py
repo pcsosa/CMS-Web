@@ -33,7 +33,6 @@ urlpatterns = [
     path('articulos/eliminar/<int:pk>/', views_cont.eliminar_contenido, name='eliminar_contenido'),
     path('kanban/', views_cont.tablero_kanban, name='tablero_kanban'),
     path('articulos/visualizar/<int:pk>/',views_cont.visualizar_contenido, name="visualizar_contenido"),
-    path('contenido/<int:contenido_id>/', views_cont.dejar_comentario, name='comentario'),
     path('articulos/visualizar/<int:pk>/<str:estado_actual>/<str:estado_siguiente>/',views_cont.cambiar_estado,name='cambiar_estado'),
 ]
 
