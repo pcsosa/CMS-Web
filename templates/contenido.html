@@ -1,6 +1,7 @@
 {% load static %}
 {% load permisos %}
-
+{% tienePermiso 'botones' '["ver"]' as permisoBoton %}
+{% tienePermiso 'contenido' '["ver"]' as permisoEstado %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -244,10 +245,18 @@
                 <!-- HASTA ACA-->
                 <div class="dropdown-menu" id="dropdownMenu">
                     <ul>
-                        <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'Revisión' %}"><li> Mandar a edición</li></a>
-                        <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'A Publicar' %}"><li> Mandar a Publicador</li></a>
-                        <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'Publicado' %}"><li>Publicar</li></a>
-                        <li onclick="abrirPanelComentarios()">Enviar a Borrador</li>
+                        {% if permisoBoton.ver %}
+                            <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'Revisión' %}"><li> Mandar a edición</li></a>
+                        {% endif %}
+                        {% if permisoBoton.ver %}
+                            <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'A Publicar' %}"><li> Mandar a Publicador</li></a>
+                        {% endif %}
+                        {% if permisoBoton.ver %}
+                            <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'Publicado' %}"><li>Publicar</li></a>
+                        {% endif %}
+                        {% if permisoBoton.ver %}
+                            <li onclick="abrirPanelComentarios()">Enviar a Borrador</li>
+                        {% endif %}
                         <!--<li> <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'Inactivo' %}">Eliminar</a></li>
                     -->
                     </ul>
@@ -264,25 +273,26 @@
                     <img src="{{ contenido.imagen.url }}" alt="{{ contenido.titulo }}">
                 {% endif %}
             </div>
+            {% if contenido.estado == 'publicado'%}
+                <div class="comments">
+                    <h3 style="border-bottom:1px solid #38444d; padding: 10px 0; border-top:1px solid #38444d">Comentarios</h3>
+                    <div class="comentar-body">
+                        <div class="comment-content">
+                            <textarea placeholder="Comenta la publicación"></textarea>
+                        </div>
+                    </div>
+                    <button class="reply-button">Comentar</button>
 
-            <div class="comments">
-                <h3 style="border-bottom:1px solid #38444d; padding: 10px 0; border-top:1px solid #38444d">Comentarios</h3>
-                <div class="comentar-body">
-                    <div class="comment-content">
-                        <textarea placeholder="Comenta la publicación"></textarea>
+                    <div class="comment">
+                        <div class="title">@usuario2</div>
+                        <p>Inspirador mensaje. Gracias por compartir tu experiencia.</p>
+                    </div>
+                    <div class="comment">
+                        <div class="title">@usuario3</div>
+                        <p>Cada día es una oportunidad para crecer. ¡Sigue adelante!</p>
                     </div>
                 </div>
-                <button class="reply-button">Comentar</button>
-
-                <div class="comment">
-                    <div class="title">@usuario2</div>
-                    <p>Inspirador mensaje. Gracias por compartir tu experiencia.</p>
-                </div>
-                <div class="comment">
-                    <div class="title">@usuario3</div>
-                    <p>Cada día es una oportunidad para crecer. ¡Sigue adelante!</p>
-                </div>
-            </div>
+            {% endif %}
         </div>
 
         <!-- Panel lateral de comentarios -->
