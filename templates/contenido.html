@@ -249,13 +249,13 @@
                         {% if permisoBoton.enviar_revision and contenido.estado != 'Revisión' and contenido.estado != 'Publicado' %}
                         <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'Revisión' %}"><li> Mandar a edición</li></a>
                         {% endif %}
-                        {% if permisoBoton.enviar_aPublicar and contenido.estado != 'Borrador' and contenido.estado != 'a Publicar'%}
+                        {% if permisoBoton.enviar_aPublicar and contenido.estado != 'Borrador' and contenido.estado != 'A Publicar'%}
                         <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'A Publicar' %}"><li> Mandar a Publicador</li></a>
                         {% endif %}
                         {% if permisoBoton.enviar_publicar and contenido.estado != 'Revisión' and contenido.estado != 'Borrador'%}
                         <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'Publicado' %}"><li>Publicar</li></a>
                         {% endif %}
-                        {% if permisoBoton.enviar_borrador and contenido.estado != 'Borrador' and contenido.estado != 'a Publicar' and contenido.estado != 'Publicado' %}
+                        {% if permisoBoton.enviar_borrador and contenido.estado != 'Borrador' and contenido.estado != 'A Publicar' and contenido.estado != 'Publicado' %}
                         <li onclick="abrirPanelComentarios()">Enviar a Borrador</li>
                         {% endif %}
                         {% if contenido.estado != 'Inactivo' %}
