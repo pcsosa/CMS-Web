@@ -1,8 +1,7 @@
-import json
-
-import requests
 from django.contrib.auth.models import User  # Para manejar el publicador
+from django.core.paginator import Paginator
 from django.core.serializers import serialize
+from django.db.models import Q  # Para realizar búsquedas
 from django.http import HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import csrf_exempt
@@ -112,8 +111,52 @@ def crear_contenido(request):
 
 
 def lista_contenidos(request):
-    contenidos = Contenido.objects.all()  # Obtén todos los contenidos
-    return render(request, "lista_contenidos.html", {"contenidos": contenidos})
+    # Obtener todos los contenidos inicialmente
+    contenidos = Contenido.objects.all()
+    autores = obtenerUsersConRol("Autor")
+
+    # Obtener los parámetros del filtro desde la solicitud
+    orden = request.GET.get("orden", "desc")  # Por defecto descendente
+    categoria_id = request.GET.get("categoria")
+    autor_id = request.GET.get("autor")
+    busqueda = request.GET.get("busqueda", "")
+
+    # Filtrar por categoría si se proporciona
+    if categoria_id:
+        contenidos = contenidos.filter(categoria_id=categoria_id)
+
+    # Filtrar por autor si se proporciona
+    if autor_id:
+
+        contenidos = contenidos.filter(autor_id=autor_id)
+
+    # Filtrar por búsqueda en el título o el contenido
+    if busqueda:
+        contenidos = contenidos.filter(
+            Q(titulo__icontains=busqueda) | Q(texto__icontains=busqueda)
+        )
+
+    # Ordenar por fecha de creación
+    if orden == "asc":
+        contenidos = contenidos.order_by("fecha_modificacion")
+    else:
+        contenidos = contenidos.order_by("-fecha_modificacion")
+
+    # Pasar la lista de contenidos y categorías al contexto
+    categorias = Categoria.objects.all()
+    paginator = Paginator(contenidos, 10)  # 10 contenidos por página
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    contexto = {
+        "page_obj": page_obj,
+        "contenidos": contenidos,
+        "categorias": categorias,
+        "busqueda": busqueda,
+        "autores": autores,
+    }
+
+    return render(request, "lista_contenidos.html", contexto)
 
 
 def gestion_contenido(request):
@@ -210,3 +253,22 @@ def editar_contenido(request, pk):
 
     # Renderizar el formulario de edición con los datos actuales del contenido
     return render(request, "editar_contenido.html", contexto)
+
+
+def tablero_kanban(request):
+    # Obtener artículos filtrados por estado
+    borrador = Contenido.objects.filter(estado="Borrador")
+    en_revision = Contenido.objects.filter(estado="Revisión")
+    a_publicar = Contenido.objects.filter(estado="A Publicar")
+    publicado = Contenido.objects.filter(estado="Publicado")
+    inactivo = Contenido.objects.filter(estado="Inactivo")
+
+    contexto = {
+        "borrador": borrador,
+        "en_revision": en_revision,
+        "a_publicar": a_publicar,
+        "publicado": publicado,
+        "inactivo": inactivo,
+    }
+
+    return render(request, "tablero_kanban.html", contexto)

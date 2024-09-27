@@ -2,6 +2,7 @@
 {% load permisos %}
 {% tienePermiso 'contenido' '["ver"]' as permisoCont %}
 {% tienePermiso 'categoria' '["ver"]' as permisoCat %}
+{% tienePermiso 'kanban' '["ver"]' as permisoKan %}
 <!DOCTYPE html>
 <html lang="es">
   <head>
@@ -58,6 +59,12 @@
             <a href={% url 'lista_categorias' %} class="dashboard-nav-item">
               <i class="fas fa-icons"></i>
               Categorías
+            </a>
+          {% endif %}
+          {% if permisoKan.ver %}          
+            <a href={% url 'tablero_kanban' %} class="dashboard-nav-item">
+              <i class="fa-solid fa-table-columns"></i>
+              Tablero kanban
             </a>
           {% endif %}
           <!-- <a href="#" class="dashboard-nav-item">
