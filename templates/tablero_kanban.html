@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -31,61 +31,61 @@
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
     </style>
-
 </head>
 <body>
 
 <div class="kanban-board">
-    <div class="kanban-column">
+    <div class="kanban-column" data-estado="Borrador">
         <h2>Borrador</h2>
         {% for contenido in borrador %}
-            <div class="kanban-item">
+            <div class="kanban-item" data-id="{{ contenido.id }}" data-estado="Borrador" onclick="window.location.href='{% url 'visualizar_contenido' contenido.id %}'">
                 <h3>{{ contenido.titulo }}</h3>
                 <p>{{ contenido.texto|truncatewords:15 }}</p>
             </div>
         {% endfor %}
     </div>
     
-    <div class="kanban-column">
+    <div class="kanban-column" data-estado="Revisión">
         <h2>En Revisión</h2>
         {% for contenido in en_revision %}
-            <div class="kanban-item">
+            <div class="kanban-item" data-id="{{ contenido.id }}" data-estado="Revisión" onclick="window.location.href='{% url 'visualizar_contenido' contenido.id %}'">
                 <h3>{{ contenido.titulo }}</h3>
                 <p>{{ contenido.texto|truncatewords:15 }}</p>
             </div>
         {% endfor %}
     </div>
 
-    <div class="kanban-column">
+    <div class="kanban-column" data-estado="A Publicar">
         <h2>A Publicar</h2>
         {% for contenido in a_publicar %}
-            <div class="kanban-item">
+            <div class="kanban-item" data-id="{{ contenido.id }}" data-estado="A Publicar" onclick="window.location.href='{% url 'visualizar_contenido' contenido.id %}'">
                 <h3>{{ contenido.titulo }}</h3>
                 <p>{{ contenido.texto|truncatewords:15 }}</p>
             </div>
         {% endfor %}
     </div>
 
-    <div class="kanban-column">
+    <div class="kanban-column" data-estado="Publicado">
         <h2>Publicado</h2>
         {% for contenido in publicado %}
-            <div class="kanban-item">
+            <div class="kanban-item" data-id="{{ contenido.id }}" data-estado="Publicado" onclick="window.location.href='{% url 'visualizar_contenido' contenido.id %}'">
                 <h3>{{ contenido.titulo }}</h3>
                 <p>{{ contenido.texto|truncatewords:15 }}</p>
             </div>
         {% endfor %}
     </div>
 
-    <div class="kanban-column">
+    <div class="kanban-column" data-estado="Inactivo">
         <h2>Inactivo</h2>
         {% for contenido in inactivo %}
-            <div class="kanban-item">
+            <div class="kanban-item" data-id="{{ contenido.id }}" data-estado="Inactivo" onclick="window.location.href='{% url 'visualizar_contenido' contenido.id %}'">
                 <h3>{{ contenido.titulo }}</h3>
                 <p>{{ contenido.texto|truncatewords:15 }}</p>
             </div>
         {% endfor %}
     </div>
 </div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 <script>
     // Seleccionar todas las columnas del tablero
@@ -98,40 +98,22 @@
             animation: 150,
             onEnd: function (evt) {
                 let itemEl = evt.item;  // El artículo arrastrado
-                let estado = evt.to.getAttribute('data-estado');  // Nuevo estado
                 let articuloId = itemEl.getAttribute('data-id');  // ID del artículo
+                let estado_actual = itemEl.getAttribute('data-estado');  // Estado actual del artículo
+                let nuevo_estado = evt.to.getAttribute('data-estado');  // Nuevo estado
 
-                // Llamada para actualizar el estado en el servidor
-                actualizarEstadoArticulo(articuloId, estado);
+                // Verificar si el nuevo estado es diferente al actual
+                if (estado_actual !== nuevo_estado) {
+                    let url = "{% url 'cambiar_estado' 0 'estado_actual' 'nuevo_estado' %}"
+                    url = url.replace("0", articuloId)
+                             .replace("estado_actual", estado_actual)
+                             .replace("nuevo_estado", nuevo_estado);
+                    
+                    window.location.href = url;  // Redirigir para cambiar el estado
+                }
             }
         });
     });
-
-    // Función para actualizar el estado del artículo usando AJAX
-    function actualizarEstadoArticulo(articuloId, estado) {
-        fetch('/actualizar_estado_articulo/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}',  // Agregar el CSRF token
-            },
-            body: JSON.stringify({
-                'articulo_id': articuloId,
-                'estado': estado,
-            }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                console.log('Estado actualizado con éxito');
-            } else {
-                console.error('Error al actualizar el estado');
-            }
-        })
-        .catch(error => {
-            console.error('Error en la solicitud:', error);
-        });
-    }
 </script>
 </body>
 </html>
