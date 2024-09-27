@@ -1,35 +1,38 @@
-from django.shortcuts import get_object_or_404, redirect, render
-from django.http import HttpResponse
+from django.conf import settings
 from django.contrib import messages
+from django.core.cache import cache
 from django.db.models import Q
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
+
 from .forms import CategoriaForm
 from .models import Categoria
 from .services.keycloak_service import KeycloakService
-from .utils.utils import quitar_acentos
-from dotenv import load_dotenv
-import os
-load_dotenv()
+from .utils.utils import obtenerRPT, obtenerToken, quitar_acentos
 
 # --------------- PRINCIPAL----------------
 
+
 def home(request):
-  """
-  Vista para la página de inicio.
-  
-  Esta vista renderiza la plantilla 'home.html'.
-  """
-  return render(request, 'home.html')
+    """
+    Vista para la página de inicio.
+
+    Esta vista renderiza la plantilla 'home.html'.
+    """
+    return render(request, "home.html")
+
 
 def panel(request):
-  """
-  Vista para la página del panel de administración.
+    """
+    Vista para la página del panel de administración.
 
-  Esta vista renderiza la plantilla 'panel.html'.
-  """
-  return render(request, 'panel.html')
+    Esta vista renderiza la plantilla 'panel.html'.
+    """
+    return render(request, "panel.html")
 
 
 # --------------- CATEGORIAS ----------------
+
 
 def lista_categorias(request):
     """
@@ -42,8 +45,8 @@ def lista_categorias(request):
     :type request: HttpRequest
     :return: HttpResponse: La respuesta renderizada con la lista de categorías.
     """
-    
-    consulta = request.GET.get('q')
+
+    consulta = request.GET.get("q")
     consulta = quitar_acentos(consulta)
     categorias = []
 
@@ -51,13 +54,11 @@ def lista_categorias(request):
         categorias = Categoria.objects.filter(Q(nombre__icontains=consulta))
     else:
         categorias = Categoria.objects.all()
-        
-    contexto = {
-        'categorias': categorias,
-        'consulta': consulta
-    }
-    
-    return render(request, 'lista_categorias.html', contexto)
+
+    contexto = {"categorias": categorias, "consulta": consulta}
+
+    return render(request, "lista_categorias.html", contexto)
+
 
 def crear_categoria(request):
     """
@@ -70,13 +71,14 @@ def crear_categoria(request):
     :type request: HttpRequest
     :return: HttpResponse.
     """
-    if request.method == 'POST':
+    if request.method == "POST":
         form = CategoriaForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('lista_categorias')
+            return redirect("lista_categorias")
     else:
-        return HttpResponse('Error: Método no permitido', status=405)
+        return HttpResponse("Error: Método no permitido", status=405)
+
 
 def eliminar_categoria(request, pk):
     """
@@ -92,15 +94,19 @@ def eliminar_categoria(request, pk):
     :return: HttpResponse.
     """
     categoria = get_object_or_404(Categoria, pk=pk)
-    
-    if request.method == 'POST':
-        categoria.delete()
-        messages.success(request, f'La categoría "{categoria.nombre}" ha sido eliminada correctamente.')
-        return redirect('lista_categorias')
-    else:
-        return HttpResponse('Error: Método no permitido', status=405)
 
-def editar_categoria(request,pk):
+    if request.method == "POST":
+        categoria.delete()
+        messages.success(
+            request,
+            f'La categoría "{categoria.nombre}" ha sido eliminada correctamente.',
+        )
+        return redirect("lista_categorias")
+    else:
+        return HttpResponse("Error: Método no permitido", status=405)
+
+
+def editar_categoria(request, pk):
     """Editar campos de categoria
 
     Args:
@@ -111,25 +117,29 @@ def editar_categoria(request,pk):
         :return: HttpResponse.
     """
     categoria = get_object_or_404(Categoria, pk=pk)
-    
-    if request.method == 'POST':
+
+    if request.method == "POST":
         form = CategoriaForm(request.POST, instance=categoria)
         if form.is_valid():
             form.save()
-            messages.success(request, f'La categoría "{categoria.nombre}" ha sido modificado correctamente.')
-            return redirect('lista_categorias')  
+            messages.success(
+                request,
+                f'La categoría "{categoria.nombre}" ha sido modificado correctamente.',
+            )
+            return redirect("lista_categorias")
     else:
-        return HttpResponse('Error: Método no permitido', status=405)
+        return HttpResponse("Error: Método no permitido", status=405)
 
 
 # --------------- AUTENTICACIÓN --------------
+
 
 def login(request):
     """
     Maneja el inicio de sesión del usuario.
 
     Esta función redirige al usuario a la página de autenticación de Keycloak.
-    Se genera una URL de autorización con los permisos solicitados ('openid', 'profile', 'email') 
+    Se genera una URL de autorización con los permisos solicitados ('openid', 'profile', 'email')
     y la redirección después del inicio de sesión exitoso es manejada por la URI proporcionada.
 
     :param request: El objeto HTTP request de Django que contiene los detalles de la solicitud.
@@ -137,36 +147,50 @@ def login(request):
     :return: Redirige al usuario a la página de inicio de sesión de Keycloak.
     :rtype: HttpResponse
     """
-    
+
     kc = KeycloakService.get_instance()
     authorization_url = kc.openid.auth_url(
-        redirect_uri = os.getenv('DJ_URL') + ':' + os.getenv('DJ_PORT') + '/callback/',
-        scope='openid profile email'
+        redirect_uri=settings.DJ_URL + ":" + settings.DJ_PORT + "/callback/",
+        scope="openid profile email",
     )
     return redirect(authorization_url)
+
 
 def callback(request):
     """
     Maneja el callback de Keycloak después del inicio de sesión.
 
-    Recibe el código de autorización de Keycloak, lo intercambia por un token de acceso 
+    Recibe el código de autorización de Keycloak, lo intercambia por un token de acceso
     y lo guarda en la sesión del usuario. Si no se proporciona un código, devuelve un error.
 
     :param request: El objeto HTTP request de Django que contiene los detalles de la solicitud.
     :type request: HttpRequest
-    :return: Si se proporciona un código válido, redirige al usuario al panel de control. 
+    :return: Si se proporciona un código válido, redirige al usuario al panel de control.
              Si no se proporciona el código, devuelve un error HTTP 400.
     :rtype: HttpResponse
     """
-    
-    code = request.GET.get('code')
+
+    code = request.GET.get("code")
     if not code:
-        return HttpResponse('Error: No code provided', status=400)
+        return HttpResponse("Error: No code provided", status=400)
 
     kc = KeycloakService.get_instance()
-    token = kc.get_token(code)
-    request.session['token'] = token
-    return redirect('panel')
+    token = kc.get_token(code)  # Obtener token normal sin permisos
+    token = obtenerRPT(token["access_token"])  # Obtener token con permisos incluidos
+
+    access_token = token["access_token"]  # Token normal
+    refresh_token = token["refresh_token"]  # Token con permisos
+
+    # Guardar tokens en la sesión
+    request.session["access_token"] = access_token
+    request.session["refresh_token"] = refresh_token
+
+    # Cachear los tokens para mayor rendimiento
+    cache.set("access_token", access_token, timeout=300)
+    cache.set("refresh_token", refresh_token, timeout=1800)
+
+    return redirect("panel")
+
 
 def logout(request):
     """
@@ -182,8 +206,15 @@ def logout(request):
     """
 
     kc = KeycloakService.get_instance()
-    token = request.session.get('token')
-    if token:
-      request.session.clear()
-      kc.openid.logout(token['refresh_token'])    
-    return redirect('home')
+
+    refresh_token = cache.get("refresh_token")
+
+    if not refresh_token:
+        refresh_token = request.session.get("refresh_token")
+
+    if refresh_token:
+        request.session.clear()
+        cache.clear()
+        kc.openid.logout(refresh_token)
+
+    return redirect("home")
