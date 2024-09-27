@@ -8,3 +8,4 @@ class ComentarioForm(forms.ModelForm):
         widgets = {
             'content': forms.Textarea(attrs={'placeholder': 'Escribe tu comentario...'}),
         }
+
