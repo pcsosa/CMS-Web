@@ -53,3 +53,17 @@ class ContenidoForm(forms.ModelForm):
     class Meta:
         model = Contenido
         fields = ['tipo', 'titulo', 'texto', 'imagen', 'imagen_url', 'categoria', 'subcategoria', 'estado', 'autor_id', 'editor_id', 'publicador_id', 'id_historial_mod']
+
+class Comentario(models.Model):
+    contenido = models.ForeignKey(Contenido,on_delete=models.CASCADE,related_name='comments')
+    usuario = models.CharField(max_length=80)
+    email = models.EmailField()
+    comentario = models.TextField()
+    fecha = models.DateTimeField(auto_now_add=True)
+    active = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['-fecha']
+
+    def __str__(self):
+        return 'Comentario {} por {}'.format(self.comentario, self.usuario)
