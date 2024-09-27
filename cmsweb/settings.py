@@ -1,131 +1,149 @@
 import os
 from pathlib import Path
-from dotenv import load_dotenv
-import dj_database_url
 
-#-------------------------------------------------
-#------------------- PATHS ----------------------
-#-------------------------------------------------
+import dj_database_url
+from dotenv import load_dotenv
+
+# -------------------------------------------------
+# ------------------- PATHS ----------------------
+# -------------------------------------------------
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 
-# Cargar variables de entorno desde un archivo .env
-load_dotenv(dotenv_path=os.path.join(BASE_DIR, '.env'), override=True)
+# -------------------------------------------------
+# ------------- Variables de entorno --------------
+# -------------------------------------------------
 
-# Mostrar todas las variables de entorno (incluyendo las del sistema)
-# expected_keys = ['KEYCLOAK_RS256_PUBLIC_KEY', 'DJ_PORT', 'DJ_URL']
+# Cargar variables de entorno desde un archivo .env
+load_dotenv(dotenv_path=os.path.join(BASE_DIR, ".env"), override=True)
+
+# Guardar las variables de entorno en variables de Python
+DATABASE_URL = os.getenv("DATABASE_URL")
+KEYCLOAK_SERVER_URL = os.getenv("KEYCLOAK_SERVER_URL")
+KEYCLOAK_REALM = os.getenv("KEYCLOAK_REALM")
+KEYCLOAK_CLIENT_ID = os.getenv("KEYCLOAK_CLIENT_ID")
+KEYCLOAK_CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET")
+KEYCLOAK_RS256_PUBLIC_KEY = os.getenv("KEYCLOAK_RS256_PUBLIC_KEY")
+DJ_PORT = os.getenv("DJ_PORT")
+DJ_URL = os.getenv("DJ_URL")
+
+# Mostrar todas las variables de entorno (para depuración)
+# expected_keys = [
+#     "DATABASE_URL",
+#     "KEYCLOAK_SERVER_URL",
+#     "KEYCLOAK_REALM",
+#     "KEYCLOAK_CLIENT_ID",
+#     "KEYCLOAK_CLIENT_SECRET",
+#     "KEYCLOAK_RS256_PUBLIC_KEY",
+#     "DJ_PORT",
+#     "DJ_URL",
+# ]
+
 # for key in expected_keys:
 #     value = os.getenv(key)
 #     print(f"{key}: {value}")
 
-#-------------------------------------------------
-#------------------- SEGURIDAD -------------------
-#-------------------------------------------------
+# -------------------------------------------------
+# ------------------- SEGURIDAD -------------------
+# -------------------------------------------------
 
 # Clave secreta para la aplicación Django
-SECRET_KEY = 'django-insecure-)c$w1=-2dx9e&9^yi1tf*199nu(0d5yu2+0gpsak4d(%(8$2aq'
+SECRET_KEY = "django-insecure-)c$w1=-2dx9e&9^yi1tf*199nu(0d5yu2+0gpsak4d(%(8$2aq"
 
 # Configuración de depuración (No debe estar habilitado en producción)
 DEBUG = True
 
 # Hosts permitidos
 ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    'cms-web-mt3l.onrender.com',
+    "localhost",
+    "127.0.0.1",
+    "cms-web-mt3l.onrender.com",
 ]
 
-#-------------------------------------------------
-#----------------- APLICACIONES ------------------
-#-------------------------------------------------
+# -------------------------------------------------
+# ----------------- APLICACIONES ------------------
+# -------------------------------------------------
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'appcms',
-    'contenidos',
-    'subcategorias',
-    
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "appcms",
+    "contenidos",
+    "subcategorias",
 ]
 
-#-------------------------------------------------
-#----------------- MIDDLEWARES -------------------
-#-------------------------------------------------
+# -------------------------------------------------
+# ----------------- MIDDLEWARES -------------------
+# -------------------------------------------------
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'appcms.middleware.token_middleware.KeycloakTokenMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "appcms.middleware.token_middleware.KeycloakTokenMiddleware",
 ]
 
 # Configuración de URLs y WSGI
-ROOT_URLCONF = 'cmsweb.urls'
-WSGI_APPLICATION = 'cmsweb.wsgi.application'
+ROOT_URLCONF = "cmsweb.urls"
+WSGI_APPLICATION = "cmsweb.wsgi.application"
 
-#-------------------------------------------------
-#------------------- TEMPLATES -------------------
-#-------------------------------------------------
+# -------------------------------------------------
+# ------------------- TEMPLATES -------------------
+# -------------------------------------------------
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [TEMPLATES_DIR],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-                'django.template.context_processors.request',
-                'appcms.context_processors.datos_basicos',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [TEMPLATES_DIR],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+                "django.template.context_processors.request",
+                "appcms.context_processors.datos_basicos",
             ],
-        }
+        },
     },
 ]
 
-#-------------------------------------------------
-#---------------- STATIC FILES -------------------
-#-------------------------------------------------
+# -------------------------------------------------
+# ---------------- STATIC FILES -------------------
+# -------------------------------------------------
 
 # Directorio donde se almacenarán los archivos estáticos
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_URL = "/static/"
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 # Directorio donde se almacenan los archivos estáticos recolectados para producción
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # Configuración de archivos multimedia
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-#-------------------------------------------------
-#---------------- AUTHENTICATION -----------------
-#-------------------------------------------------
+# -------------------------------------------------
+# ---------------- AUTHENTICATION -----------------
+# -------------------------------------------------
 
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
+    "django.contrib.auth.backends.ModelBackend",
 ]
 
-KEYCLOAK_SERVER_URL = os.getenv('KEYCLOAK_SERVER_URL')
-KEYCLOAK_CLIENT_ID = os.getenv('KEYCLOAK_CLIENT_ID')
-KEYCLOAK_REALM = os.getenv('KEYCLOAK_REALM')
-KEYCLOAK_CLIENT_SECRET = os.getenv('KEYCLOAK_CLIENT_SECRET')
-KEYCLOAK_RS256_PUBLIC_KEY = os.getenv('KEYCLOAK_RS256_PUBLIC_KEY')
-
-#-------------------------------------------------
-#------------------- DATABASES -------------------
-#-------------------------------------------------
+# -------------------------------------------------
+# ------------------- DATABASES -------------------
+# -------------------------------------------------
 
 # Dependiendo del entorno, puede elegir una de las configuraciones de base de datos
 # Descomente la configuración apropiada según sea necesario
@@ -143,9 +161,7 @@ KEYCLOAK_RS256_PUBLIC_KEY = os.getenv('KEYCLOAK_RS256_PUBLIC_KEY')
 # }
 
 # PostgreSQL desde URL
-DATABASES = {
-     'default': dj_database_url.parse(os.getenv('DATABASE_URL'))
-}
+DATABASES = {"default": dj_database_url.parse(DATABASE_URL)}
 
 # SQLite en memoria (para pruebas)
 #DATABASES = {
@@ -156,36 +172,39 @@ DATABASES = {
 #}
 
 # SQLite archivo local
-#DATABASES = {
+# DATABASES = {
 #   'default': {
 #       'ENGINE': 'django.db.backends.sqlite3',
 #       'NAME': 'db.sqlite3',
 #   }
-#}
+# }
 
-#-------------------------------------------------
-#----------------- PASSWORD VALIDATORS -----------
-#-------------------------------------------------
+# -------------------------------------------------
+# ----------------- PASSWORD VALIDATORS -----------
+# -------------------------------------------------
 
 AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
+    {
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
+    },
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-#-------------------------------------------------
-#---------------- INTERNATIONALIZATION -----------
-#-------------------------------------------------
+# -------------------------------------------------
+# ---------------- INTERNATIONALIZATION -----------
+# -------------------------------------------------
 
-LANGUAGE_CODE = 'es'
-TIME_ZONE = 'UTC'
+LANGUAGE_CODE = "es"
+TIME_ZONE = 'America/Asuncion'  # O la zona horaria correcta para tu ubicación
+USE_TZ = True  # Asegúrate de que esté habilitado el uso de zonas horarias
 USE_I18N = True
-USE_TZ = True
 
-#-------------------------------------------------
-#--------------- OTRAS CONFIGURACIONES------------
-#-------------------------------------------------
+
+# -------------------------------------------------
+# --------------- OTRAS CONFIGURACIONES------------
+# -------------------------------------------------
 
 # Tipo de dato predeterminado para los id de los modelos
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
