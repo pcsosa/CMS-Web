@@ -2,21 +2,17 @@ from django.contrib.auth.models import User  # Para manejar el publicador
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect
-
 from contenidos.forms import ComentarioForm
-from .models_cont import Comentario, ContenidoForm, Contenido, Categoria
+from .models_cont import Comentario, Contenido, Categoria
 from appcms.models import Categoria
 from subcategorias.models import Subcategoria
 from appcms.utils.utils import obtenerToken, obtenerUserId, obtenerUsersConRol
 from django.core.serializers import serialize
 import requests, json
 from django.db.models import Q  # Para realizar búsquedas
-
 from django.core.paginator import Paginator
-
-
 from django.shortcuts import get_object_or_404
-from django.http import JsonResponse, HttpResponseForbidden
+from django.http import JsonResponse
 from django.contrib import messages
 
 def crear_contenido(request):
@@ -294,30 +290,6 @@ def editar_contenido(request, pk):
     # Renderizar el formulario de edición con los datos actuales del contenido
     return render(request, 'editar_contenido.html', contexto)
 
-def dejar_comentario(request, id):
-    contenido = get_object_or_404(Contenido, contenido_id=id)
-    
-    if request.method == 'POST':
-        comentario_form = ComentarioForm(request.POST)
-        if comentario_form.is_valid():
-            print("Errores en el formulario:", comentario_form.errors) 
-            nuevo_comentario = comentario_form.save(commit=False)
-            nuevo_comentario.contenido = contenido
-            nuevo_comentario.active = True
-            nuevo_comentario.save()
-            return redirect('dejar_comentario', contenido_id=contenido.id)  
-    else:
-        comentario_form = ComentarioForm()
-
-    comentarios = Comentario.objects.filter(contenido=contenido, active=True)
-    print("Comentarios recuperados:", comentarios)
-
-    return render(request, 'contenido.html', {
-        'contenido': contenido,
-        'comentarios': comentarios,
-        'comentario_form': comentario_form,
-    })
-
 def tablero_kanban(request):
     # Obtener artículos filtrados por estado
     borrador = Contenido.objects.filter(estado='Borrador')
@@ -348,7 +320,24 @@ def visualizar_contenido(request, pk):
     """
     try:
         contenido = Contenido.objects.get(pk=pk)
-        return render(request,'contenido.html',{'contenido':contenido})
+        comentarios = Comentario.objects.filter(contenido=contenido, active=True)
+        if request.method == 'POST':
+            comentario_form = ComentarioForm(request.POST)
+            if comentario_form.is_valid():
+                nuevo_comentario = comentario_form.save(commit=False)
+                nuevo_comentario.contenido = contenido
+                nuevo_comentario.active = True
+                nuevo_comentario.save()
+                return redirect('dejar_comentario', contenido_id=contenido.id)  
+        else:
+            comentario_form = ComentarioForm()
+
+        return render(request, 'contenido.html', {
+            'contenido': contenido,
+            'comentarios': comentarios,
+            'comentario_form': comentario_form,
+        })
+   
     except Contenido.DoesNotExist:
         return JsonResponse({'error': 'Contenido no encontrado'}, status=404)
     
