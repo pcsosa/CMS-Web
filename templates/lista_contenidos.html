@@ -8,7 +8,6 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #f0f2f5;
-            display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
@@ -62,6 +61,37 @@
     </style>
   </head>
   <body>
+    <div class="filter-container">
+      <form method="GET">
+        <!-- Cuadro de búsqueda -->
+        <input type="text" name="busqueda" placeholder="Buscar..." value="{{ busqueda }}">
+        
+        <!-- Filtro por categoría -->
+        <select name="categoria">
+          <option value="">Todas las categorías</option>
+          {% for categoria in categorias %}
+            <option value="{{ categoria.id_categoria }}" {% if request.GET.categoria == categoria.id_categoria|stringformat:"s" %}selected{% endif %}>
+              {{ categoria.nombre }}
+            </option>
+          {% endfor %}
+        </select>
+
+        <!-- Filtro por autor -->
+        <select id="autor" name="autor" required>
+          <option value="">Selecciona un autor</option>
+          {% for autor in autores %}<option value="{{ autor.id }}">{{ autor.username }}</option>{% endfor %}
+        </select>
+
+        <!-- Filtro por orden -->
+        <select name="orden">
+          <option value="desc" {% if request.GET.orden == 'desc' %}selected{% endif %}>Más recientes</option>
+          <option value="asc" {% if request.GET.orden == 'asc' %}selected{% endif %}>Más antiguos</option>
+        </select>
+
+        <button type="submit">Filtrar</button>
+      </form>
+    </div>
+
     <div class="posts-container">
       {% for contenido in contenidos %}
         <div class="post">
@@ -78,19 +108,14 @@
               {{ contenido.texto|safe }}
             </div>
             {% if contenido.imagen %}
-              <img src="{{ contenido.imagen.url }}"
-                   alt="{{ contenido.titulo }}"
-                   class="post-image">
+              <img src="{{ contenido.imagen.url }}" alt="{{ contenido.titulo }}" class="post-image">
             {% elif contenido.imagen_url %}
-              <img src="{{ contenido.imagen_url }}"
-                   alt="{{ contenido.titulo }}"
-                   class="post-image">
+              <img src="{{ contenido.imagen_url }}" alt="{{ contenido.titulo }}" class="post-image">
             {% endif %}
           </div>
           <div class="post-footer">
             Categoría: {{ contenido.categoria }}
-            {% if contenido.subcategoria %}· Subcategoría: {{ contenido.subcategoria }}{% endif %}
-            <br>
+            {% if contenido.subcategoria %} · Subcategoría: {{ contenido.subcategoria }}{% endif %}
           </div>
         </div>
       {% endfor %}
