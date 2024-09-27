@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     'appcms',
     'contenidos',
     'subcategorias',
-    'comentarios',
+    
 ]
 
 #-------------------------------------------------
