@@ -56,6 +56,7 @@ class ContenidoForm(forms.ModelForm):
         fields = ['tipo', 'titulo', 'texto', 'imagen', 'imagen_url', 'categoria', 'subcategoria', 'estado', 'autor_id', 'editor_id', 'publicador_id', 'id_historial_mod']
 
 class Comentario(models.Model):
+    # en el html o del form?
     contenido = models.ForeignKey(Contenido,on_delete=models.CASCADE,related_name='comments')
     usuario = models.CharField(max_length=80)
     email = models.EmailField()

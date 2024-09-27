@@ -290,14 +290,14 @@ def dejar_comentario(request, id):
     contenido = get_object_or_404(Contenido, contenido_id=id)
     
     if request.method == 'POST':
-        comentario_form = ComentarioForm(data=request.POST)
+        comentario_form = ComentarioForm(request.POST)
         if comentario_form.is_valid():
             print("Errores en el formulario:", comentario_form.errors) 
             nuevo_comentario = comentario_form.save(commit=False)
             nuevo_comentario.contenido = contenido
             nuevo_comentario.active = True
             nuevo_comentario.save()
-            return redirect('visualizar_contenido', contenido_id=contenido.id)  
+            return redirect('dejar_comentario', contenido_id=contenido.id)  
     else:
         comentario_form = ComentarioForm()
 
