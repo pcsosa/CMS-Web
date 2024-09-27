@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tablero Kanban</title>
+    <style>
+        .kanban-board {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        .kanban-column {
+            width: 18%;
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .kanban-column h2 {
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .kanban-item {
+            background-color: #fff;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+
+</head>
+<body>
+
+<div class="kanban-board">
+    <div class="kanban-column">
+        <h2>Borrador</h2>
+        {% for contenido in borrador %}
+            <div class="kanban-item">
+                <h3>{{ contenido.titulo }}</h3>
+                <p>{{ contenido.texto|truncatewords:15 }}</p>
+            </div>
+        {% endfor %}
+    </div>
+    
+    <div class="kanban-column">
+        <h2>En Revisión</h2>
+        {% for contenido in en_revision %}
+            <div class="kanban-item">
+                <h3>{{ contenido.titulo }}</h3>
+                <p>{{ contenido.texto|truncatewords:15 }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="kanban-column">
+        <h2>A Publicar</h2>
+        {% for contenido in a_publicar %}
+            <div class="kanban-item">
+                <h3>{{ contenido.titulo }}</h3>
+                <p>{{ contenido.texto|truncatewords:15 }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="kanban-column">
+        <h2>Publicado</h2>
+        {% for contenido in publicado %}
+            <div class="kanban-item">
+                <h3>{{ contenido.titulo }}</h3>
+                <p>{{ contenido.texto|truncatewords:15 }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="kanban-column">
+        <h2>Inactivo</h2>
+        {% for contenido in inactivo %}
+            <div class="kanban-item">
+                <h3>{{ contenido.titulo }}</h3>
+                <p>{{ contenido.texto|truncatewords:15 }}</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+<script>
+    // Seleccionar todas las columnas del tablero
+    let columnas = document.querySelectorAll('.kanban-column');
+    
+    // Aplicar Sortable.js a cada columna
+    columnas.forEach(function (column) {
+        new Sortable(column, {
+            group: 'kanban',
+            animation: 150,
+            onEnd: function (evt) {
+                let itemEl = evt.item;  // El artículo arrastrado
+                let estado = evt.to.getAttribute('data-estado');  // Nuevo estado
+                let articuloId = itemEl.getAttribute('data-id');  // ID del artículo
+
+                // Llamada para actualizar el estado en el servidor
+                actualizarEstadoArticulo(articuloId, estado);
+            }
+        });
+    });
+
+    // Función para actualizar el estado del artículo usando AJAX
+    function actualizarEstadoArticulo(articuloId, estado) {
+        fetch('/actualizar_estado_articulo/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}',  // Agregar el CSRF token
+            },
+            body: JSON.stringify({
+                'articulo_id': articuloId,
+                'estado': estado,
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Estado actualizado con éxito');
+            } else {
+                console.error('Error al actualizar el estado');
+            }
+        })
+        .catch(error => {
+            console.error('Error en la solicitud:', error);
+        });
+    }
+</script>
+</body>
+</html>
