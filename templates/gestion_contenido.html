@@ -1,20 +1,18 @@
 {% extends "panel.html" %}
 {% block content %}
   {% load permisos %}
-  {% tienePermiso 'contenido#crear' as permisoCrear %}
-  {% tienePermiso 'contenido#eliminar' as permisoEliminar %}
-  {% tienePermiso 'contenido#editar' as permisoEditar %}
+  {% tienePermiso 'contenido' '["crear", "editar", "eliminar"]' as permisosCont %}
   <h1 class="text-center">Gestión de Contenidos</h1>
   <!-- djlint:off -->
-                <div style="display: flex;
-                  justify-content: space-between;
-                  align-items: center">
+              <div style="display: flex;
+                justify-content: space-between;
+                align-items: center">
   <!-- djlint:on -->
   <h3>Listado de contenidos</h3>
   <button type="button"
           class="btn btn-success"
           onclick="window.location.href='{% url 'crear_contenido' %}'"
-          {% if not permisoCrear %}disabled{% endif %}>Nuevo contenido</button>
+          {% if not permisosCont.crear %}disabled{% endif %}>Nuevo contenido</button>
 </div>
 {% if messages %}
   <div class="alert alert-success">
@@ -45,8 +43,9 @@
       <tr>
         <td>{{ contenido.id }}</td>
         <td>{{ contenido.titulo }}</td>
-        <td>{{ contenido.fecha_creacion }}</td>
-        <td>{{ contenido.fecha_modificacion }}</td>
+        <td>{{ contenido.fecha_creacion|date:"d M Y H:i" }}</td>
+        <td>{{ contenido.fecha_modificacion|date:"d M Y H:i" }}</td>
+
         <td>
           <div class="button-group">
             <!-- Botón Eliminar -->
@@ -55,13 +54,12 @@
               <button type="submit"
                       class="btn btn-danger"
                       onclick="return confirm('¿Estás seguro de que deseas eliminar este artículo?');"
-                      {% if not permisoEliminar %}disabled{% endif %}>Eliminar</button>
+                      {% if not permisosCont.eliminar %}disabled{% endif %}>Eliminar</button>
             </form>
             <!-- Botón Editar.    -->
-            <a href={% url 'editar_contenido' contenido.id %}>
-            Editar
-            </a>
-            
+            {% if permisosCont.editar %}
+              <a href={% url 'editar_contenido' contenido.id %}>Editar</a>
+            {% endif %}
           </div>
         </td>
       </tr>

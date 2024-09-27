@@ -43,6 +43,7 @@ class Contenido(models.Model):
     autor_id = models.CharField(max_length=255, null=True, blank=True)
     editor_id = models.CharField(max_length=255, null=True, blank=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)  # Fecha de creación automática
+    fecha_modificacion = models.DateTimeField(auto_now=True)  # Se actualiza en cada modificación
     
     def obtener_imagen(self):
         if self.imagen:
