@@ -15,7 +15,7 @@ from django.core.paginator import Paginator
 
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse, HttpResponseForbidden
-
+from django.contrib import messages
 
 def crear_contenido(request):
     """
@@ -311,3 +311,44 @@ def tablero_kanban(request):
 
     return render(request, 'tablero_kanban.html', contexto)
 
+def visualizar_contenido(request, pk):
+    """
+    Despliega la informacion de un solo contenido y los comentarios para ese contenido
+    
+    :param request: La solicitud HTTP.
+    :type request: HttpRequest
+    :param pk: La clave primaria del contenido a ser desplegado
+    :type pk: int
+    :return: HttpResponse: La respuesta renderizada con la lista de categorías.
+    """
+    try:
+        contenido = Contenido.objects.get(pk=pk)
+        return render(request,'contenido.html',{'contenido':contenido})
+    except Contenido.DoesNotExist:
+        return JsonResponse({'error': 'Contenido no encontrado'}, status=404)
+    
+def cambiar_estado(request,pk,estado_actual,estado_siguiente):
+    
+    contenido = get_object_or_404(Contenido, pk=pk)
+    estados_disponibles = ('Borrador', 'Revisión', 'A Publicar', 'Publicado', 'Inactivo')
+
+    # Verifica que los estados actual y siguiente existan en la lista de estados
+    if estado_actual in estados_disponibles and estado_siguiente in estados_disponibles:
+        actual = estados_disponibles.index(estado_actual)
+        siguiente = estados_disponibles.index(estado_siguiente)
+
+        # Si el estado siguiente no es 'Inactivo' y el estado actual no es 'Publicado'
+        if (estado_siguiente != 'Inactivo') and (estado_actual != 'Publicado'):
+            
+            # Verifica que los estados estén uno al lado del otro
+            if abs(actual - siguiente) == 1 or estado_actual=='Inactivo':
+                contenido.estado = estado_siguiente
+                contenido.save()
+                return redirect('visualizar_contenido', pk)
+            else:
+                messages.error(request, "No se pudo cambiar de estado")
+                return redirect(request.META.get('HTTP_REFERER'))
+        else:
+            contenido.estado = estado_siguiente
+            contenido.save()
+            return redirect('visualizar_contenido', pk)

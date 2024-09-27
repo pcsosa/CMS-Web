@@ -5,6 +5,7 @@ from subcategorias.forms import SubcategoriaForm
 from .models import Subcategoria
 from django.contrib import messages
 from django.views.decorators.http import require_POST
+from contenidos.models_cont import Contenido
 
 def administrar_subcategorias(request):
     """
@@ -91,14 +92,17 @@ def eliminar_subcategoria(request, pk):
     :return: Una respuesta con la vista de confirmación de eliminación.
     :rtype: HttpResponse
     """
-    subcategoria = get_object_or_404(Subcategoria, pk=pk)
-    categoria = subcategoria.categoria
-    
+    subcategoria_ = get_object_or_404(Subcategoria, pk=pk)
+    categoria_ = subcategoria_.categoria
+    contenidos = Contenido.objects.filter(subcategoria = pk , categoria = categoria_.pk)
     if request.method == 'POST':
-        subcategoria.delete()
-        messages.success(request, "La eliminacion ha sido exitosa")
-        return redirect('lista_subcategorias',pk=categoria.pk)  # Redirige a la lista de subcategorías después de eliminar
-    
+        if not contenidos:
+            subcategoria_.delete()
+            messages.success(request, "La eliminacion ha sido exitosa")
+            return redirect('lista_subcategorias',pk=categoria_.pk)  # Redirige a la lista de subcategorías después de eliminar
+        else :
+            messages.error(request,"No se pudo borrar la subcategoria. Verifique si existen contenidos publicados.")
+            return redirect('lista_subcategorias',pk=categoria_.pk)
 
 @require_POST
 def actualizar_subcategoria(request):
