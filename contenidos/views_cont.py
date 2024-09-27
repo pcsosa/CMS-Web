@@ -338,7 +338,7 @@ def cambiar_estado(request,pk,estado_actual,estado_siguiente):
         siguiente = estados_disponibles.index(estado_siguiente)
 
         # Si el estado siguiente no es 'Inactivo' y el estado actual no es 'Publicado'
-        if (estado_siguiente != 'Inactivo') and (estado_actual != 'Publicado'):
+        if (estado_siguiente != 'Inactivo'):
             
             # Verifica que los estados estén uno al lado del otro
             if abs(actual - siguiente) == 1 or estado_actual=='Inactivo':
