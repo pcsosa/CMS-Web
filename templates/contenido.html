@@ -1,7 +1,6 @@
-{% load static %}
 {% load permisos %}
-{% tienePermiso 'botones' '["ver"]' as permisoBoton %}
 {% tienePermiso 'contenido' '["ver"]' as permisoEstado %}
+{% tienePermiso 'boton' '["enviar_aPublicar","enviar_borrador","enviar_publicar","enviar_revision","ver"]' as permisoBoton %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -234,7 +233,8 @@
             <div class="post">
                 <!--
                     Solo para los que tienen permiso
-                -->
+            -->
+                {% if permisoBoton.ver %}
                 <div class="menu-icon" onclick="toggleDropdownMenu()">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor">
                         <circle cx="12" cy="6" r="1.5"></circle>
@@ -242,26 +242,30 @@
                         <circle cx="12" cy="18" r="1.5"></circle>
                     </svg>
                 </div>
+                {% endif %}
                 <!-- HASTA ACA-->
                 <div class="dropdown-menu" id="dropdownMenu">
                     <ul>
-                        {% if permisoBoton.ver %}
-                            <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'Revisión' %}"><li> Mandar a edición</li></a>
+                        {% if permisoBoton.enviar_revision and contenido.estado != 'Revisión' and contenido.estado != 'Publicado' %}
+                        <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'Revisión' %}"><li> Mandar a edición</li></a>
                         {% endif %}
-                        {% if permisoBoton.ver %}
-                            <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'A Publicar' %}"><li> Mandar a Publicador</li></a>
+                        {% if permisoBoton.enviar_aPublicar and contenido.estado != 'Borrador' and contenido.estado != 'a Publicar'%}
+                        <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'A Publicar' %}"><li> Mandar a Publicador</li></a>
                         {% endif %}
-                        {% if permisoBoton.ver %}
-                            <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'Publicado' %}"><li>Publicar</li></a>
+                        {% if permisoBoton.enviar_publicar and contenido.estado != 'Revisión' and contenido.estado != 'Borrador'%}
+                        <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'Publicado' %}"><li>Publicar</li></a>
                         {% endif %}
-                        {% if permisoBoton.ver %}
-                            <li onclick="abrirPanelComentarios()">Enviar a Borrador</li>
+                        {% if permisoBoton.enviar_borrador and contenido.estado != 'Borrador' and contenido.estado != 'a Publicar' and contenido.estado != 'Publicado' %}
+                        <li onclick="abrirPanelComentarios()">Enviar a Borrador</li>
                         {% endif %}
-                        <!--<li> <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'Inactivo' %}">Eliminar</a></li>
-                    -->
+                        {% if contenido.estado != 'Inactivo' %}
+                        <li> <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'Inactivo' %}">Inactivar</a></li>
+                        {% endif %}
                     </ul>
                 </div>
-                <div class="estado">{{ contenido.estado }}</div>
+                {% if permisoEstado.ver %}
+                    <div class="estado">{{ contenido.estado }}</div>
+                {% endif %}
                 <div class="title"> 
                     {{ contenido.titulo }}
                 </div>
@@ -273,7 +277,7 @@
                     <img src="{{ contenido.imagen.url }}" alt="{{ contenido.titulo }}">
                 {% endif %}
             </div>
-            {% if contenido.estado == 'publicado'%}
+            {% if contenido.estado == 'Publicado' %}
                 <div class="comments">
                     <h3 style="border-bottom:1px solid #38444d; padding: 10px 0; border-top:1px solid #38444d">Comentarios</h3>
                     <div class="comentar-body">
