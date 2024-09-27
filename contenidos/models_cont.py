@@ -23,6 +23,15 @@ class Contenido(models.Model):
 
     tipo = models.CharField(max_length=10, choices=TIPO_CONTENIDO)
     estado = models.CharField(max_length=20, choices=ESTADO_CONTENIDO, default='Borrador')
+    """
+    Modelo que representa un contenido en el sistema.
+
+    :param titulo: Título del contenido, con un máximo de 255 caracteres.
+    :param texto: Texto completo del contenido.
+    :param imagen: Imagen opcional asociada al contenido, almacenada en la carpeta 'imagenes/'.
+    :param fecha_creacion: Fecha en que el contenido fue creado, asignada automáticamente.
+    :param fecha_actualizacion: Fecha de la última actualización del contenido, asignada automáticamente.
+    """
     titulo = models.CharField(max_length=255)  # Campo para el título del contenido
     texto = models.TextField()  # Campo para el texto
     imagen = models.ImageField(upload_to='multimedia/', blank=True, null=True)  # Para imágenes subidas
@@ -34,6 +43,7 @@ class Contenido(models.Model):
     autor_id = models.CharField(max_length=255, null=True, blank=True)
     editor_id = models.CharField(max_length=255, null=True, blank=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)  # Fecha de creación automática
+    fecha_modificacion = models.DateTimeField(auto_now=True)  # Se actualiza en cada modificación
     
     def obtener_imagen(self):
         if self.imagen:
@@ -43,13 +53,32 @@ class Contenido(models.Model):
         return None
 
     class Meta:
+        """
+        Metadatos para el modelo Contenido.
+
+        :param verbose_name_plural: Nombre en plural de la clase.
+        :param app_label: Etiqueta de la aplicación asociada.
+        :param db_table: Nombre de la tabla en la base de datos.
+        """
         verbose_name_plural = "Contenidos"
         app_label = 'contenidos'
 
     def __str__(self):
+        """
+        Representación en cadena del contenido.
+
+        :return: El título del contenido.
+        :rtype: str
+        """
         return self.titulo
 
 class ContenidoForm(forms.ModelForm):
+    """
+    Formulario para el modelo Contenido.
+
+    :param model: El modelo asociado al formulario.
+    :param fields: Los campos que serán utilizados en el formulario.
+    """
     class Meta:
         model = Contenido
         fields = ['tipo', 'titulo', 'texto', 'imagen', 'imagen_url', 'categoria', 'subcategoria', 'estado', 'autor_id', 'editor_id', 'publicador_id', 'id_historial_mod']
