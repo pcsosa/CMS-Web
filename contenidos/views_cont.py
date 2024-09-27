@@ -247,3 +247,21 @@ def editar_contenido(request, pk):
     return render(request, 'editar_contenido.html', contexto)
 
 
+def tablero_kanban(request):
+    # Obtener artículos filtrados por estado
+    borrador = Contenido.objects.filter(estado='Borrador')
+    en_revision = Contenido.objects.filter(estado='Revisión')
+    a_publicar = Contenido.objects.filter(estado='A Publicar')
+    publicado = Contenido.objects.filter(estado='Publicado')
+    inactivo = Contenido.objects.filter(estado='Inactivo')
+
+    contexto = {
+        'borrador': borrador,
+        'en_revision': en_revision,
+        'a_publicar': a_publicar,
+        'publicado': publicado,
+        'inactivo': inactivo,
+    }
+
+    return render(request, 'tablero_kanban.html', contexto)
+
