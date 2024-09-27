@@ -354,15 +354,22 @@ def cambiar_estado(request, pk, estado_actual, estado_siguiente):
         else:
             contenido.estado = estado_siguiente
             contenido.save()
-            #messages.success(request, "El contenido ha sido inactivado.")
-    #else:
-        #messages.error(request, "Estados inválidos proporcionados.")
-
-    # Manejar la redirección si HTTP_REFERER no está presente
-    referer = request.META.get('HTTP_REFERER')
-
-    if referer:
-        return redirect(referer)
-    else:
-        # Si no hay referer, redirigir a una vista por defecto
-        return redirect('tablero_kanban')
+            return redirect('visualizar_contenido', pk)
+def guardar_comentario(request, pk ):
+    
+    contenido_ = get_object_or_404(Contenido, pk=pk)
+    
+    if request.method == 'POST':
+        comentario_ = request.POST.get('comentario')
+        if comentario_:
+            comentario_ = comentario_.replace('<p>', '').replace('</p>', '')
+        else:
+            comentario_ = ''  # O puedes decidir usar un valor predeterminado
+            
+    nuevo_comentario = Comentario(
+        contenido = contenido_,
+        comentario = comentario_,
+        active =True
+    )
+    nuevo_comentario.save()
+    return redirect('visualizar_contenido',pk)

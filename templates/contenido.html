@@ -276,10 +276,9 @@
 
                 <h4>Deja un comentario</h4>
                 
-                <form method="post">
+                <form method="post" action="{% url 'guardar_comentario' contenido.id %}">
                     {% csrf_token %}
-                    <textarea rows="5" cols="10"></textarea><br><br>
-                    {{ form.as_p }}
+                    <textarea rows="5" cols="10" name="comentario"></textarea><br><br>
                     <button type="submit">Comentar</button>
                 </form>
                 
