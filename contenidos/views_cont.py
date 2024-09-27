@@ -2,7 +2,9 @@ from django.contrib.auth.models import User  # Para manejar el publicador
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect
-from .models_cont import ContenidoForm, Contenido, Categoria
+
+from contenidos.forms import ComentarioForm
+from .models_cont import Comentario, ContenidoForm, Contenido, Categoria
 from appcms.models import Categoria
 from subcategorias.models import Subcategoria
 from appcms.utils.utils import obtenerUserId, obtenerUsersConRol
@@ -199,24 +201,27 @@ def editar_contenido(request, pk):
     # Renderizar el formulario de edición con los datos actuales del contenido
     return render(request, 'editar_contenido.html', contexto)
 
-def post_detail(request, slug):
-    post = get_object_or_404(Post, slug=slug)
-    comentarios = post.comentarios.filter(activo=True)
-    nuevo_comentario = None
-
+def dejar_comentario(request, id):
+    contenido = get_object_or_404(Contenido, contenido_id=id)
+    
     if request.method == 'POST':
-        comentario_form = CommentForm(data=request.POST)
+        comentario_form = ComentarioForm(data=request.POST)
         if comentario_form.is_valid():
+            print("Errores en el formulario:", comentario_form.errors) 
             nuevo_comentario = comentario_form.save(commit=False)
-            nuevo_comentario.post = post
+            nuevo_comentario.contenido = contenido
+            nuevo_comentario.active = True
             nuevo_comentario.save()
+            return redirect('visualizar_contenido', contenido_id=contenido.id)  
     else:
-        comentario_form = CommentForm()
+        comentario_form = ComentarioForm()
 
-    return render(request, 'lista_contenidos.html', {
+    comentarios = Comentario.objects.filter(contenido=contenido, active=True)
+    print("Comentarios recuperados:", comentarios)
+
+    return render(request, 'contenido.html', {
         'contenido': contenido,
         'comentarios': comentarios,
-        'nuevo_comentario': nuevo_comentario,
         'comentario_form': comentario_form,
     })
 

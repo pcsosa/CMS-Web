@@ -205,21 +205,27 @@
             <div class="comments">
                 <h3 style="border-bottom:1px solid #38444d; padding: 10px 0; border-top:1px solid #38444d">Comentarios</h3>
                 <div class="comentar-body">
-                    <div class="comment-content">
-                        <textarea placeholder="Comenta la publicación"></textarea>
+                    {% for comment in comments %}
+                    <div class="comment">
+                        <strong>{{ comment.usuario }}</strong>: {{ comment.comentario }} <br>
+                        <small>{{ comment.fecha|date:"d/m/Y H:i" }}</small>
                     </div>
+                    {% empty %}
+                        <p>No hay comentarios aún. ¡Sé el primero en comentar!</p>
+                    {% endfor %}
                 </div>
-                <button class="reply-button">Comentar</button>
 
-                <div class="comment">
-                    <div class="title">@usuario2</div>
-                    <p>Inspirador mensaje. Gracias por compartir tu experiencia.</p>
-                </div>
-                <div class="comment">
-                    <div class="title">@usuario3</div>
-                    <p>Cada día es una oportunidad para crecer. ¡Sigue adelante!</p>
-                </div>
+                <h4>Deja un comentario</h4>
+                <textarea rows="5" cols="10"></textarea><br><br>
+                <form method="post" action="{% url 'dejar_comentario' contenido.id %}">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit">Comentar</button>
+                </form>
+                
             </div>
+            
+                
         </div>
 
         <!-- Panel lateral de comentarios -->
