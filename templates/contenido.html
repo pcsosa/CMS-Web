@@ -11,7 +11,6 @@
             padding: 20px;
             background-color: #f0f2f5;
             height: 100%;
-            display: flex;
             justify-content: space-between;
             transition: width 0.3s ease;
         }
@@ -156,16 +155,77 @@
         a {
             text-decoration: none;
         }
+        .estado {
+            display:inline-block;
+            border: 1px solid red;
+            padding:5px;
+            border-radius: 10%;
+            color:red;
+            margin-bottom: 10px;
+        }
+        .messages-container {
+            width: 100%; /* Que ocupe todo el ancho del contenedor */
+            padding: 10px;
+            margin-bottom: 20px; /* Separación con el contenido debajo */
+            display: flex;
+            justify-content: center; /* Para centrar los mensajes horizontalmente */
+        }
+
+        .message {
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            display: inline-block;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .message.success {
+            background-color: #d4edda;
+            border-left: 5px solid #28a745;
+            color: #155724;
+        }
+
+        .message.error {
+            background-color: #f8d7da;
+            border-left: 5px solid #dc3545;
+            color: #721c24;
+        }
+
+        .message.info {
+            background-color: #cce5ff;
+            border-left: 5px solid #007bff;
+            color: #004085;
+        }
+
+        .message.warning {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
+            color: #856404;
+        }
+
+        .message-icon {
+            margin-right: 10px;
+        }
+
+        .message svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
     </style>
 </head>
 <body>
     {% if messages %}
-      <div class="">
-        {% for message in messages %} {{ message }} {% endfor %}
-      </div>
+        <div class="messages-container">
+            {% for message in messages %}
+            <div class="message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
     {% endif %}
 
     <div class="main-content">
+        
         <div class="container">
             <div class="post">
                 <!--
@@ -189,11 +249,11 @@
                     -->
                     </ul>
                 </div>
+                <div class="estado">{{ contenido.estado }}</div>
                 <div class="title"> 
-                    {{ contenido.estado }}
-                    <hr>
                     {{ contenido.titulo }}
                 </div>
+                
                 <div class="content">
                     <p> {{ contenido.texto }} </p>
                 </div>

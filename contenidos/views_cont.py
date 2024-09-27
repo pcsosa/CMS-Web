@@ -7,16 +7,27 @@ from contenidos.forms import ComentarioForm
 from .models_cont import Comentario, ContenidoForm, Contenido, Categoria
 from appcms.models import Categoria
 from subcategorias.models import Subcategoria
-from appcms.utils.utils import obtenerUserId, obtenerUsersConRol
+from appcms.utils.utils import obtenerToken, obtenerUserId, obtenerUsersConRol
 from django.core.serializers import serialize
 import requests, json
+from django.db.models import Q  # Para realizar búsquedas
+
+from django.core.paginator import Paginator
+
 
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse, HttpResponseForbidden
 from django.contrib import messages
 
 def crear_contenido(request):
-  
+    """
+    Crea un nuevo contenido en el sistema a partir de los datos enviados a través del formulario.
+
+    :param request: Objeto HttpRequest que contiene los datos de la solicitud.
+    :return: Si la solicitud es POST y los datos son válidos, redirige a 'lista_contenidos'. 
+             Si hay errores, renderiza el formulario con mensajes de error.
+    :rtype: HttpResponse
+    """
     editores = obtenerUsersConRol('Editor') # Obtener todos los usuarios con el rol de Editor
     categorias = Categoria.objects.all()  # Obtener todas las categorías para mostrarlas en el formulario
     subcategorias = Subcategoria.objects.all()  # Obtener todas las subcategorías
@@ -24,7 +35,6 @@ def crear_contenido(request):
     
     print("=============================================SUBCATEGORIAS")
     print(sub_json)
-    
     
     if request.method == 'POST':
         # Obtener datos del formulario
@@ -40,7 +50,7 @@ def crear_contenido(request):
         editor_id = request.POST.get('editor')
 
         # Obtener el usuario actual como el autor
-        token = request.session.get("token")
+        token = obtenerToken(request)
         autor_id = obtenerUserId(token)
         
         # Obtener el publicador
@@ -114,20 +124,103 @@ def crear_contenido(request):
     return render(request, 'crear_contenido.html', contexto)
 
 def lista_contenidos(request):
-    contenidos = Contenido.objects.all()  # Obtén todos los contenidos
-    return render(request, 'lista_contenidos.html', {'contenidos': contenidos})
+    """
+    Muestra una lista de todos los contenidos en el sistema.
+
+    :param request: Objeto HttpRequest que contiene los datos de la solicitud.
+    :return: Respuesta renderizada con la plantilla 'lista_contenidos.html' y el contexto que incluye los contenidos.
+    :rtype: HttpResponse
+    """
+    # Obtener todos los contenidos inicialmente
+    contenidos = Contenido.objects.all()
+    autores = obtenerUsersConRol('Autor')
+
+    # Obtener los parámetros del filtro desde la solicitud
+    orden = request.GET.get('orden', 'desc')  # Por defecto descendente
+    categoria_id = request.GET.get('categoria')
+    autor_id = request.GET.get('autor')
+    busqueda = request.GET.get('busqueda', '')
+
+    # Filtrar por categoría si se proporciona
+    if categoria_id:
+        contenidos = contenidos.filter(categoria_id=categoria_id)
+    
+    # Filtrar por autor si se proporciona
+    if autor_id:
+        
+        contenidos = contenidos.filter(autor_id=autor_id)
+
+
+    # Filtrar por búsqueda en el título o el contenido
+    if busqueda:
+        contenidos = contenidos.filter(Q(titulo__icontains=busqueda) | Q(texto__icontains=busqueda))
+
+    # Ordenar por fecha de creación
+    if orden == 'asc':
+        contenidos = contenidos.order_by('fecha_modificacion')
+    else:
+        contenidos = contenidos.order_by('-fecha_modificacion')
+
+    # Pasar la lista de contenidos y categorías al contexto
+    categorias = Categoria.objects.all()
+    paginator = Paginator(contenidos, 10)  # 10 contenidos por página
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    contexto = {
+        'page_obj': page_obj,
+        'contenidos': contenidos,
+        'categorias': categorias,
+        'busqueda': busqueda,
+        'autores' : autores,
+    }
+    
+    return render(request, 'lista_contenidos.html', contexto)
+
 
 def gestion_contenido(request):
+    """
+    Muestra la página de gestión de contenidos, que incluye todos los contenidos disponibles.
+
+    :param request: Objeto HttpRequest que contiene los datos de la solicitud.
+    :return: Respuesta renderizada con la plantilla 'gestion_contenido.html' y el contexto que incluye los contenidos.
+    :rtype: HttpResponse
+    """
     contenidos = Contenido.objects.all()
     return render(request, 'gestion_contenido.html', {'contenidos': contenidos})
   
 def editar_contenido(request):
-  # Falta codigo para editar contenido
-  return render(request, 'editar_contenido.html')
+    """
+    Muestra la página para editar un contenido específico.
 
+    :param request: Objeto HttpRequest que contiene los datos de la solicitud.
+    :return: Respuesta renderizada con la plantilla 'editar_contenido.html'.
+    :rtype: HttpResponse
+    """
+
+    # Falta codigo para editar contenido
+    return render(request, 'editar_contenido.html')
+
+def eliminar_contenido(request):
+    """
+    Muestra la página para eliminar un contenido específico.
+
+    :param request: Objeto HttpRequest que contiene los datos de la solicitud.
+    :return: Respuesta renderizada con la plantilla 'eliminar_contenido.html'.
+    :rtype: HttpResponse
+    """
+    # Falta codigo para eliminar contenido
+    return render(request, 'eliminar_contenido.html')
 
 @csrf_exempt
 def upload_image(request):
+    """
+    Sube una imagen al servidor y retorna su URL.
+
+    :param request: Objeto HttpRequest que contiene los datos de la solicitud.
+    :return: Un JsonResponse con la URL de la imagen subida.
+    :rtype: JsonResponse
+    """
     if request.method == 'POST':
         image = request.FILES['file']
         # Guardar la imagen en el servidor
@@ -169,7 +262,7 @@ def editar_contenido(request, pk):
             content = contenido.texto  # Mantener el contenido original si no se proporciona uno nuevo
 
         # Obtener el usuario actual como el autor
-        token = request.session.get("token")
+        token = obtenerToken(request)
         autor_id = obtenerUserId(token)
         
         # Obtener la categoría y subcategoría
@@ -224,6 +317,24 @@ def dejar_comentario(request, id):
         'comentarios': comentarios,
         'comentario_form': comentario_form,
     })
+
+def tablero_kanban(request):
+    # Obtener artículos filtrados por estado
+    borrador = Contenido.objects.filter(estado='Borrador')
+    en_revision = Contenido.objects.filter(estado='Revisión')
+    a_publicar = Contenido.objects.filter(estado='A Publicar')
+    publicado = Contenido.objects.filter(estado='Publicado')
+    inactivo = Contenido.objects.filter(estado='Inactivo')
+
+    contexto = {
+        'borrador': borrador,
+        'en_revision': en_revision,
+        'a_publicar': a_publicar,
+        'publicado': publicado,
+        'inactivo': inactivo,
+    }
+
+    return render(request, 'tablero_kanban.html', contexto)
 
 def visualizar_contenido(request, pk):
     """
