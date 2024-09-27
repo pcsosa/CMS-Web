@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contenido</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+            height: 100%;
+            justify-content: space-between;
+            transition: width 0.3s ease;
+        }
+        .main-content {
+            display: flex;
+            width: 100%;
+            transition: width 0.3s ease;
+        }
+        .container {
+            flex: 1;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: flex-basis 0.3s ease;
+        }
+        .post {
+            position: relative;
+        }
+        .title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .content {
+            margin-bottom: 15px;
+        }
+        img {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+            border-radius: 10px;
+        }
+        .comments {
+            background-color: #f0f2f5;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        .comment {
+            border-bottom: 1px solid #38444d;
+            padding: 10px 0;
+        }
+        .comment:last-child {
+            border-bottom: none;
+        }
+        textarea {
+            width: 98%;
+            height: 60px;
+            border: none;
+            padding: 10px;
+            border-radius: 10px;
+            resize: none;
+        }
+        
+        /* Estilos para el icono de los tres puntos */
+        .menu-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            z-index: 10;
+        }
+        .menu-icon svg {
+            width: 24px;
+            height: 24px;
+            color: #333; 
+            fill: none;
+            stroke: #333;
+            stroke-width: 2px;
+        }
+        .menu-icon:hover{
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            border-radius: 50%;
+        }
+        /* Estilos del icono de cerrar*/
+        .close-icon {
+            cursor: pointer;
+            float: right;
+            margin-bottom: 10px;
+        }
+        .close-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: #333; /* Color del icono */
+        }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 10px;
+            top: 40px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+        .dropdown-menu ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .dropdown-menu li {
+            padding: 10px;
+            cursor: pointer;
+        }
+        .dropdown-menu li:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Panel lateral de comentarios */
+        #comentariosPanel {
+            display: none;
+            flex-basis: 0;
+            max-width: 30%;
+            background-color: rgb(0,0,0,0.2);
+            color: white;
+            border-left: 1px solid #ccc;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            transition: flex-basis 0.3s ease;
+            overflow-y: auto;
+            border-radius: 5px;
+            margin-left: 10px;
+        }
+        #comentariosPanel h3 {
+            margin-top: 0;
+        }
+        #comentariosPanel textarea {
+            width: 98%;
+            height: 100px;
+            margin-bottom: 10px;
+        }
+
+        /* Flexbox para que el contenido se ajuste al panel */
+        .with-panel #comentariosPanel {
+            display: block;
+            flex-basis: 30%;
+        }
+        .with-panel .container {
+            flex-basis: 70%;
+        }
+        a {
+            text-decoration: none;
+        }
+        .estado {
+            display:inline-block;
+            border: 1px solid red;
+            padding:5px;
+            border-radius: 10%;
+            color:red;
+            margin-bottom: 10px;
+        }
+        .messages-container {
+            width: 100%; /* Que ocupe todo el ancho del contenedor */
+            padding: 10px;
+            margin-bottom: 20px; /* Separación con el contenido debajo */
+            display: flex;
+            justify-content: center; /* Para centrar los mensajes horizontalmente */
+        }
+
+        .message {
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            display: inline-block;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .message.success {
+            background-color: #d4edda;
+            border-left: 5px solid #28a745;
+            color: #155724;
+        }
+
+        .message.error {
+            background-color: #f8d7da;
+            border-left: 5px solid #dc3545;
+            color: #721c24;
+        }
+
+        .message.info {
+            background-color: #cce5ff;
+            border-left: 5px solid #007bff;
+            color: #004085;
+        }
+
+        .message.warning {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
+            color: #856404;
+        }
+
+        .message-icon {
+            margin-right: 10px;
+        }
+
+        .message svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+    </style>
+</head>
+<body>
+    {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+            <div class="message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="main-content">
+        
+        <div class="container">
+            <div class="post">
+                <!--
+                    Solo para los que tienen permiso
+                -->
+                <div class="menu-icon" onclick="toggleDropdownMenu()">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor">
+                        <circle cx="12" cy="6" r="1.5"></circle>
+                        <circle cx="12" cy="12" r="1.5"></circle>
+                        <circle cx="12" cy="18" r="1.5"></circle>
+                    </svg>
+                </div>
+                <!-- HASTA ACA-->
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <ul>
+                        <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'Revisión' %}"><li> Mandar a edición</li></a>
+                        <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'A Publicar' %}"><li> Mandar a Publicador</li></a>
+                        <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'Publicado' %}"><li>Publicar</li></a>
+                        <li onclick="abrirPanelComentarios()">Enviar a Borrador</li>
+                        <!--<li> <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'Inactivo' %}">Eliminar</a></li>
+                    -->
+                    </ul>
+                </div>
+                <div class="estado">{{ contenido.estado }}</div>
+                <div class="title"> 
+                    {{ contenido.titulo }}
+                </div>
+                
+                <div class="content">
+                    <p> {{ contenido.texto }} </p>
+                </div>
+                {% if contenido.imagen %}
+                    <img src="{{ contenido.imagen.url }}" alt="{{ contenido.titulo }}">
+                {% endif %}
+            </div>
+
+            <div class="comments">
+                <h3 style="border-bottom:1px solid #38444d; padding: 10px 0; border-top:1px solid #38444d">Comentarios</h3>
+                <div class="comentar-body">
+                    <div class="comment-content">
+                        <textarea placeholder="Comenta la publicación"></textarea>
+                    </div>
+                </div>
+                <button class="reply-button">Comentar</button>
+
+                <div class="comment">
+                    <div class="title">@usuario2</div>
+                    <p>Inspirador mensaje. Gracias por compartir tu experiencia.</p>
+                </div>
+                <div class="comment">
+                    <div class="title">@usuario3</div>
+                    <p>Cada día es una oportunidad para crecer. ¡Sigue adelante!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel lateral de comentarios -->
+        <div id="comentariosPanel">
+            <div class="close-icon" onclick="cerrarPanelComentarios()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M18 6L6 18M6 6l12 12" stroke="#333" stroke-width="2" fill="none"/>
+                </svg>
+            </div>
+            <h3>Comentarios para el autor</h3>
+            <textarea placeholder="Escribe tus comentarios..."></textarea>
+            <button onclick="guardarComentario()">Enviar Comentario</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleDropdownMenu() {
+            var dropdownMenu = document.getElementById('dropdownMenu');
+            if (dropdownMenu.style.display === 'block') {
+                dropdownMenu.style.display = 'none';
+            } else {
+                dropdownMenu.style.display = 'block';
+            }
+        }
+
+        // Abrir el panel de comentarios y ajustar el layout
+        function abrirPanelComentarios() {
+            var mainContent = document.querySelector('.main-content');
+            mainContent.classList.toggle('with-panel'); // Añade o quita la clase 'with-panel'
+        }
+        function cerrarPanelComentarios() {
+            var mainContent = document.querySelector('.main-content');
+            mainContent.classList.remove('with-panel'); // Quita la clase 'with-panel'
+        }
+        // Función para guardar el comentario
+        function guardarComentario() {
+            var comentario = document.querySelector('#comentariosPanel textarea').value;
+            const url = "{% url 'cambiar_estado' contenido.pk contenido.estado 'Borrador' %}";
+            if (comentario) {
+                alert("Comentario guardado: " + comentario);
+                // Lógica adicional para enviar el comentario al servidor
+            } else {
+                window.location.href = url;
+            }
+        }
+
+        // Cerrar el menú desplegable si se hace clic fuera de él
+        window.onclick = function(event) {
+            var dropdownMenu = document.getElementById('dropdownMenu');
+            if (!event.target.closest('.menu-icon')) {
+                dropdownMenu.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
