@@ -1,7 +1,8 @@
 {% load static %}
 {% load permisos %}
-{% tienePermiso 'categoria#ver' as permisoCat %}
-{% tienePermiso 'contenido#ver' as permisoCont %}
+{% tienePermiso 'contenido' '["ver"]' as permisoCont %}
+{% tienePermiso 'categoria' '["ver"]' as permisoCat %}
+{% tienePermiso 'kanban' '["ver"]' as permisoKan %}
 <!DOCTYPE html>
 <html lang="es">
   <head>
@@ -36,7 +37,7 @@
             <i class="fas fa-tachometer-alt"></i>
             Dashboard
           </a>
-          {% if permisoCont %}
+          {% if permisoCont.ver %}
             <a href={% url 'gestion_contenido' %} class="dashboard-nav-item active">
               <i class="fas fa-newspaper"></i>
               Artículos
@@ -54,24 +55,26 @@
               <a href="#" class="dashboard-nav-dropdown-item">Eliminar artículos</a>
             </div>
           </div> {% endcomment %}
-          {% if permisoCat %}
+          {% if permisoCat.ver %}
             <a href={% url 'lista_categorias' %} class="dashboard-nav-item">
               <i class="fas fa-icons"></i>
               Categorías
             </a>
           {% endif %}
-          <a href="#" class="dashboard-nav-item">
-            <i class="fas fa-key"></i>
-            Keycloak
-          </a>
-          <a href="#" class="dashboard-nav-item">
+          {% if permisoKan.ver %}          
+            <a href={% url 'tablero_kanban' %} class="dashboard-nav-item">
+              <i class="fa-solid fa-table-columns"></i>
+              Tablero kanban
+            </a>
+          {% endif %}
+          <!-- <a href="#" class="dashboard-nav-item">
             <i class="fas fa-cogs"></i>
             Configuración
           </a>
           <a href="#" class="dashboard-nav-item">
             <i class="fas fa-user"></i>
             Perfil
-          </a>
+          </a> -->
           <div class="nav-item-divider"></div>
           <a href={% url 'logout' %} class="dashboard-nav-item">
             <i class="fas fa-sign-out-alt"></i>
