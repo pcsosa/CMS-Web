@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.models import User  # Para manejar el publicador
 from django.core.paginator import Paginator
 from django.core.serializers import serialize
@@ -10,11 +11,16 @@ from appcms.models import Categoria
 from appcms.utils.utils import obtenerToken, obtenerUserId, obtenerUsersConRol
 from subcategorias.models import Subcategoria
 
-from .models_cont import Categoria, Contenido, ContenidoForm
-
 
 def crear_contenido(request):
+    """
+    Crea un nuevo contenido en el sistema a partir de los datos enviados a través del formulario.
 
+    :param request: Objeto HttpRequest que contiene los datos de la solicitud.
+    :return: Si la solicitud es POST y los datos son válidos, redirige a 'lista_contenidos'.
+             Si hay errores, renderiza el formulario con mensajes de error.
+    :rtype: HttpResponse
+    """
     editores = obtenerUsersConRol(
         "Editor"
     )  # Obtener todos los usuarios con el rol de Editor
@@ -23,6 +29,9 @@ def crear_contenido(request):
     )  # Obtener todas las categorías para mostrarlas en el formulario
     subcategorias = Subcategoria.objects.all()  # Obtener todas las subcategorías
     sub_json = serialize("json", subcategorias)
+
+    print("=============================================SUBCATEGORIAS")
+    print(sub_json)
 
     if request.method == "POST":
         # Obtener datos del formulario
@@ -111,6 +120,13 @@ def crear_contenido(request):
 
 
 def lista_contenidos(request):
+    """
+    Muestra una lista de todos los contenidos en el sistema.
+
+    :param request: Objeto HttpRequest que contiene los datos de la solicitud.
+    :return: Respuesta renderizada con la plantilla 'lista_contenidos.html' y el contexto que incluye los contenidos.
+    :rtype: HttpResponse
+    """
     # Obtener todos los contenidos inicialmente
     contenidos = Contenido.objects.all()
     autores = obtenerUsersConRol("Autor")
@@ -160,17 +176,51 @@ def lista_contenidos(request):
 
 
 def gestion_contenido(request):
+    """
+    Muestra la página de gestión de contenidos, que incluye todos los contenidos disponibles.
+
+    :param request: Objeto HttpRequest que contiene los datos de la solicitud.
+    :return: Respuesta renderizada con la plantilla 'gestion_contenido.html' y el contexto que incluye los contenidos.
+    :rtype: HttpResponse
+    """
     contenidos = Contenido.objects.all()
     return render(request, "gestion_contenido.html", {"contenidos": contenidos})
 
 
 def editar_contenido(request):
+    """
+    Muestra la página para editar un contenido específico.
+
+    :param request: Objeto HttpRequest que contiene los datos de la solicitud.
+    :return: Respuesta renderizada con la plantilla 'editar_contenido.html'.
+    :rtype: HttpResponse
+    """
+
     # Falta codigo para editar contenido
     return render(request, "editar_contenido.html")
 
 
+def eliminar_contenido(request):
+    """
+    Muestra la página para eliminar un contenido específico.
+
+    :param request: Objeto HttpRequest que contiene los datos de la solicitud.
+    :return: Respuesta renderizada con la plantilla 'eliminar_contenido.html'.
+    :rtype: HttpResponse
+    """
+    # Falta codigo para eliminar contenido
+    return render(request, "eliminar_contenido.html")
+
+
 @csrf_exempt
 def upload_image(request):
+    """
+    Sube una imagen al servidor y retorna su URL.
+
+    :param request: Objeto HttpRequest que contiene los datos de la solicitud.
+    :return: Un JsonResponse con la URL de la imagen subida.
+    :rtype: JsonResponse
+    """
     if request.method == "POST":
         image = request.FILES["file"]
         # Guardar la imagen en el servidor
@@ -272,3 +322,61 @@ def tablero_kanban(request):
     }
 
     return render(request, "tablero_kanban.html", contexto)
+
+
+def visualizar_contenido(request, pk):
+    """
+    Despliega la informacion de un solo contenido y los comentarios para ese contenido
+
+    :param request: La solicitud HTTP.
+    :type request: HttpRequest
+    :param pk: La clave primaria del contenido a ser desplegado
+    :type pk: int
+    :return: HttpResponse: La respuesta renderizada con la lista de categorías.
+    """
+    try:
+        contenido = Contenido.objects.get(pk=pk)
+        return render(request, "contenido.html", {"contenido": contenido})
+    except Contenido.DoesNotExist:
+        return JsonResponse({"error": "Contenido no encontrado"}, status=404)
+
+
+def cambiar_estado(request, pk, estado_actual, estado_siguiente):
+    contenido = get_object_or_404(Contenido, pk=pk)
+    estados_disponibles = (
+        "Borrador",
+        "Revisión",
+        "A Publicar",
+        "Publicado",
+        "Inactivo",
+    )
+
+    # Verifica que los estados actual y siguiente existan en la lista de estados
+    if estado_actual in estados_disponibles and estado_siguiente in estados_disponibles:
+        actual = estados_disponibles.index(estado_actual)
+        siguiente = estados_disponibles.index(estado_siguiente)
+
+        # Si el estado siguiente no es 'Inactivo' y el estado actual no es 'Publicado'
+        if estado_siguiente != "Inactivo":
+            # Verifica que los estados estén uno al lado del otro
+            if abs(actual - siguiente) == 1 or estado_actual == "Inactivo":
+                contenido.estado = estado_siguiente
+                contenido.save()
+                # messages.success(request, "El estado ha sido cambiado exitosamente.")
+            # else:
+            # messages.error(request, "No se pudo cambiar de estado.")
+        else:
+            contenido.estado = estado_siguiente
+            contenido.save()
+            # messages.success(request, "El contenido ha sido inactivado.")
+    # else:
+    # messages.error(request, "Estados inválidos proporcionados.")
+
+    # Manejar la redirección si HTTP_REFERER no está presente
+    referer = request.META.get("HTTP_REFERER")
+
+    if referer:
+        return redirect(referer)
+    else:
+        # Si no hay referer, redirigir a una vista por defecto
+        return redirect("tablero_kanban")
