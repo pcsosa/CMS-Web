@@ -31,8 +31,5 @@ class Categoria(models.Model):
         """
         return self.descripcion
 
-    
-
-
 
 
