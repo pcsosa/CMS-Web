@@ -1,4 +1,5 @@
 {% extends "panel.html" %}
+{% load static %}
 {% load permisos %}
 {% block content %}
   {% tienePermiso 'categoria' '["crear", "editar", "eliminar"]' as permisosCat %}
@@ -11,9 +12,10 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">×</span>
-          </button>
+          <button type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"></button>
           <h4 class="modal-title" id="crearModalLabel">Crear Nueva Categoría</h4>
         </div>
         <div class="modal-body">
@@ -39,16 +41,11 @@
     </div>
   </div>
   <!-- djlint:off -->
-      <div style="display: flex;
-      justify-content: space-between;
-      align-items: center">
+    <div style="display: flex;
+    justify-content: space-between;
+    align-items: center">
   <!-- djlint:on -->
   <h3>Listado de Categorías</h3>
-  <button type="button"
-          class="btn btn-success"
-          data-toggle="modal"
-          data-target="#crearModal"
-          {% if not permisosCat.crear %}disabled{% endif %}>Nueva Categoría</button>
 </div>
 {% if messages %}
   <div class="alert alert-success">
@@ -58,11 +55,24 @@
 <!-- Formulario de búsqueda -->
 <form method="get" action="{% url 'lista_categorias' %}">
   {{ form.as_p }}
-  <input type="text"
-         name="q"
-         placeholder="Buscar categoría"
-         value="{{ consulta }}" />
-  <button type="submit">Buscar</button>
+  <div class="input-group mb-3">
+    <input type="text"
+           name="q"
+           class="form-control"
+           placeholder="Buscar categoría"
+           value="{{ consulta }}">
+    <div class="input-group-append">
+      <button type="submit" class="btn btn-primary">Buscar</button>
+      {% if permisosCat.crear %}
+        <button type="button"
+                class="btn btn-success text-decoration-none px-5"
+                data-bs-toggle="modal"
+                data-bs-target="#crearModal">
+          <i class="fas fa-plus"></i>
+        </button>
+      {% endif %}
+    </div>
+  </div>
 </form>
 <table class="table table-bordered">
   <thead>
@@ -80,27 +90,33 @@
         <td>{{ categoria.nombre }}</td>
         <td>{{ categoria.descripcion }}</td>
         <td>
-          <div class="button-group">
+          <div class="btn-group">
             <!-- Botón Eliminar -->
-            <form method="post"
-                  action="{% url 'eliminar_categoria' categoria.id_categoria %}">
-              {% csrf_token %}
-              <button type="submit"
-                      class="btn btn-danger"
-                      onclick="return confirm('¿Estás seguro de que deseas eliminar esta categoría?');"
-                      {% if not permisosCat.eliminar %}disabled{% endif %}>Eliminar</button>
-            </form>
+            {% if permisosCat.eliminar %}
+              <form method="post"
+                    action="{% url 'eliminar_categoria' categoria.id_categoria %}">
+                {% csrf_token %}
+                <button type="submit"
+                        class="btn btn-danger rounded-end-0"
+                        onclick="return confirm('¿Estás seguro de que deseas eliminar esta categoría?');">
+                  <i class="far fa-trash-alt"></i>
+                </button>
+              </form>
+            {% endif %}
             <!-- Botón Editar -->
+            {% if permisosCat.editar %}
+              <button type="button"
+                      class="btn btn-primary"
+                      data-bs-toggle="modal"
+                      data-bs-target="#editModal"
+                      data-id="{{ categoria.id_categoria }}"
+                      data-nombre="{{ categoria.nombre }}"
+                      data-descripcion="{{ categoria.descripcion }}">
+                <i class="far fa-edit"></i>
+              </button>
+            {% endif %}
             <button type="button"
-                    class="btn btn-primary"
-                    data-toggle="modal"
-                    data-target="#editModal"
-                    data-id="{{ categoria.id_categoria }}"
-                    data-nombre="{{ categoria.nombre }}"
-                    data-descripcion="{{ categoria.descripcion }}"
-                    {% if not permisosCat.editar %}disabled{% endif %}>Editar</button>
-            <button type="button"
-                    class="btn btn-celeste"
+                    class="btn btn-info"
                     onclick="redirigirUrl('{{ categoria.pk }}')">Subcategorias</button>
           </div>
         </td>
@@ -118,9 +134,10 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">×</span>
-        </button>
+        <button type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"></button>
         <h4 class="modal-title" id="editModalLabel">Editar Categoría</h4>
       </div>
       <div class="modal-body">
@@ -145,45 +162,6 @@
     </div>
   </div>
 </div>
-<script>
-    function redirigirUrl(categoriaId) {
-      // Obtener la URL actual
-      let currentUrl = window.location.href
-      
-      // Reemplazar '/lista/' con '/adminsub/lista/' y añadir el ID de la categoría
-      let newUrl = currentUrl.replace(
-        '/cat/',
-        `/adminsub/lista/${categoriaId}`
-        )
-
-        // Redirigir a la nueva URL
-        window.location.href = newUrl
-      }
-
-    $('#crearModal').on('hidden.bs.modal', function () {
-      $(this).find('form').trigger('reset')
-    })
-
-    $('#editModal').on('show.bs.modal', function (event) {
-      var button = $(event.relatedTarget) // Botón que abrió el modal
-      var id = button.data('id') // Extrae el ID de los datos del botón
-      var nombre = button.data('nombre') // Extrae el nombre de los datos del botón
-      var descripcion = button.data('descripcion') // Extrae la descripción de los datos del botón
-      
-      var modal = $(this)
-      modal.find('#categoriaId').val(id)
-      modal.find('#nombre').val(nombre)
-      modal.find('#descripcion').val(descripcion)
-      
-      // Actualiza la URL del formulario en el modal
-      var actionUrl = "{% url 'editar_categoria' 0 %}".replace('0', id)
-      modal.find('form').attr('action', actionUrl)
-    })
-</script>
-<style>
-      .button-group {
-        display: flex;
-        gap: 10px;
-      }
-</style>
+<script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+<script src="{% static 'js/lista_categorias.js' %}"></script>
 {% endblock content %}
