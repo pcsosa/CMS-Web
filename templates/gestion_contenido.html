@@ -44,27 +44,29 @@
           <td>{{ contenido.fecha_creacion|date:"d M Y H:i" }}</td>
           <td>{{ contenido.fecha_modificacion|date:"d M Y H:i" }}</td>
           <td>
-            <!-- Botón Ver -->
-            <a href="{% url 'visualizar_contenido' contenido.id %}"
-               class="btn btn-info text-decoration-none">
-              <i class="far fa-eye"></i>
-            </a>
-            <!-- Botón Eliminar -->
-            {% if permisosCont.eliminar %}
-              <form method="post" action="{% url 'eliminar_contenido' contenido.id %}">
-                {% csrf_token %}
-                <button type="submit"
-                        class="btn btn-danger"
-                        onclick="return confirm('¿Estás seguro de que deseas eliminar este artículo?');">
-                  <i class="far fa-trash-alt"></i>
-                </button>
-              </form>
-            {% endif %}
-            <!-- Botón Editar.    -->
-            <a href="{% url 'editar_contenido' contenido.id %}"
-               class="btn btn-primary text-decoration-none">
-              <i class="far fa-edit"></i>
-            </a>
+            <div class="btn-group">
+              <!-- Botón Ver -->
+              <a href="{% url 'visualizar_contenido' contenido.id %}"
+                 class="btn btn-info text-decoration-none">
+                <i class="far fa-eye"></i>
+              </a>
+              <!-- Botón Eliminar -->
+              {% if permisosCont.eliminar %}
+                <form method="post" action="{% url 'eliminar_contenido' contenido.id %}">
+                  {% csrf_token %}
+                  <button type="submit"
+                          class="btn btn-danger rounded-0"
+                          onclick="return confirm('¿Estás seguro de que deseas eliminar este artículo?');">
+                    <i class="far fa-trash-alt"></i>
+                  </button>
+                </form>
+              {% endif %}
+              <!-- Botón Editar.    -->
+              <a href="{% url 'editar_contenido' contenido.id %}"
+                 class="btn btn-primary text-decoration-none">
+                <i class="far fa-edit"></i>
+              </a>
+            </div
           </td>
         </tr>
       {% endfor %}
