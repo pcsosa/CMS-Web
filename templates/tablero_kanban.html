@@ -1,5 +1,6 @@
 {% extends "panel.html" %}
 {% load static %}
+{% load custom_filters %}
 {% block title %}
   Tablero Kanban
 {% endblock title %}
@@ -17,7 +18,7 @@
              data-estado="Borrador"
              onclick="window.location.href='{% url 'visualizar_contenido' contenido.id %}'">
           <h3>{{ contenido.titulo }}</h3>
-          <p>{{ contenido.texto|truncatewords:15 }}</p>
+          <p>{{ contenido.texto|safe_truncate:5 }}</p>
         </div>
       {% endfor %}
     </div>
@@ -29,7 +30,7 @@
              data-estado="Revisión"
              onclick="window.location.href='{% url 'visualizar_contenido' contenido.id %}'">
           <h3>{{ contenido.titulo }}</h3>
-          <p>{{ contenido.texto|truncatewords:15 }}</p>
+          <p>{{ contenido.texto|safe_truncate:5 }}</p>
         </div>
       {% endfor %}
     </div>
@@ -41,7 +42,7 @@
              data-estado="A Publicar"
              onclick="window.location.href='{% url 'visualizar_contenido' contenido.id %}'">
           <h3>{{ contenido.titulo }}</h3>
-          <p>{{ contenido.texto|truncatewords:15 }}</p>
+          <p>{{ contenido.texto|safe_truncate:5 }}</p>
         </div>
       {% endfor %}
     </div>
@@ -53,7 +54,7 @@
              data-estado="Publicado"
              onclick="window.location.href='{% url 'visualizar_contenido' contenido.id %}'">
           <h3>{{ contenido.titulo }}</h3>
-          <p>{{ contenido.texto|truncatewords:15 }}</p>
+          <p>{{ contenido.texto|safe_truncate:5 }}</p>
         </div>
       {% endfor %}
     </div>
@@ -65,7 +66,7 @@
              data-estado="Inactivo"
              onclick="window.location.href='{% url 'visualizar_contenido' contenido.id %}'">
           <h3>{{ contenido.titulo }}</h3>
-          <p>{{ contenido.texto|truncatewords:15 }}</p>
+          <p>{{ contenido.texto|safe_truncate:5 }}</p>
         </div>
       {% endfor %}
     </div>
