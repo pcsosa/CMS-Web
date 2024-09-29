@@ -1,6 +1,6 @@
 {% extends "panel.html" %}
+{% load permisos %}
 {% block content %}
-  {% load permisos %}
   {% tienePermiso 'categoria' '["crear", "editar", "eliminar"]' as permisosCat %}
   <h1 class="text-center">Gestión de Categorías</h1>
   <div class="modal fade"
@@ -39,9 +39,9 @@
     </div>
   </div>
   <!-- djlint:off -->
-    <div style="display: flex;
-    justify-content: space-between;
-    align-items: center">
+      <div style="display: flex;
+      justify-content: space-between;
+      align-items: center">
   <!-- djlint:on -->
   <h3>Listado de Categorías</h3>
   <button type="button"

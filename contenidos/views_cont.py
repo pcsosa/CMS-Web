@@ -9,6 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from appcms.models import Categoria
 from appcms.utils.utils import obtenerToken, obtenerUserId, obtenerUsersConRol
+from contenidos.models_cont import Contenido
 from subcategorias.models import Subcategoria
 
 from .models_cont import Categoria, Contenido, ContenidoForm
@@ -227,3 +228,81 @@ def editar_contenido(request, pk):
 
     # Renderizar el formulario de edición con los datos actuales del contenido
     return render(request, "editar_contenido.html", contexto)
+
+
+def tablero_kanban(request):
+
+    # Obtener artículos filtrados por estado
+    borrador = Contenido.objects.filter(estado="Borrador")
+    en_revision = Contenido.objects.filter(estado="Revisión")
+    a_publicar = Contenido.objects.filter(estado="A Publicar")
+    publicado = Contenido.objects.filter(estado="Publicado")
+    inactivo = Contenido.objects.filter(estado="Inactivo")
+
+    contexto = {
+        "borrador": borrador,
+        "en_revision": en_revision,
+        "a_publicar": a_publicar,
+        "publicado": publicado,
+        "inactivo": inactivo,
+    }
+
+    return render(request, "tablero_kanban.html", contexto)
+
+
+def visualizar_contenido(request, pk):
+    """
+    Despliega la informacion de un solo contenido y los comentarios para ese contenido
+
+    :param request: La solicitud HTTP.
+    :type request: HttpRequest
+    :param pk: La clave primaria del contenido a ser desplegado
+    :type pk: int
+    :return: HttpResponse: La respuesta renderizada con la lista de categorías.
+    """
+    try:
+        contenido = Contenido.objects.get(pk=pk)
+        return render(request, "contenido.html", {"contenido": contenido})
+    except Contenido.DoesNotExist:
+        return JsonResponse({"error": "Contenido no encontrado"}, status=404)
+
+
+def cambiar_estado(request, pk, estado_actual, estado_siguiente):
+    contenido = get_object_or_404(Contenido, pk=pk)
+    estados_disponibles = (
+        "Borrador",
+        "Revisión",
+        "A Publicar",
+        "Publicado",
+        "Inactivo",
+    )
+
+    # Verifica que los estados actual y siguiente existan en la lista de estados
+    if estado_actual in estados_disponibles and estado_siguiente in estados_disponibles:
+        actual = estados_disponibles.index(estado_actual)
+        siguiente = estados_disponibles.index(estado_siguiente)
+
+        # Si el estado siguiente no es 'Inactivo' y el estado actual no es 'Publicado'
+        if estado_siguiente != "Inactivo":
+            # Verifica que los estados estén uno al lado del otro
+            if abs(actual - siguiente) == 1 or estado_actual == "Inactivo":
+                contenido.estado = estado_siguiente
+                contenido.save()
+                # messages.success(request, "El estado ha sido cambiado exitosamente.")
+            # else:
+            # messages.error(request, "No se pudo cambiar de estado.")
+        else:
+            contenido.estado = estado_siguiente
+            contenido.save()
+            # messages.success(request, "El contenido ha sido inactivado.")
+    # else:
+    # messages.error(request, "Estados inválidos proporcionados.")
+
+    # Manejar la redirección si HTTP_REFERER no está presente
+    referer = request.META.get("HTTP_REFERER")
+
+    if referer:
+        return redirect(referer)
+    else:
+        # Si no hay referer, redirigir a una vista por defecto
+        return redirect("tablero_kanban")
