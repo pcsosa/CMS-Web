@@ -1,0 +1,49 @@
+/* kanban.css */
+
+/* Estilos generales */
+.kanban-board {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 16px;
+}
+
+.kanban-column {
+  flex: 1;
+  min-width: 300px;
+  background-color: #f4f4f4;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.kanban-item {
+  background-color: #fff;
+  border-radius: 4px;
+  padding: 8px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.kanban-item h3 {
+  margin: 0;
+  font-size: 1.2em;
+}
+
+.kanban-item p {
+  margin: 0;
+  font-size: 0.9em;
+  color: #666;
+}
+
+/* Media queries para hacer el diseño responsive */
+@media (max-width: 768px) {
+  .kanban-board {
+    flex-direction: column;
+  }
+
+  .kanban-column {
+    min-width: 100%;
+  }
+}
