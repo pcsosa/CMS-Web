@@ -1,12 +1,12 @@
 {% extends "panel.html" %}
+{% load permisos %}
 {% block content %}
-  {% load permisos %}
   {% tienePermiso 'contenido' '["crear", "editar", "eliminar"]' as permisosCont %}
   <h1 class="text-center">Gestión de Contenidos</h1>
   <!-- djlint:off -->
-              <div style="display: flex;
-                justify-content: space-between;
-                align-items: center">
+                <div style="display: flex;
+                  justify-content: space-between;
+                  align-items: center">
   <!-- djlint:on -->
   <h3>Listado de contenidos</h3>
   <button type="button"
@@ -45,7 +45,6 @@
         <td>{{ contenido.titulo }}</td>
         <td>{{ contenido.fecha_creacion|date:"d M Y H:i" }}</td>
         <td>{{ contenido.fecha_modificacion|date:"d M Y H:i" }}</td>
-
         <td>
           <div class="button-group">
             <!-- Botón Eliminar -->
