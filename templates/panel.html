@@ -11,9 +11,9 @@
 {% endblock head %}
 <!-- Bloque para el contenido del body -->
 {% block body %}
-  {% tienePermiso 'contenido' '["ver"]' as permisoCont %}
-  {% tienePermiso 'categoria' '["ver"]' as permisoCat %}
-  {% tienePermiso 'kanban' '["ver"]' as permisoKan %}
+  {% tienePermiso 'contenido' '["listar"]' as permisoCont %}
+  {% tienePermiso 'categoria' '["listar"]' as permisoCat %}
+  {% tienePermiso 'kanban' '["listar"]' as permisoKan %}
   <div class="dashboard">
     <div class="dashboard-nav">
       <header>
@@ -27,11 +27,11 @@
           <i class="fas fa-home"></i>
           Inicio
         </a>
-        <a href="#" class="dashboard-nav-item">
+        {% comment %} <a href="#" class="dashboard-nav-item">
           <i class="fas fa-tachometer-alt"></i>
           Dashboard
-        </a>
-        {% if permisoCont.ver %}
+        </a> {% endcomment %}
+        {% if permisoCont.listar %}
           <a href={% url 'gestion_contenido' %} class="dashboard-nav-item active">
             <i class="fas fa-newspaper"></i>
             Artículos
@@ -49,13 +49,13 @@
               <a href="#" class="dashboard-nav-dropdown-item">Eliminar artículos</a>
             </div>
         </div> {% endcomment %}
-        {% if permisoCat.ver %}
+        {% if permisoCat.listar %}
           <a href={% url 'lista_categorias' %} class="dashboard-nav-item">
             <i class="fas fa-icons"></i>
             Categorías
           </a>
         {% endif %}
-        {% if permisoKan.ver %}
+        {% if permisoKan.listar %}
           <a href={% url 'tablero_kanban' %} class="dashboard-nav-item">
             <i class="fa-solid fa-table-columns"></i>
             Tablero kanban
