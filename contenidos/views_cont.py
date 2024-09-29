@@ -9,6 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from appcms.models import Categoria
 from appcms.utils.utils import obtenerToken, obtenerUserId, obtenerUsersConRol
+from contenidos.models_cont import Contenido
 from subcategorias.models import Subcategoria
 
 
@@ -306,6 +307,7 @@ def editar_contenido(request, pk):
 
 
 def tablero_kanban(request):
+
     # Obtener artículos filtrados por estado
     borrador = Contenido.objects.filter(estado="Borrador")
     en_revision = Contenido.objects.filter(estado="Revisión")
