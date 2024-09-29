@@ -1,400 +1,108 @@
+{% extends "home.html" %}
+{% load static %}
 {% load permisos %}
-{% tienePermiso 'contenido' '["ver"]' as permisoEstado %}
-{% tienePermiso 'boton' '["enviar_aPublicar","enviar_borrador","enviar_publicar","enviar_revision","ver"]' as permisoBoton %}
-<!DOCTYPE html>
-<html lang="es">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contenido</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f0f2f5;
-            height: 100%;
-            justify-content: space-between;
-            transition: width 0.3s ease;
-        }
-        .main-content {
-            display: flex;
-            width: 100%;
-            transition: width 0.3s ease;
-        }
-        .container {
-            flex: 1;
-            padding: 20px;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            transition: flex-basis 0.3s ease;
-        }
-        .post {
-            position: relative;
-        }
-        .title {
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .content {
-            margin-bottom: 15px;
-        }
-        img {
-            display: block;
-            margin: 0 auto;
-            max-width: 100%;
-            border-radius: 10px;
-        }
-        .comments {
-            background-color: #f0f2f5;
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 15px;
-        }
-        .comment {
-            border-bottom: 1px solid #38444d;
-            padding: 10px 0;
-        }
-        .comment:last-child {
-            border-bottom: none;
-        }
-        textarea {
-            width: 98%;
-            height: 60px;
-            border: none;
-            padding: 10px;
-            border-radius: 10px;
-            resize: none;
-        }
-        
-        /* Estilos para el icono de los tres puntos */
-        .menu-icon {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            cursor: pointer;
-            z-index: 10;
-        }
-        .menu-icon svg {
-            width: 24px;
-            height: 24px;
-            color: #333; 
-            fill: none;
-            stroke: #333;
-            stroke-width: 2px;
-        }
-        .menu-icon:hover{
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            border-radius: 50%;
-        }
-        /* Estilos del icono de cerrar*/
-        .close-icon {
-            cursor: pointer;
-            float: right;
-            margin-bottom: 10px;
-        }
-        .close-icon svg {
-            width: 20px;
-            height: 20px;
-            fill: #333; /* Color del icono */
-        }
-        .dropdown-menu {
-            display: none;
-            position: absolute;
-            right: 10px;
-            top: 40px;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-        }
-        .dropdown-menu ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-        .dropdown-menu li {
-            padding: 10px;
-            cursor: pointer;
-        }
-        .dropdown-menu li:hover {
-            background-color: #f0f0f0;
-        }
-
-        /* Panel lateral de comentarios */
-        #comentariosPanel {
-            display: none;
-            flex-basis: 0;
-            max-width: 30%;
-            background-color: rgb(0,0,0,0.2);
-            color: white;
-            border-left: 1px solid #ccc;
-            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
-            padding: 20px;
-            transition: flex-basis 0.3s ease;
-            overflow-y: auto;
-            border-radius: 5px;
-            margin-left: 10px;
-        }
-        #comentariosPanel h3 {
-            margin-top: 0;
-        }
-        #comentariosPanel textarea {
-            width: 98%;
-            height: 100px;
-            margin-bottom: 10px;
-        }
-
-        /* Flexbox para que el contenido se ajuste al panel */
-        .with-panel #comentariosPanel {
-            display: block;
-            flex-basis: 30%;
-        }
-        .with-panel .container {
-            flex-basis: 70%;
-        }
-        a {
-            text-decoration: none;
-        }
-        .estado {
-            display:inline-block;
-            border: 1px solid red;
-            padding:5px;
-            border-radius: 10%;
-            color:red;
-            margin-bottom: 10px;
-        }
-        .messages-container {
-            width: 100%; /* Que ocupe todo el ancho del contenedor */
-            padding: 10px;
-            margin-bottom: 20px; /* Separación con el contenido debajo */
-            display: flex;
-            justify-content: center; /* Para centrar los mensajes horizontalmente */
-        }
-
-        .message {
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-size: 0.9em;
-            display: inline-block;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        }
-
-        .message.success {
-            background-color: #d4edda;
-            border-left: 5px solid #28a745;
-            color: #155724;
-        }
-
-        .message.error {
-            background-color: #f8d7da;
-            border-left: 5px solid #dc3545;
-            color: #721c24;
-        }
-
-        .message.info {
-            background-color: #cce5ff;
-            border-left: 5px solid #007bff;
-            color: #004085;
-        }
-
-        .message.warning {
-            background-color: #fff3cd;
-            border-left: 5px solid #ffc107;
-            color: #856404;
-        }
-
-        .message-icon {
-            margin-right: 10px;
-        }
-
-        .message svg {
-            width: 20px;
-            height: 20px;
-            fill: currentColor;
-        }
-                /* Estilo general para la sección de comentarios */
-        .comments {
-            background-color: #f4f4f4; /* Color de fondo suave */
-            border-radius: 10px; /* Bordes redondeados */
-            padding: 20px; /* Espaciado interno */
-            margin: 20px 0; /* Margen superior e inferior */
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
-        }
-
-        /* Estilo para el título de la sección */
-        .comments h3 {
-            border-bottom: 2px solid #38444d; /* Borde inferior */
-            padding: 10px 0; /* Espaciado interno */
-            color: #38444d; /* Color del texto */
-            font-family: 'Arial', sans-serif; /* Fuente moderna */
-        }
-
-        /* Estilo para el cuerpo de los comentarios */
-        .comentar-body {
-            margin-top: 15px; /* Margen superior */
-        }
-
-        /* Estilo para cada comentario */
-        .comment {
-            background-color: #ffffff; /* Fondo blanco para cada comentario */
-            border: 1px solid #e0e0e0; /* Borde sutil */
-            border-radius: 5px; /* Bordes redondeados */
-            padding: 15px; /* Espaciado interno */
-            margin-bottom: 10px; /* Margen inferior entre comentarios */
-            transition: box-shadow 0.3s; /* Transición suave para la sombra */
-        }
-
-        .comment:hover {
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15); /* Sombra al pasar el mouse */
-        }
-
-        /* Estilo para el nombre del usuario */
-        .comment strong {
-            color: #007bff; /* Color azul para el nombre */
-        }
-
-        /* Estilo para la fecha del comentario */
-        .comment small {
-            font-size: 0.85em; /* Tamaño de fuente más pequeño */
-            color: #999; /* Color gris para la fecha */
-        }
-
-        /* Estilo para el formulario de nuevo comentario */
-        h4 {
-            margin-top: 20px; /* Margen superior */
-            color: #38444d; /* Color del texto */
-        }
-
-        .formulario-comentario {
-            margin-top: 15px; /* Margen superior */
-        }
-
-        .formulario-comentario textarea {
-            width: 100%; /* Ancho completo */
-            height: 100px; /* Altura del área de texto */
-            border-radius: 5px; /* Bordes redondeados */
-            border: 1px solid #ccc; /* Borde sutil */
-            padding: 10px; /* Espaciado interno */
-            resize: none; /* Deshabilitar el redimensionamiento */
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* Sombra interna */
-        }
-
-        .formulario-comentario button {
-            background-color: #007bff !important; /* Color de fondo del botón */
-            color: rgb(245, 245, 245); /* Color del texto del botón */
-            border: none; /* Sin borde */
-            border-radius: 5px; /* Bordes redondeados */
-            padding: 10px 15px; /* Espaciado interno */
-            cursor: pointer; /* Cambiar cursor al pasar el mouse */
-            transition: background-color 0.3s; /* Transición suave para el color de fondo */
-        }
-
-        .formulario-comentario button:hover {
-            background-color: #0056b3; /* Color más oscuro al pasar el mouse */
-        }
-
-    </style>
-  </head>
-  <body>
-    {% if messages %}
-      <div class="messages-container">
-        {% for message in messages %}<div class="message {{ message.tags }}">{{ message }}</div>{% endfor %}
-      </div>
-    {% endif %}
-    <div class="main-content">
-      <div class="container">
-        <div class="post">
-          <!--
+{% block title %}
+  {{ contenido.titulo }} | CMSWEB
+{% endblock title %}
+{% block head %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'css/contenido.css' %}">
+{% endblock head %}
+{% block content %}
+  {% tienePermiso 'contenido' '["ver"]' as permisoEstado %}
+  {% tienePermiso 'boton' '["enviar_aPublicar","enviar_borrador","enviar_publicar","enviar_revision","ver"]' as permisoBoton %}
+  {% if messages %}
+    <div class="messages-container">
+      {% for message in messages %}<div class="message {{ message.tags }}">{{ message }}</div>{% endfor %}
+    </div>
+  {% endif %}
+  <div class="main-content">
+    <div class="container">
+      <div class="post">
+        <!--
                     Solo para los que tienen permiso
             -->
-          {% if permisoBoton.ver %}
-            <div class="menu-icon" onclick="toggleDropdownMenu()">
-              <svg xmlns="http://www.w3.org/2000/svg"
-                   viewBox="0 0 24 24"
-                   stroke="currentColor">
-                <circle cx="12" cy="6" r="1.5"></circle>
-                <circle cx="12" cy="12" r="1.5"></circle>
-                <circle cx="12" cy="18" r="1.5"></circle>
-              </svg>
-            </div>
-          {% endif %}
-          <!-- HASTA ACA-->
-          <div class="dropdown-menu" id="dropdownMenu">
-            <ul>
-              {% if permisoBoton.enviar_revision and contenido.estado != 'Revisión' and contenido.estado != 'Publicado' %}
-                <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'Revisión' %}">
-                  <li>Mandar a edición</li>
-                </a>
-              {% endif %}
-              {% if permisoBoton.enviar_aPublicar and contenido.estado != 'Borrador' and contenido.estado != 'A Publicar' %}
-                <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'A Publicar' %}">
-                  <li>Mandar a Publicador</li>
-                </a>
-              {% endif %}
-              {% if permisoBoton.enviar_publicar and contenido.estado != 'Revisión' and contenido.estado != 'Borrador' and contenido.estado != 'Publicado' %}
-                <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'Publicado' %}">
-                  <li>Publicar</li>
-                </a>
-              {% endif %}
-              {% if permisoBoton.enviar_borrador and contenido.estado != 'Borrador' and contenido.estado != 'A Publicar' and contenido.estado != 'Publicado' %}
-                <li onclick="abrirPanelComentarios()">Enviar a Borrador</li>
-              {% endif %}
-              {% if contenido.estado != 'Inactivo' %}
-                <li>
-                  <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'Inactivo' %}">Inactivar</a>
-                </li>
-              {% endif %}
-            </ul>
+        {% if permisoBoton.ver %}
+          <div class="menu-icon" onclick="toggleDropdownMenu()">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 viewBox="0 0 24 24"
+                 stroke="currentColor">
+              <circle cx="12" cy="6" r="1.5"></circle>
+              <circle cx="12" cy="12" r="1.5"></circle>
+              <circle cx="12" cy="18" r="1.5"></circle>
+            </svg>
           </div>
-          {% if permisoEstado.ver %}<div class="estado">{{ contenido.estado }}</div>{% endif %}
-          <div class="title">{{ contenido.titulo }}</div>
-          <div class="content">
-            <p>{{ contenido.texto|safe }}</p>
-          </div>
-          {% if contenido.imagen %}<img src="{{ contenido.imagen.url }}" alt="{{ contenido.titulo }}">{% endif %}
-        </div>
-        {% if contenido.estado == 'Publicado' %}
-        <div class="comments">
-            <h3 style="border-bottom: 2px solid #38444d; padding: 10px 0; margin-bottom: 20px;">Comentarios</h3>
-            <div class="comentar-body">
-                {% for comentario in comentarios %}
-                <div class="comment" style="border-bottom: 1px solid #e0e0e0; padding: 10px 0;">
-                    <strong style="color: #2c3e50;">{{ comentario.usuario }}</strong>: 
-                    <span style="color: #34495e;">{{ comentario.comentario }}</span> <br>
-                    <small style="color: #7f8c8d;">{{ comentario.fecha|date:"d/m/Y H:i" }}</small>
-                </div>
-                {% empty %}
-                <p style="color: #95a5a6;">No hay comentarios aún. ¡Sé el primero en comentar!</p>
-                {% endfor %}
-            </div>
-
-            <h4 style="margin-top: 20px;">Deja un comentario</h4>
-            
-            <form method="post" action="{% url 'guardar_comentario' contenido.id %}" style="margin-top: 10px;">
-                {% csrf_token %}
-                <textarea name="comentario" rows="4" style="width: 25%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 4px; resize: none;" placeholder="Escribe tu comentario aquí..."></textarea><br><br>
-                <button type="submit" style="background-color: #3498db; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer;">Comentar</button>
-            </form>
-            
-        </div>
         {% endif %}
-      <!-- Panel lateral de comentarios -->
-      <div id="comentariosPanel">
-        <div class="close-icon" onclick="cerrarPanelComentarios()">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M18 6L6 18M6 6l12 12" stroke="#333" stroke-width="2" fill="none" />
-          </svg>
+        <!-- HASTA ACA-->
+        <div class="dropdown-menu" id="dropdownMenu">
+          <ul>
+            {% if permisoBoton.enviar_revision and contenido.estado != 'Revisión' and contenido.estado != 'Publicado' %}
+              <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'Revisión' %}">
+                <li>Mandar a edición</li>
+              </a>
+            {% endif %}
+            {% if permisoBoton.enviar_aPublicar and contenido.estado != 'Borrador' and contenido.estado != 'A Publicar' %}
+              <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'A Publicar' %}">
+                <li>Mandar a Publicador</li>
+              </a>
+            {% endif %}
+            {% if permisoBoton.enviar_publicar and contenido.estado != 'Revisión' and contenido.estado != 'Borrador' and contenido.estado != 'Publicado' %}
+              <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'Publicado' %}">
+                <li>Publicar</li>
+              </a>
+            {% endif %}
+            {% if permisoBoton.enviar_borrador and contenido.estado != 'Borrador' and contenido.estado != 'A Publicar' and contenido.estado != 'Publicado' %}
+              <li onclick="abrirPanelComentarios()">Enviar a Borrador</li>
+            {% endif %}
+            {% if contenido.estado != 'Inactivo' %}
+              <li>
+                <a href="{% url 'cambiar_estado' contenido.id contenido.estado 'Inactivo' %}">Inactivar</a>
+              </li>
+            {% endif %}
+          </ul>
         </div>
-        <h3>Comentarios para el autor</h3>
-        <textarea placeholder="Escribe tus comentarios..."></textarea>
-        <button onclick="guardarComentario()">Enviar Comentario</button>
+        {% if permisoEstado.ver %}<div class="estado">{{ contenido.estado }}</div>{% endif %}
+        <div class="title">{{ contenido.titulo }}</div>
+        <div class="content">
+          <p>{{ contenido.texto | safe }}</p>
+        </div>
+        {% if contenido.imagen %}<img src="{{ contenido.imagen.url }}" alt="{{ contenido.titulo }}">{% endif %}
       </div>
+      {% if contenido.estado == 'Publicado' %}
+        <div class="comments">
+          <h3 style="border-bottom:1px solid #38444d;
+                     padding: 10px 0;
+                     border-top:1px solid #38444d">Comentarios</h3>
+          <div class="comentar-body">
+            <div class="comment-content">
+              <textarea placeholder="Comenta la publicación"></textarea>
+            </div>
+          </div>
+          <button class="reply-button">Comentar</button>
+          <div class="comment">
+            <div class="title">@usuario2</div>
+            <p>Inspirador mensaje. Gracias por compartir tu experiencia.</p>
+          </div>
+          <div class="comment">
+            <div class="title">@usuario3</div>
+            <p>Cada día es una oportunidad para crecer. ¡Sigue adelante!</p>
+          </div>
+        </div>
+      {% endif %}
     </div>
-    <script>
+    <!-- Panel lateral de comentarios -->
+    <div id="comentariosPanel">
+      <div class="close-icon" onclick="cerrarPanelComentarios()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M18 6L6 18M6 6l12 12" stroke="#333" stroke-width="2" fill="none" />
+        </svg>
+      </div>
+      <h3>Comentarios para el autor</h3>
+      <textarea placeholder="Escribe tus comentarios..."></textarea>
+      <button onclick="guardarComentario()">Enviar Comentario</button>
+    </div>
+  </div>
+  <script>
         function toggleDropdownMenu() {
             var dropdownMenu = document.getElementById('dropdownMenu');
             if (dropdownMenu.style.display === 'block') {
@@ -432,6 +140,5 @@
                 dropdownMenu.style.display = 'none';
             }
         }
-    </script>
-  </body>
-</html>
+  </script>
+{% endblock content %}
