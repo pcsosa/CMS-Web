@@ -213,6 +213,87 @@
             height: 20px;
             fill: currentColor;
         }
+                /* Estilo general para la sección de comentarios */
+        .comments {
+            background-color: #f4f4f4; /* Color de fondo suave */
+            border-radius: 10px; /* Bordes redondeados */
+            padding: 20px; /* Espaciado interno */
+            margin: 20px 0; /* Margen superior e inferior */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
+        }
+
+        /* Estilo para el título de la sección */
+        .comments h3 {
+            border-bottom: 2px solid #38444d; /* Borde inferior */
+            padding: 10px 0; /* Espaciado interno */
+            color: #38444d; /* Color del texto */
+            font-family: 'Arial', sans-serif; /* Fuente moderna */
+        }
+
+        /* Estilo para el cuerpo de los comentarios */
+        .comentar-body {
+            margin-top: 15px; /* Margen superior */
+        }
+
+        /* Estilo para cada comentario */
+        .comment {
+            background-color: #ffffff; /* Fondo blanco para cada comentario */
+            border: 1px solid #e0e0e0; /* Borde sutil */
+            border-radius: 5px; /* Bordes redondeados */
+            padding: 15px; /* Espaciado interno */
+            margin-bottom: 10px; /* Margen inferior entre comentarios */
+            transition: box-shadow 0.3s; /* Transición suave para la sombra */
+        }
+
+        .comment:hover {
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15); /* Sombra al pasar el mouse */
+        }
+
+        /* Estilo para el nombre del usuario */
+        .comment strong {
+            color: #007bff; /* Color azul para el nombre */
+        }
+
+        /* Estilo para la fecha del comentario */
+        .comment small {
+            font-size: 0.85em; /* Tamaño de fuente más pequeño */
+            color: #999; /* Color gris para la fecha */
+        }
+
+        /* Estilo para el formulario de nuevo comentario */
+        h4 {
+            margin-top: 20px; /* Margen superior */
+            color: #38444d; /* Color del texto */
+        }
+
+        .formulario-comentario {
+            margin-top: 15px; /* Margen superior */
+        }
+
+        .formulario-comentario textarea {
+            width: 100%; /* Ancho completo */
+            height: 100px; /* Altura del área de texto */
+            border-radius: 5px; /* Bordes redondeados */
+            border: 1px solid #ccc; /* Borde sutil */
+            padding: 10px; /* Espaciado interno */
+            resize: none; /* Deshabilitar el redimensionamiento */
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* Sombra interna */
+        }
+
+        .formulario-comentario button {
+            background-color: #007bff !important; /* Color de fondo del botón */
+            color: rgb(245, 245, 245); /* Color del texto del botón */
+            border: none; /* Sin borde */
+            border-radius: 5px; /* Bordes redondeados */
+            padding: 10px 15px; /* Espaciado interno */
+            cursor: pointer; /* Cambiar cursor al pasar el mouse */
+            transition: background-color 0.3s; /* Transición suave para el color de fondo */
+        }
+
+        .formulario-comentario button:hover {
+            background-color: #0056b3; /* Color más oscuro al pasar el mouse */
+        }
+
     </style>
 </head>
 <body>
@@ -279,7 +360,7 @@
                 
                 <form method="post" action="{% url 'guardar_comentario' contenido.id %}">
                     {% csrf_token %}
-                    <textarea rows="5" cols="10" name="comentario"></textarea><br><br>
+                    <textarea name="comentario"></textarea><br><br>
                     <button type="submit">Comentar</button>
                 </form>
                 
