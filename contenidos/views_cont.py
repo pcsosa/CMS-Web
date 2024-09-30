@@ -324,7 +324,8 @@ def visualizar_contenido(request, pk):
     """
     try:
         contenido = Contenido.objects.get(pk=pk)
-        return render(request,'contenido.html',{'contenido':contenido})
+        comentarios = Comentario.objects.filter(contenido=pk)
+        return render(request,'contenido.html',{'contenido':contenido,'comentarios':comentarios})
     except Contenido.DoesNotExist:
         return JsonResponse({'error': 'Contenido no encontrado'}, status=404)
     
@@ -374,7 +375,6 @@ def guardar_comentario(request, pk ):
                 contenido = contenido_,
                 comentario = comentario_,
                 usuario = request.user,
-
                 active =True
             )
             nuevo_comentario.save()
