@@ -277,27 +277,28 @@
           {% if contenido.imagen %}<img src="{{ contenido.imagen.url }}" alt="{{ contenido.titulo }}">{% endif %}
         </div>
         {% if contenido.estado == 'Publicado' %}
-          <div class="comments">
-            <h3 style="border-bottom:1px solid #38444d;
-                       padding: 10px 0;
-                       border-top:1px solid #38444d">Comentarios</h3>
+        <div class="comments">
+            <h3 style="border-bottom:1px solid #38444d; padding: 10px 0; border-top:1px solid #38444d">Comentarios</h3>
             <div class="comentar-body">
-              <div class="comment-content">
-                <textarea placeholder="Comenta la publicación"></textarea>
-              </div>
+                {% for comentario in comentarios %}
+                <div class="comment">
+                    <strong>{{ comentario.usuario }}</strong>: {{ comentario.comentario }} <br>
+                    <small>{{ comentario.fecha|date:"d/m/Y H:i" }}</small>
+                </div>
+                {% empty %}
+                    <p>No hay comentarios aún. ¡Sé el primero en comentar!</p>
+                {% endfor %}
             </div>
-            <button class="reply-button">Comentar</button>
-            <div class="comment">
-              <div class="title">@usuario2</div>
-              <p>Inspirador mensaje. Gracias por compartir tu experiencia.</p>
-            </div>
-            <div class="comment">
-              <div class="title">@usuario3</div>
-              <p>Cada día es una oportunidad para crecer. ¡Sigue adelante!</p>
-            </div>
-          </div>
-        {% endif %}
-      </div>
+
+            <h4>Deja un comentario</h4>
+            
+            <form method="post" action="{% url 'guardar_comentario' contenido.id %}">
+                {% csrf_token %}
+                <textarea name="comentario"></textarea><br><br>
+                <button type="submit">Comentar</button>
+            </form>
+            
+        </div>
       <!-- Panel lateral de comentarios -->
       <div id="comentariosPanel">
         <div class="close-icon" onclick="cerrarPanelComentarios()">
