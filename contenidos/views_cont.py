@@ -312,24 +312,8 @@ def visualizar_contenido(request, pk):
     """
     try:
         contenido = Contenido.objects.get(pk=pk)
-        comentarios = Comentario.objects.filter(contenido=contenido, active=True)
-        if request.method == 'POST':
-            comentario_form = ComentarioForm(request.POST)
-            if comentario_form.is_valid():
-                nuevo_comentario = comentario_form.save(commit=False)
-                nuevo_comentario.contenido = contenido
-                nuevo_comentario.active = True
-                nuevo_comentario.save()
-                return redirect('vizualizar_contenido', contenido_id=contenido.id)  
-        else:
-            comentario_form = ComentarioForm()
-        #return redirect('vizualizar_contenido', contenido_id=contenido.id) 
-        return render(request, 'contenido.html', {
-           'contenido': contenido,
-           'comentarios': comentarios,
-           'comentario_form': comentario_form,
-       })
-   
+        comentarios = Comentario.objects.filter(contenido=pk)
+        return render(request,'contenido.html',{'contenido':contenido,'comentarios':comentarios})
     except Contenido.DoesNotExist:
         return JsonResponse({'error': 'Contenido no encontrado'}, status=404)
     
@@ -367,7 +351,6 @@ def guardar_comentario(request, pk ):
                 contenido = contenido_,
                 comentario = comentario_,
                 usuario = request.user,
-
                 active =True
             )
             nuevo_comentario.save()

@@ -353,7 +353,7 @@
           {% if permisoEstado.ver %}<div class="estado">{{ contenido.estado }}</div>{% endif %}
           <div class="title">{{ contenido.titulo }}</div>
           <div class="content">
-            <p>{{ contenido.texto }}</p>
+            <p>{{ contenido.texto|safe }}</p>
           </div>
           {% if contenido.imagen %}<img src="{{ contenido.imagen.url }}" alt="{{ contenido.titulo }}">{% endif %}
         </div>
