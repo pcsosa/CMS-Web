@@ -34,6 +34,7 @@ urlpatterns = [
     path('kanban/', views_cont.tablero_kanban, name='tablero_kanban'),
     path('articulos/visualizar/<int:pk>/',views_cont.visualizar_contenido, name="visualizar_contenido"),
     path('articulos/visualizar/<int:pk>/<str:estado_actual>/<str:estado_siguiente>/',views_cont.cambiar_estado,name='cambiar_estado'),
+    path('articulos/guardarComen/<int:pk>',views_cont.guardar_comentario, name="guardar_comentario")
 ]
 
 if settings.DEBUG:
