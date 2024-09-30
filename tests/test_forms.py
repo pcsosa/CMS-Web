@@ -1,5 +1,5 @@
 from django.test import TestCase
-from appcms.forms import CategoriaForm, BusquedaCategoriaForm
+from appcms.forms import CategoriaForm
 from appcms.models import Categoria
 
 class CategoriaFormTest(TestCase):

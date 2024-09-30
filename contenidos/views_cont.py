@@ -2,7 +2,8 @@ from django.contrib.auth.models import User  # Para manejar el publicador
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect
-from .models_cont import ContenidoForm, Contenido, Categoria
+from contenidos.forms import ComentarioForm
+from .models_cont import  Comentario,Contenido, Categoria
 from appcms.models import Categoria
 from subcategorias.models import Subcategoria
 from appcms.utils.utils import obtenerToken, obtenerUserId, obtenerUsersConRol
@@ -360,3 +361,25 @@ def cambiar_estado(request, pk, estado_actual, estado_siguiente):
     else:
         # Si no hay referer, redirigir a una vista por defecto
         return redirect('tablero_kanban')
+
+def guardar_comentario(request, pk ):
+    
+    contenido_ = get_object_or_404(Contenido, pk=pk)
+    
+    if request.method == 'POST':
+        comentario_ = request.POST.get('comentario')
+        if comentario_:
+            comentario_ = comentario_.replace('<p>', '').replace('</p>', '')
+            nuevo_comentario = Comentario(
+                contenido = contenido_,
+                comentario = comentario_,
+                usuario = request.user,
+
+                active =True
+            )
+            nuevo_comentario.save()
+        else:
+           error_message = "El comentario no puede estar vacío."
+            
+    
+    return redirect('visualizar_contenido',pk)
