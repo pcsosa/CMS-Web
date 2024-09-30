@@ -374,13 +374,16 @@ def guardar_comentario(request, pk ):
         comentario_ = request.POST.get('comentario')
         if comentario_:
             comentario_ = comentario_.replace('<p>', '').replace('</p>', '')
+            nuevo_comentario = Comentario(
+                contenido = contenido_,
+                comentario = comentario_,
+                usuario = request.user,
+
+                active =True
+            )
+            nuevo_comentario.save()
         else:
-            comentario_ = ''  # O puedes decidir usar un valor predeterminado
+           error_message = "El comentario no puede estar vacío."
             
-    nuevo_comentario = Comentario(
-        contenido = contenido_,
-        comentario = comentario_,
-        active =True
-    )
-    nuevo_comentario.save()
+    
     return redirect('visualizar_contenido',pk)
