@@ -75,7 +75,7 @@ INSTALLED_APPS = [
     "appcms",
     "contenidos",
     "subcategorias",
-]
+] #
 
 # -------------------------------------------------
 # ----------------- MIDDLEWARES -------------------
@@ -164,12 +164,12 @@ AUTHENTICATION_BACKENDS = [
 DATABASES = {"default": dj_database_url.parse(DATABASE_URL)}
 
 # SQLite en memoria (para pruebas)
-# DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': ':memory:',
-#    }
-# }
+#DATABASES = {
+ #  'default': {
+ #      'ENGINE': 'django.db.backends.sqlite3',
+#       'NAME': ':memory:',
+#   }
+#}
 
 # SQLite archivo local
 # DATABASES = {
