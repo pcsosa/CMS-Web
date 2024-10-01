@@ -38,3 +38,9 @@
   font-size: 14px;
   color: #65676b;
 }
+html, body {
+  height: 100%;
+  overflow-y: auto; /* Asegura el desplazamiento vertical */
+  margin: 0;
+  padding: 0;
+}
