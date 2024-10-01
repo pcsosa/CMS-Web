@@ -1,74 +1,84 @@
 {% extends "panel.html" %}
+{% load permisos %}
 {% block content %}
-  {% load permisos %}
-  {% tienePermiso 'contenido' '["crear", "editar", "eliminar"]' as permisosCont %}
+  {% tienePermiso 'contenido' '["ver", "crear", "editar", "eliminar"]' as permisosCont %}
   <h1 class="text-center">Gestión de Contenidos</h1>
-  <!-- djlint:off -->
-              <div style="display: flex;
-                justify-content: space-between;
-                align-items: center">
-  <!-- djlint:on -->
-  <h3>Listado de contenidos</h3>
-  <button type="button"
-          class="btn btn-success"
-          onclick="window.location.href='{% url 'crear_contenido' %}'"
-          {% if not permisosCont.crear %}disabled{% endif %}>Nuevo contenido</button>
-</div>
-{% if messages %}
-  <div class="alert alert-success">
-    {% for message in messages %}{{ message }}{% endfor %}
+  <div class="d-flex justify-content-between align-items-center">
+    <h3>Listado de contenidos</h3>
   </div>
-{% endif %}
-<!-- Formulario de búsqueda -->
-<form method="get" action="{% url 'lista_contenidos' %}">
-  {{ form.as_p }}
-  <input type="text"
-         name="q"
-         placeholder="Buscar contenido"
-         value="{{ consulta }}" />
-  <button type="submit">Buscar</button>
-</form>
-<table class="table table-bordered">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Título</th>
-      <th>Fecha creación</th>
-      <th>Fecha modificación</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for contenido in contenidos %}
+  {% if messages %}
+    <div class="alert alert-success">
+      {% for message in messages %}{{ message }}{% endfor %}
+    </div>
+  {% endif %}
+  <!-- Formulario de búsqueda -->
+  <form method="get" action="{% url 'lista_contenidos' %}">
+    {{ form.as_p }}
+    <div class="input-group mb-3">
+      <input type="text"
+             name="q"
+             class="form-control"
+             placeholder="Buscar contenido">
+      <div class="input-group-append">
+        <button type="submit" class="btn btn-primary">Buscar</button>
+        {% if permisosCont.crear %}
+          <a href="{% url 'crear_contenido' %}"
+             class="btn btn-success text-decoration-none px-5">
+            <i class="fas fa-plus"></i>
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </form>
+  <table class="table table-bordered">
+    <thead>
       <tr>
-        <td>{{ contenido.id }}</td>
-        <td>{{ contenido.titulo }}</td>
-        <td>{{ contenido.fecha_creacion|date:"d M Y H:i" }}</td>
-        <td>{{ contenido.fecha_modificacion|date:"d M Y H:i" }}</td>
-
-        <td>
-          <div class="button-group">
-            <!-- Botón Eliminar -->
-            <form method="post" action="{% url 'eliminar_contenido' contenido.id %}">
-              {% csrf_token %}
-              <button type="submit"
-                      class="btn btn-danger"
-                      onclick="return confirm('¿Estás seguro de que deseas eliminar este artículo?');"
-                      {% if not permisosCont.eliminar %}disabled{% endif %}>Eliminar</button>
-            </form>
-            <!-- Botón Editar.    -->
-            {% if permisosCont.editar %}
-              <a href={% url 'editar_contenido' contenido.id %}>Editar</a>
-            {% endif %}
-          </div>
-        </td>
+        <th>ID</th>
+        <th>Título</th>
+        <th>Fecha creación</th>
+        <th>Fecha modificación</th>
+        <th>Acciones</th>
       </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% if consulta %}<p>Resultados para "{{ consulta }}"</p>{% endif %}
-<!-- Modal para Editar Categoría -->
-{% comment %} <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel">
+    </thead>
+    <tbody>
+      {% for contenido in contenidos %}
+        <tr>
+          <td>{{ contenido.id }}</td>
+          <td>{{ contenido.titulo }}</td>
+          <td>{{ contenido.fecha_creacion|date:"d M Y H:i" }}</td>
+          <td>{{ contenido.fecha_modificacion|date:"d M Y H:i" }}</td>
+          <td>
+            <div class="btn-group">
+              <!-- Botón Ver -->
+              <a href="{% url 'visualizar_contenido' contenido.id %}"
+                 class="btn btn-info text-decoration-none">
+                <i class="far fa-eye"></i>
+              </a>
+              <!-- Botón Eliminar -->
+              {% if permisosCont.eliminar %}
+                <form method="post" action="{% url 'eliminar_contenido' contenido.id %}">
+                  {% csrf_token %}
+                  <button type="submit"
+                          class="btn btn-danger rounded-0"
+                          onclick="return confirm('¿Estás seguro de que deseas eliminar este artículo?');">
+                    <i class="far fa-trash-alt"></i>
+                  </button>
+                </form>
+              {% endif %}
+              <!-- Botón Editar.    -->
+              <a href="{% url 'editar_contenido' contenido.id %}"
+                 class="btn btn-primary text-decoration-none">
+                <i class="far fa-edit"></i>
+              </a>
+            </div>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% if consulta %}<p>Resultados para "{{ consulta }}"</p>{% endif %}
+  <!-- Modal para Editar Categoría -->
+  {% comment %} <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -88,7 +98,7 @@
             <div class="form-group">
               <label for="descripcion">Descripción</label>
               <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required></textarea>
-            </div>
+              </div>
             <button type="submit" class="btn btn-primary">Guardar Cambios</button>
           </form>
         </div>
