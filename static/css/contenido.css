@@ -1,0 +1,199 @@
+.main-content {
+  display: flex;
+  width: 100%;
+  transition: width 0.3s ease;
+}
+.container {
+  flex: 1;
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: flex-basis 0.3s ease;
+}
+.post {
+  position: relative;
+}
+.title {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.content {
+  margin-bottom: 15px;
+}
+img {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  border-radius: 10px;
+}
+.comments {
+  background-color: #f0f2f5;
+  border-radius: 10px;
+  padding: 15px;
+  margin-top: 15px;
+}
+.comment {
+  border-bottom: 1px solid #38444d;
+  padding: 10px 0;
+}
+.comment:last-child {
+  border-bottom: none;
+}
+textarea {
+  width: 98%;
+  height: 60px;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+  resize: none;
+}
+
+/* Estilos para el icono de los tres puntos */
+.menu-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  z-index: 10;
+}
+.menu-icon svg {
+  width: 24px;
+  height: 24px;
+  color: #333;
+  fill: none;
+  stroke: #333;
+  stroke-width: 2px;
+}
+.menu-icon:hover {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+}
+/* Estilos del icono de cerrar*/
+.close-icon {
+  cursor: pointer;
+  float: right;
+  margin-bottom: 10px;
+}
+.close-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: #333; /* Color del icono */
+}
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  right: 10px;
+  top: 40px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+.dropdown-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.dropdown-menu li {
+  padding: 10px;
+  cursor: pointer;
+}
+.dropdown-menu li:hover {
+  background-color: #f0f0f0;
+}
+
+/* Panel lateral de comentarios */
+#comentariosPanel {
+  display: none;
+  flex-basis: 0;
+  max-width: 30%;
+  background-color: rgb(0, 0, 0, 0.2);
+  color: white;
+  border-left: 1px solid #ccc;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  transition: flex-basis 0.3s ease;
+  overflow-y: auto;
+  border-radius: 5px;
+  margin-left: 10px;
+}
+#comentariosPanel h3 {
+  margin-top: 0;
+}
+#comentariosPanel textarea {
+  width: 98%;
+  height: 100px;
+  margin-bottom: 10px;
+}
+
+/* Flexbox para que el contenido se ajuste al panel */
+.with-panel #comentariosPanel {
+  display: block;
+  flex-basis: 30%;
+}
+.with-panel .container {
+  flex-basis: 70%;
+}
+a {
+  text-decoration: none;
+}
+.estado {
+  display: inline-block;
+  border: 1px solid red;
+  padding: 5px;
+  border-radius: 10%;
+  color: red;
+  margin-bottom: 10px;
+}
+.messages-container {
+  width: 100%; /* Que ocupe todo el ancho del contenedor */
+  padding: 10px;
+  margin-bottom: 20px; /* Separación con el contenido debajo */
+  display: flex;
+  justify-content: center; /* Para centrar los mensajes horizontalmente */
+}
+
+.message {
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 0.9em;
+  display: inline-block;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.message.success {
+  background-color: #d4edda;
+  border-left: 5px solid #28a745;
+  color: #155724;
+}
+
+.message.error {
+  background-color: #f8d7da;
+  border-left: 5px solid #dc3545;
+  color: #721c24;
+}
+
+.message.info {
+  background-color: #cce5ff;
+  border-left: 5px solid #007bff;
+  color: #004085;
+}
+
+.message.warning {
+  background-color: #fff3cd;
+  border-left: 5px solid #ffc107;
+  color: #856404;
+}
+
+.message-icon {
+  margin-right: 10px;
+}
+
+.message svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
