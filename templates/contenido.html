@@ -8,6 +8,7 @@
   {{ block.super }}
   <link rel="stylesheet" href="{% static 'css/contenido.css' %}">
 {% endblock head %}
+<body>
 {% block content %}
   {% tienePermiso 'contenido' '["ver"]' as permisoEstado %}
   {% tienePermiso 'boton' '["enviar_aPublicar","enviar_borrador","enviar_publicar","enviar_revision","ver"]' as permisoBoton %}
@@ -145,3 +146,4 @@
         }
   </script>
 {% endblock content %}
+</body>
