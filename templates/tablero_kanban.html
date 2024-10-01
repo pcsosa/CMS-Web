@@ -1,119 +1,103 @@
-<!DOCTYPE html> 
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tablero Kanban</title>
-    <style>
-        .kanban-board {
-            display: flex;
-            justify-content: space-between;
-            padding: 20px;
-        }
-
-        .kanban-column {
-            width: 18%;
-            background-color: #f0f0f0;
-            padding: 10px;
-            border-radius: 5px;
-        }
-
-        .kanban-column h2 {
-            text-align: center;
-            font-size: 18px;
-        }
-
-        .kanban-item {
-            background-color: #fff;
-            margin: 10px 0;
-            padding: 10px;
-            border-radius: 5px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-    </style>
-</head>
-<body>
-
-<div class="kanban-board">
+{% extends "panel.html" %}
+{% load static %}
+{% load custom_filters %}
+{% block title %}
+  Tablero Kanban
+{% endblock title %}
+{% block head %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'css/kanban.css' %}">
+{% endblock head %}
+{% block content %}
+  <div class="kanban-board">
     <div class="kanban-column" data-estado="Borrador">
-        <h2>Borrador</h2>
-        {% for contenido in borrador %}
-            <div class="kanban-item" data-id="{{ contenido.id }}" data-estado="Borrador" onclick="window.location.href='{% url 'visualizar_contenido' contenido.id %}'">
-                <h3>{{ contenido.titulo }}</h3>
-                <p>{{ contenido.texto|truncatewords:15 }}</p>
-            </div>
-        {% endfor %}
+      <h2>Borrador</h2>
+      {% for contenido in borrador %}
+        <div class="kanban-item"
+             data-id="{{ contenido.id }}"
+             data-estado="Borrador"
+             onclick="window.location.href='{% url 'visualizar_contenido' contenido.id %}'">
+          <h3>{{ contenido.titulo }}</h3>
+          <p>{{ contenido.texto|safe_truncate:5 }}</p>
+        </div>
+      {% endfor %}
     </div>
-    
     <div class="kanban-column" data-estado="Revisión">
-        <h2>En Revisión</h2>
-        {% for contenido in en_revision %}
-            <div class="kanban-item" data-id="{{ contenido.id }}" data-estado="Revisión" onclick="window.location.href='{% url 'visualizar_contenido' contenido.id %}'">
-                <h3>{{ contenido.titulo }}</h3>
-                <p>{{ contenido.texto|truncatewords:15 }}</p>
-            </div>
-        {% endfor %}
+      <h2>En Revisión</h2>
+      {% for contenido in en_revision %}
+        <div class="kanban-item"
+             data-id="{{ contenido.id }}"
+             data-estado="Revisión"
+             onclick="window.location.href='{% url 'visualizar_contenido' contenido.id %}'">
+          <h3>{{ contenido.titulo }}</h3>
+          <p>{{ contenido.texto|safe_truncate:5 }}</p>
+        </div>
+      {% endfor %}
     </div>
-
     <div class="kanban-column" data-estado="A Publicar">
-        <h2>A Publicar</h2>
-        {% for contenido in a_publicar %}
-            <div class="kanban-item" data-id="{{ contenido.id }}" data-estado="A Publicar" onclick="window.location.href='{% url 'visualizar_contenido' contenido.id %}'">
-                <h3>{{ contenido.titulo }}</h3>
-                <p>{{ contenido.texto|truncatewords:15 }}</p>
-            </div>
-        {% endfor %}
+      <h2>A Publicar</h2>
+      {% for contenido in a_publicar %}
+        <div class="kanban-item"
+             data-id="{{ contenido.id }}"
+             data-estado="A Publicar"
+             onclick="window.location.href='{% url 'visualizar_contenido' contenido.id %}'">
+          <h3>{{ contenido.titulo }}</h3>
+          <p>{{ contenido.texto|safe_truncate:5 }}</p>
+        </div>
+      {% endfor %}
     </div>
-
     <div class="kanban-column" data-estado="Publicado">
-        <h2>Publicado</h2>
-        {% for contenido in publicado %}
-            <div class="kanban-item" data-id="{{ contenido.id }}" data-estado="Publicado" onclick="window.location.href='{% url 'visualizar_contenido' contenido.id %}'">
-                <h3>{{ contenido.titulo }}</h3>
-                <p>{{ contenido.texto|truncatewords:15 }}</p>
-            </div>
-        {% endfor %}
+      <h2>Publicado</h2>
+      {% for contenido in publicado %}
+        <div class="kanban-item"
+             data-id="{{ contenido.id }}"
+             data-estado="Publicado"
+             onclick="window.location.href='{% url 'visualizar_contenido' contenido.id %}'">
+          <h3>{{ contenido.titulo }}</h3>
+          <p>{{ contenido.texto|safe_truncate:5 }}</p>
+        </div>
+      {% endfor %}
     </div>
-
     <div class="kanban-column" data-estado="Inactivo">
-        <h2>Inactivo</h2>
-        {% for contenido in inactivo %}
-            <div class="kanban-item" data-id="{{ contenido.id }}" data-estado="Inactivo" onclick="window.location.href='{% url 'visualizar_contenido' contenido.id %}'">
-                <h3>{{ contenido.titulo }}</h3>
-                <p>{{ contenido.texto|truncatewords:15 }}</p>
-            </div>
-        {% endfor %}
+      <h2>Inactivo</h2>
+      {% for contenido in inactivo %}
+        <div class="kanban-item"
+             data-id="{{ contenido.id }}"
+             data-estado="Inactivo"
+             onclick="window.location.href='{% url 'visualizar_contenido' contenido.id %}'">
+          <h3>{{ contenido.titulo }}</h3>
+          <p>{{ contenido.texto|safe_truncate:5 }}</p>
+        </div>
+      {% endfor %}
     </div>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
-<script>
+  </div>
+  <script src="{% static 'js/sortable.min.js' %}"></script>
+  <script>
     // Seleccionar todas las columnas del tablero
-    let columnas = document.querySelectorAll('.kanban-column');
-    
-    // Aplicar Sortable.js a cada columna
-    columnas.forEach(function (column) {
-        new Sortable(column, {
-            group: 'kanban',
-            animation: 150,
-            onEnd: function (evt) {
-                let itemEl = evt.item;  // El artículo arrastrado
-                let articuloId = itemEl.getAttribute('data-id');  // ID del artículo
-                let estado_actual = itemEl.getAttribute('data-estado');  // Estado actual del artículo
-                let nuevo_estado = evt.to.getAttribute('data-estado');  // Nuevo estado
+    const columnas = document.querySelectorAll('.kanban-column')
 
-                // Verificar si el nuevo estado es diferente al actual
-                if (estado_actual !== nuevo_estado) {
-                    let url = "{% url 'cambiar_estado' 0 'estado_actual' 'nuevo_estado' %}"
-                    url = url.replace("0", articuloId)
-                             .replace("estado_actual", estado_actual)
-                             .replace("nuevo_estado", nuevo_estado);
-                    
-                    window.location.href = url;  // Redirigir para cambiar el estado
-                }
-            }
-        });
-    });
-</script>
-</body>
-</html>
+    // Aplicar Sortable.js a cada columna
+    columnas.forEach((column) => {
+      new Sortable(column, {
+        group: 'kanban',
+        animation: 150,
+        onEnd: (evt) => {
+          const itemEl = evt.item
+          const articuloId = itemEl.getAttribute('data-id')
+          const estado_actual = itemEl.getAttribute('data-estado')
+          const nuevo_estado = evt.to.getAttribute('data-estado')
+
+          // Verificar si el nuevo estado es diferente al actual
+          if (estado_actual !== nuevo_estado) {
+            let url = "{% url 'cambiar_estado' 0 'estado_actual' 'nuevo_estado' %}"
+            url = url.replace("0", articuloId)
+                     .replace("estado_actual", estado_actual)
+                     .replace("nuevo_estado", nuevo_estado);
+            
+            window.location.href = url;  // Redirigir para cambiar el estado
+          }
+        }
+      })
+    })
+  </script>
+{% endblock content %}
