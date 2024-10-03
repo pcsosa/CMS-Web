@@ -156,6 +156,20 @@ def upload_image(request):
 
 @csrf_exempt
 def eliminar_contenido(request, pk):
+    """
+    Elimina un objeto de tipo Contenido basado en su clave primaria (pk).
+
+    :param request: El objeto de solicitud HTTP.
+    :type request: HttpRequest
+    :param pk: Clave primaria del contenido que se desea eliminar.
+    :type pk: int
+    :return: Redirige a la vista de gestión de contenidos si la eliminación es exitosa, 
+             o retorna una respuesta JSON con un error si el contenido no existe.
+    :rtype: HttpResponse or JsonResponse
+
+    Si el contenido con la clave primaria proporcionada no se encuentra en la 
+    base de datos, se retorna un JSON con un mensaje de error y un estado HTTP 404.
+    """
     try:
         contenido = Contenido.objects.get(pk=pk)
         contenido.delete()
@@ -165,6 +179,35 @@ def eliminar_contenido(request, pk):
 
 
 def editar_contenido(request, pk):
+    """
+    Edita un objeto de tipo Contenido basado en su clave primaria (pk).
+
+    :param request: El objeto de solicitud HTTP.
+    :type request: HttpRequest
+    :param pk: Clave primaria del contenido que se desea editar.
+    :type pk: int
+    :return: Redirige a la vista de gestión de contenidos después de guardar los cambios,
+             o renderiza el formulario de edición con los datos actuales del contenido.
+    :rtype: HttpResponse
+
+    La función permite editar el título, texto, imagen, categoría, subcategoría, 
+    y editor de un contenido. Si no se proporciona una nueva imagen o texto, 
+    se mantendrán los valores originales.
+
+    En caso de que se envíe una solicitud POST con los nuevos datos, estos se 
+    validan y el contenido se actualiza en la base de datos. El autor del 
+    contenido se obtiene utilizando un token a través de la función `obtenerToken`.
+
+    **Contexto de la plantilla:**
+    
+    - ``contenido``: El contenido actual a editar.
+    - ``editores``: Lista de usuarios con el rol de "Editor".
+    - ``categorias``: Lista de todas las categorías disponibles.
+    - ``sub_json``: Subcategorías serializadas en formato JSON.
+    
+    :raises Http404: Si no se encuentra un contenido con la clave primaria proporcionada.
+    """
+
     contenido = get_object_or_404(
         Contenido, id=pk
     )  # Obtener el contenido por ID o lanzar un error 404
@@ -231,7 +274,32 @@ def editar_contenido(request, pk):
 
 
 def tablero_kanban(request):
+    """
+    Renderiza el tablero kanban mostrando los contenidos filtrados por estado.
 
+    :param request: El objeto de solicitud HTTP.
+    :type request: HttpRequest
+    :return: Renderiza la plantilla "tablero_kanban.html" con el contexto de los 
+             contenidos filtrados por estado.
+    :rtype: HttpResponse
+
+    Los estados de los contenidos que se filtran y muestran en el tablero son:
+
+    - "Borrador"
+    - "Revisión"
+    - "A Publicar"
+    - "Publicado"
+    - "Inactivo"
+
+    En el contexto de la plantilla se incluyen las listas de contenidos por 
+    cada estado, de la siguiente manera:
+    
+    - ``borrador``: Contenidos en estado "Borrador".
+    - ``en_revision``: Contenidos en estado "Revisión".
+    - ``a_publicar``: Contenidos en estado "A Publicar".
+    - ``publicado``: Contenidos en estado "Publicado".
+    - ``inactivo``: Contenidos en estado "Inactivo".
+    """
     # Obtener artículos filtrados por estado
     borrador = Contenido.objects.filter(estado="Borrador")
     en_revision = Contenido.objects.filter(estado="Revisión")
@@ -268,6 +336,32 @@ def visualizar_contenido(request, pk):
 
 
 def cambiar_estado(request, pk, estado_actual, estado_siguiente):
+    """
+    Cambia el estado de un objeto de tipo Contenido, siempre y cuando los 
+    estados actual y siguiente sean válidos y se puedan transitar entre ellos.
+
+    :param request: El objeto de solicitud HTTP.
+    :type request: HttpRequest
+    :param pk: Clave primaria del contenido que se va a actualizar.
+    :type pk: int
+    :param estado_actual: Estado actual del contenido.
+    :type estado_actual: str
+    :param estado_siguiente: Estado al cual se desea cambiar.
+    :type estado_siguiente: str
+    :return: Redirige a la página anterior o, si no existe, al tablero kanban.
+    :rtype: HttpResponse
+
+    Los estados disponibles son:
+    
+    - "Borrador"
+    - "Revisión"
+    - "A Publicar"
+    - "Publicado"
+    - "Inactivo"
+    
+    La función valida que los estados proporcionados sean válidos y permite 
+    cambios entre estados consecutivos, a excepción del estado "Inactivo".
+    """
     contenido = get_object_or_404(Contenido, pk=pk)
     estados_disponibles = (
         "Borrador",
@@ -306,3 +400,38 @@ def cambiar_estado(request, pk, estado_actual, estado_siguiente):
     else:
         # Si no hay referer, redirigir a una vista por defecto
         return redirect("tablero_kanban")
+
+
+def guardar_comentario(request, pk):
+    """
+    Guarda un comentario en un objeto de tipo Contenido.
+
+    :param request: El objeto de solicitud HTTP.
+    :type request: HttpRequest
+    :param pk: Clave primaria del contenido al que se le va a añadir un comentario.
+    :type pk: int
+    :return: Redirige a la página de visualización del contenido.
+    :rtype: HttpResponse
+
+    Si el método HTTP es POST, la función busca un comentario en los datos de 
+    la solicitud, lo limpia de etiquetas HTML, y lo guarda asociado al 
+    contenido correspondiente. En caso de no proporcionar un comentario válido, 
+    se gestiona un mensaje de error.
+    """
+    contenido_ = get_object_or_404(Contenido, pk=pk)
+
+    if request.method == "POST":
+        comentario_ = request.POST.get("comentario")
+        if comentario_:
+            comentario_ = comentario_.replace("<p>", "").replace("</p>", "")
+            nuevo_comentario = Comentario(
+                contenido=contenido_,
+                comentario=comentario_,
+                usuario=request.user,
+                active=True,
+            )
+            nuevo_comentario.save()
+        else:
+            error_message = "El comentario no puede estar vacío."
+
+    return redirect("visualizar_contenido", pk)
