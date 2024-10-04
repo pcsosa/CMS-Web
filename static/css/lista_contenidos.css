@@ -38,3 +38,103 @@
   font-size: 14px;
   color: #65676b;
 }
+    /* Estilos para el contenedor del buscador */
+    .buscador-contenedor {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 0px;
+    }
+  
+    /* Estilos para el campo de búsqueda */
+    .campo-busqueda {
+      width: 300px;
+      /* Ancho del campo de búsqueda */
+      padding: 5px 15px;
+      /* Espaciado interno */
+      margin: 0 0px;
+      /* Espacio entre los elementos */
+      border-radius: 30px;
+      /* Bordes redondeados */
+      border: 1px solid #ccc;
+      /* Borde del campo */
+      outline: none;
+      /* Elimina el borde de enfoque predeterminado */
+      font-size: 16px;
+      /* Tamaño del texto */
+      transition: all 0.3s ease;
+      /* Transición suave en el enfoque */
+      box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.2);
+      /* Sombra suave */
+    }
+  
+    .campo-busqueda:focus {
+      border-color: rgb(94, 221, 243);
+      /* Cambia el color del borde al hacer clic */
+      box-shadow: 2px 6px 12px rgba(0, 0, 0, 0.3);
+      /* Sombra más intensa al hacer clic */
+    }
+  
+    /* Estilo para el combobox */
+    .filtrador-select {
+      padding: 5px 15px;
+      /* Espaciado interno */
+      margin: 0 30px;
+      /* Espacio entre los elementos */
+      border: 1px solid #ccc;
+      /* Borde gris claro */
+      border-radius: 10px;
+      /* Bordes redondeados */
+      outline: none;
+      /* Elimina el borde de enfoque predeterminado */
+      font-size: 16px;
+      /* Tamaño del texto */
+      margin-left: 10px;
+      /* Espacio entre el select y otros elementos */
+      background-color: #fff;
+      /* Fondo blanco */
+      box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.2);
+      /* Sombra suave */
+      transition: border-color 0.3s ease;
+      /* Transición suave en el borde */
+    }
+  
+    /* Efecto al enfocar el select */
+    .filtrador-select:focus {
+      border-color: rgb(94, 221, 243);
+      /* Cambia el color del borde al hacer clic */
+      box-shadow: 2px 6px 12px rgba(0, 0, 0, 0.3);
+    }
+  
+    /* Estilos base para un botón minimalista */
+    button.minimalista {
+      background-color: rgb(16, 36, 71);
+      font-family: sans-serif;
+      color: white;
+      border: 1px solid rgb(16, 36, 71);
+      padding: 10px 15px;
+      margin: 5px 15px;
+      /* Espacio entre los elementos */
+      font-size: 16px;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.2);
+      /* Sombra suave */
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+  
+    /* Efecto al pasar el ratón */
+    button.minimalista:hover {
+      background-color: rgb(94, 221, 243);
+      color: rgb(16, 36, 71);
+      box-shadow: 2px 6px 12px rgba(0, 0, 0, 0.3);
+      /* Sombra más grande al pasar el cursor */
+    }
+  
+    /* Estilo para un botón deshabilitado */
+    button.minimalista:disabled {
+      background-color: #ddd;
+      color: #aaa;
+      border-color: #aaa;
+      cursor: not-allowed;
+    }

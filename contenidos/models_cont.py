@@ -56,7 +56,7 @@ class ContenidoForm(forms.ModelForm):
         fields = ['tipo', 'titulo', 'texto', 'imagen', 'imagen_url', 'categoria', 'subcategoria', 'estado', 'autor_id', 'editor_id', 'publicador_id', 'id_historial_mod']
 
 class Comentario(models.Model):
-     """
+    """
     Modelo que representa un comentario asociado a un contenido específico.
 
     Atributos:
