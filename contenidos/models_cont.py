@@ -56,7 +56,23 @@ class ContenidoForm(forms.ModelForm):
         fields = ['tipo', 'titulo', 'texto', 'imagen', 'imagen_url', 'categoria', 'subcategoria', 'estado', 'autor_id', 'editor_id', 'publicador_id', 'id_historial_mod']
 
 class Comentario(models.Model):
+     """
+    Modelo que representa un comentario asociado a un contenido específico.
+
+    Atributos:
+        contenido (ForeignKey): Referencia al contenido relacionado con este comentario.
+        usuario (str): Nombre del usuario que realizó el comentario.
+        email (EmailField): Dirección de correo del usuario.
+        comentario (TextField): Texto del comentario.
+        fecha (DateTimeField): Fecha en que fue creado el comentario.
+        active (bool): Indica si el comentario está activo y es visible.
     
+    Meta:
+        ordering (list): Ordena los comentarios por fecha, mostrando los más recientes primero.
+    
+    Métodos:
+        __str__: Devuelve una representación en cadena del comentario, incluyendo el texto del comentario y el usuario que lo realizó.
+    """
     contenido = models.ForeignKey(Contenido,on_delete=models.CASCADE,related_name='comments')
     usuario = models.CharField(max_length=80)
     email = models.EmailField()

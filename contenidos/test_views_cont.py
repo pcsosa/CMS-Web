@@ -161,3 +161,6 @@ class ContenidoViewsTest(TestCase):
         with self.assertRaises(Contenido.DoesNotExist):
             Contenido.objects.get(id=self.contenido.id)
 
+
+class ComentarioViewsTest(TestCase):
+    
