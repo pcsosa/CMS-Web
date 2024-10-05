@@ -26,7 +26,7 @@
         {% endfor %}
       </select>
       <!-- Filtro por autor -->
-      <select id="autor" name="autor" required>
+      <select id="autor" name="autor">
         <option value="">Selecciona un autor</option>
         {% for autor in autores %}<option value="{{ autor.id }}">{{ autor.username }}</option>{% endfor %}
       </select>
