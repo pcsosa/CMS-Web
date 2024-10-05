@@ -399,6 +399,10 @@ def visualizar_contenido(request, pk):
         contenido = Contenido.objects.get(pk=pk)
         comentarios = Comentario.objects.filter(contenido=pk)
 
+        # Reemplazar el ID del usuario por su nombre de usuario en contenido
+        contenido.autor_id = obtenerUserInfoById(contenido.autor_id).get("username")
+
+        # Reemplazar el ID del usuario por su nombre de usuario en comentarios
         for comentario in comentarios:
             comentario.usuario = obtenerUserInfoById(comentario.usuario).get("username")
 
