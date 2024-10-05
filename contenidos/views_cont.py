@@ -130,13 +130,26 @@ def lista_contenidos(request):
     """
     # Obtener todos los contenidos inicialmente
     contenidos = Contenido.objects.all()
+
+    # Obtener todos los usuarios de los roles que pueden publicar contenido
     autores = obtenerUsersConRol("Autor")
+    editores = obtenerUsersConRol("Editor")
+    administradores = obtenerUsersConRol("Administrador")
+    publicadores = obtenerUsersConRol("Publicador")
 
     # Obtener los parámetros del filtro desde la solicitud
     orden = request.GET.get("orden", "desc")  # Por defecto descendente
     categoria_id = request.GET.get("categoria")
     autor_id = request.GET.get("autor")
     busqueda = request.GET.get("busqueda", "")
+
+    # juntar listas de objetos sin repetir
+    autores = list(
+        {
+            usuario["id"]: usuario
+            for usuario in autores + editores + administradores + publicadores
+        }.values()
+    )
 
     # Filtrar por categoría si se proporciona
     if categoria_id:
