@@ -146,7 +146,7 @@ class Comentario(models.Model):
     contenido = models.ForeignKey(
         Contenido, on_delete=models.CASCADE, related_name="comments"
     )
-    usuario = models.CharField(max_length=80)
+    usuario = models.CharField(max_length=255)
     email = models.EmailField()
     comentario = models.TextField()
     fecha = models.DateTimeField(auto_now_add=True)
