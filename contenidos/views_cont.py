@@ -7,7 +7,12 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import csrf_exempt
 
 from appcms.models import Categoria
-from appcms.utils.utils import obtenerToken, obtenerUserId, obtenerUsersConRol
+from appcms.utils.utils import (
+    obtenerToken,
+    obtenerUserId,
+    obtenerUserInfoById,
+    obtenerUsersConRol,
+)
 from contenidos.models_cont import Categoria, Comentario, Contenido, ContenidoForm
 from subcategorias.models import Subcategoria
 
@@ -393,6 +398,10 @@ def visualizar_contenido(request, pk):
     try:
         contenido = Contenido.objects.get(pk=pk)
         comentarios = Comentario.objects.filter(contenido=pk)
+
+        for comentario in comentarios:
+            comentario.usuario = obtenerUserInfoById(comentario.usuario).get("username")
+
         return render(
             request,
             "contenido.html",
@@ -494,7 +503,9 @@ def guardar_comentario(request, pk):
             nuevo_comentario = Comentario(
                 contenido=contenido_,
                 comentario=comentario_,
-                usuario=request.user,
+                usuario=obtenerUserId(
+                    obtenerToken(request)
+                ),  # Guardar el id del usuario logeado
                 active=True,
             )
             nuevo_comentario.save()
