@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="{% static 'css/contenido.css' %}">
 {% endblock head %}
 {% block content %}
-  {% tienePermiso 'contenido' '["ver"]' as permisoEstado %}
+  {% tienePermiso 'contenido' '["verEstado"]' as permisoEstado %}
   {% tienePermiso 'boton' '["enviar_aPublicar","enviar_borrador","enviar_publicar","enviar_revision","ver"]' as permisoBoton %}
   {% if messages %}
     <div class="messages-container">
@@ -61,7 +61,7 @@
             {% endif %}
           </ul>
         </div>
-        {% if permisoEstado.ver %}<div class="estado">{{ contenido.estado }}</div>{% endif %}
+        {% if permisoEstado.verEstado %}<div class="estado">{{ contenido.estado }}</div>{% endif %}
         <div class="title">{{ contenido.titulo }}</div>
         <div class="content">
           <p>{{ contenido.texto|safe }}</p>
@@ -88,29 +88,32 @@
               <p style="color: #95a5a6;">No hay comentarios aún. ¡Sé el primero en comentar!</p>
             {% endfor %}
           </div>
-          <h4 style="margin-top: 20px;">Deja un comentario</h4>
-          <form method="post"
-                action="{% url 'guardar_comentario' contenido.id %}"
-                style="margin-top: 10px">
-            {% csrf_token %}
-            <textarea name="comentario"
-                      rows="4"
-                      style="width: 25%;
-                             padding: 10px;
-                             border: 1px solid #bdc3c7;
+          {% if user_info %}
+            <!-- Si el usuario está autenticado mostrar para comentar -->
+            <h4 style="margin-top: 20px;">Deja un comentario</h4>
+            <form method="post"
+                  action="{% url 'guardar_comentario' contenido.id %}"
+                  style="margin-top: 10px">
+              {% csrf_token %}
+              <textarea name="comentario"
+                        rows="4"
+                        style="width: 25%;
+                               padding: 10px;
+                               border: 1px solid #bdc3c7;
+                               border-radius: 4px;
+                               resize: none"
+                        placeholder="Escribe tu comentario aquí..."></textarea>
+              <br>
+              <br>
+              <button type="submit"
+                      style="background-color: #3498db;
+                             color: white;
+                             padding: 10px 15px;
+                             border: none;
                              border-radius: 4px;
-                             resize: none"
-                      placeholder="Escribe tu comentario aquí..."></textarea>
-            <br>
-            <br>
-            <button type="submit"
-                    style="background-color: #3498db;
-                           color: white;
-                           padding: 10px 15px;
-                           border: none;
-                           border-radius: 4px;
-                           cursor: pointer">Comentar</button>
-          </form>
+                             cursor: pointer">Comentar</button>
+            </form>
+          {% endif %}
         </div>
       {% endif %}
       <!-- Panel lateral de comentarios -->
