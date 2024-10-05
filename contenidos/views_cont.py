@@ -1,5 +1,4 @@
 from django.contrib import messages
-from django.contrib.auth.models import User  # Para manejar el publicador
 from django.core.paginator import Paginator
 from django.core.serializers import serialize
 from django.db.models import Q  # Para realizar búsquedas
@@ -31,9 +30,6 @@ def crear_contenido(request):
     subcategorias = Subcategoria.objects.all()  # Obtener todas las subcategorías
     sub_json = serialize("json", subcategorias)
 
-    print("=============================================SUBCATEGORIAS")
-    print(sub_json)
-
     if request.method == "POST":
         # Obtener datos del formulario
         title = request.POST.get("title")
@@ -64,16 +60,6 @@ def crear_contenido(request):
         print(f"Editor: {editor_id}")
         print(f"Autor: {autor_id}")
         print(f"Publicador: {publicador}")
-
-        # Obtener la categoría obligatoria
-        # categoria = Categoria.objects.get(id=categoria_id)
-        # print("================================================================= CATEGORIAS")
-        # print(categoria)
-
-        # Obtener la subcategoría opcional si se proporciona
-        # subcategoria = obtener_subcategorias(categoria_id)
-        # print("================================================================= SUBCATEGORIAS")
-        # print(subcategoria)
 
         # Obtener la instancia del modelo Categoria con el id proporcionado
         categoria_obj = Categoria.objects.get(id_categoria=categoria)
@@ -239,11 +225,11 @@ def eliminar_contenido(request, pk):
     :type request: HttpRequest
     :param pk: Clave primaria del contenido que se desea eliminar.
     :type pk: int
-    :return: Redirige a la vista de gestión de contenidos si la eliminación es exitosa, 
+    :return: Redirige a la vista de gestión de contenidos si la eliminación es exitosa,
              o retorna una respuesta JSON con un error si el contenido no existe.
     :rtype: HttpResponse or JsonResponse
 
-    Si el contenido con la clave primaria proporcionada no se encuentra en la 
+    Si el contenido con la clave primaria proporcionada no se encuentra en la
     base de datos, se retorna un JSON con un mensaje de error y un estado HTTP 404.
     """
     try:
@@ -266,21 +252,21 @@ def editar_contenido(request, pk):
              o renderiza el formulario de edición con los datos actuales del contenido.
     :rtype: HttpResponse
 
-    La función permite editar el título, texto, imagen, categoría, subcategoría, 
-    y editor de un contenido. Si no se proporciona una nueva imagen o texto, 
+    La función permite editar el título, texto, imagen, categoría, subcategoría,
+    y editor de un contenido. Si no se proporciona una nueva imagen o texto,
     se mantendrán los valores originales.
 
-    En caso de que se envíe una solicitud POST con los nuevos datos, estos se 
-    validan y el contenido se actualiza en la base de datos. El autor del 
+    En caso de que se envíe una solicitud POST con los nuevos datos, estos se
+    validan y el contenido se actualiza en la base de datos. El autor del
     contenido se obtiene utilizando un token a través de la función `obtenerToken`.
 
     **Contexto de la plantilla:**
-    
+
     - ``contenido``: El contenido actual a editar.
     - ``editores``: Lista de usuarios con el rol de "Editor".
     - ``categorias``: Lista de todas las categorías disponibles.
     - ``sub_json``: Subcategorías serializadas en formato JSON.
-    
+
     :raises Http404: Si no se encuentra un contenido con la clave primaria proporcionada.
     """
 
@@ -355,7 +341,7 @@ def tablero_kanban(request):
 
     :param request: El objeto de solicitud HTTP.
     :type request: HttpRequest
-    :return: Renderiza la plantilla "tablero_kanban.html" con el contexto de los 
+    :return: Renderiza la plantilla "tablero_kanban.html" con el contexto de los
              contenidos filtrados por estado.
     :rtype: HttpResponse
 
@@ -367,9 +353,9 @@ def tablero_kanban(request):
     - "Publicado"
     - "Inactivo"
 
-    En el contexto de la plantilla se incluyen las listas de contenidos por 
+    En el contexto de la plantilla se incluyen las listas de contenidos por
     cada estado, de la siguiente manera:
-    
+
     - ``borrador``: Contenidos en estado "Borrador".
     - ``en_revision``: Contenidos en estado "Revisión".
     - ``a_publicar``: Contenidos en estado "A Publicar".
@@ -418,7 +404,7 @@ def visualizar_contenido(request, pk):
 
 def cambiar_estado(request, pk, estado_actual, estado_siguiente):
     """
-    Cambia el estado de un objeto de tipo Contenido, siempre y cuando los 
+    Cambia el estado de un objeto de tipo Contenido, siempre y cuando los
     estados actual y siguiente sean válidos y se puedan transitar entre ellos.
 
     :param request: El objeto de solicitud HTTP.
@@ -433,14 +419,14 @@ def cambiar_estado(request, pk, estado_actual, estado_siguiente):
     :rtype: HttpResponse
 
     Los estados disponibles son:
-    
+
     - "Borrador"
     - "Revisión"
     - "A Publicar"
     - "Publicado"
     - "Inactivo"
-    
-    La función valida que los estados proporcionados sean válidos y permite 
+
+    La función valida que los estados proporcionados sean válidos y permite
     cambios entre estados consecutivos, a excepción del estado "Inactivo".
     """
     contenido = get_object_or_404(Contenido, pk=pk)
@@ -494,9 +480,9 @@ def guardar_comentario(request, pk):
     :return: Redirige a la página de visualización del contenido.
     :rtype: HttpResponse
 
-    Si el método HTTP es POST, la función busca un comentario en los datos de 
-    la solicitud, lo limpia de etiquetas HTML, y lo guarda asociado al 
-    contenido correspondiente. En caso de no proporcionar un comentario válido, 
+    Si el método HTTP es POST, la función busca un comentario en los datos de
+    la solicitud, lo limpia de etiquetas HTML, y lo guarda asociado al
+    contenido correspondiente. En caso de no proporcionar un comentario válido,
     se gestiona un mensaje de error.
     """
     contenido_ = get_object_or_404(Contenido, pk=pk)
