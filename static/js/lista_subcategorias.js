@@ -24,7 +24,10 @@ function saveSubcategoria(id) {
   // Crear un formulario temporal para enviar los datos
   var form = document.createElement('form')
   form.method = 'POST'
-  form.action = "{% url 'actualizar_subcategoria' %}" // Asegúrate de tener una URL configurada para actualizar
+  var url = window.location.href;
+  var nuevoUrl = url.replace(/\/lista\/(\d+)\//, '/editar/');
+  console.log(nuevoUrl);
+  form.action = nuevoUrl // Asegúrate de tener una URL configurada para actualizar
 
   // Agregar campos ocultos para el ID de la subcategoría y el nuevo nombre
   var inputId = document.createElement('input')
