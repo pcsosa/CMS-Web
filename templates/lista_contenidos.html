@@ -8,6 +8,8 @@
   <link rel="stylesheet" href="{% static 'css/lista_contenidos.css' %}">
 {% endblock head %}
 {% block content %}
+  {% load permisos %}
+  {% tienePermiso 'contenido' '["verBorrador","verEdicion","verAPublicar","verPublicado","verInactivo"]' as permisoContenido %}
   <div class="filter-container">
     <form method="get">
       <!-- Cuadro de búsqueda -->
@@ -40,32 +42,143 @@
   </div>
   <div class="container">
     {% for contenido in contenidos %}
-      <div class="post">
-        <div class="post-header">
-          <div class="post-title">
-            <a href="{% url 'visualizar_contenido' contenido.id %}">{{ contenido.titulo }}</a>
+      {% if contenido.estado == 'Borrador' and permisoContenido.verBorrador %}
+        <div class="post">
+          <div class="post-header">
+            <div class="post-title">
+              <a href="{% url 'visualizar_contenido' contenido.id %}">{{ contenido.titulo }}</a>
+            </div>
+            <div class="post-meta">
+              {% if contenido.fecha_creacion %}· {{ contenido.fecha_creacion|date:"d/m/Y H:i" }}{% endif %}
+            </div>
           </div>
-          <div class="post-meta">
-            {% if contenido.fecha_creacion %}· {{ contenido.fecha_creacion|date:"d/m/Y H:i" }}{% endif %}
+          <div class="post-content">
+            <div class="post-text">{{ contenido.texto|safe }}</div>
+            {% if contenido.imagen %}
+              <img src="{{ contenido.imagen.url }}"
+                  alt="{{ contenido.titulo }}"
+                  class="post-image">
+            {% elif contenido.imagen_url %}
+              <img src="{{ contenido.imagen_url }}"
+                  alt="{{ contenido.titulo }}"
+                  class="post-image">
+            {% endif %}
+          </div>
+          <div class="post-footer">
+            Categoría: {{ contenido.categoria }}
+            {% if contenido.subcategoria %}· Subcategoría: {{ contenido.subcategoria }}{% endif %}
           </div>
         </div>
-        <div class="post-content">
-          <div class="post-text">{{ contenido.texto|safe }}</div>
-          {% if contenido.imagen %}
-            <img src="{{ contenido.imagen.url }}"
-                 alt="{{ contenido.titulo }}"
-                 class="post-image">
-          {% elif contenido.imagen_url %}
-            <img src="{{ contenido.imagen_url }}"
-                 alt="{{ contenido.titulo }}"
-                 class="post-image">
-          {% endif %}
+      {% elif contenido.estado == 'Revisión' and permisoContenido.verEdicion %}
+        <div class="post">
+          <div class="post-header">
+            <div class="post-title">
+              <a href="{% url 'visualizar_contenido' contenido.id %}">{{ contenido.titulo }}</a>
+            </div>
+            <div class="post-meta">
+              {% if contenido.fecha_creacion %}· {{ contenido.fecha_creacion|date:"d/m/Y H:i" }}{% endif %}
+            </div>
+          </div>
+          <div class="post-content">
+            <div class="post-text">{{ contenido.texto|safe }}</div>
+            {% if contenido.imagen %}
+              <img src="{{ contenido.imagen.url }}"
+                  alt="{{ contenido.titulo }}"
+                  class="post-image">
+            {% elif contenido.imagen_url %}
+              <img src="{{ contenido.imagen_url }}"
+                  alt="{{ contenido.titulo }}"
+                  class="post-image">
+            {% endif %}
+          </div>
+          <div class="post-footer">
+            Categoría: {{ contenido.categoria }}
+            {% if contenido.subcategoria %}· Subcategoría: {{ contenido.subcategoria }}{% endif %}
+          </div>
         </div>
-        <div class="post-footer">
-          Categoría: {{ contenido.categoria }}
-          {% if contenido.subcategoria %}· Subcategoría: {{ contenido.subcategoria }}{% endif %}
+      {% elif contenido.estado == 'A Publicar' and permisoContenido.verAPublicar %}
+        <div class="post">
+          <div class="post-header">
+            <div class="post-title">
+              <a href="{% url 'visualizar_contenido' contenido.id %}">{{ contenido.titulo }}</a>
+            </div>
+            <div class="post-meta">
+              {% if contenido.fecha_creacion %}· {{ contenido.fecha_creacion|date:"d/m/Y H:i" }}{% endif %}
+            </div>
+          </div>
+          <div class="post-content">
+            <div class="post-text">{{ contenido.texto|safe }}</div>
+            {% if contenido.imagen %}
+              <img src="{{ contenido.imagen.url }}"
+                  alt="{{ contenido.titulo }}"
+                  class="post-image">
+            {% elif contenido.imagen_url %}
+              <img src="{{ contenido.imagen_url }}"
+                  alt="{{ contenido.titulo }}"
+                  class="post-image">
+            {% endif %}
+          </div>
+          <div class="post-footer">
+            Categoría: {{ contenido.categoria }}
+            {% if contenido.subcategoria %}· Subcategoría: {{ contenido.subcategoria }}{% endif %}
+          </div>
         </div>
-      </div>
+      {% elif contenido.estado == 'Publicado' and permisoContenido.verPublicado %}
+        <div class="post">
+          <div class="post-header">
+            <div class="post-title">
+              <a href="{% url 'visualizar_contenido' contenido.id %}">{{ contenido.titulo }}</a>
+            </div>
+            <div class="post-meta">
+              {% if contenido.fecha_creacion %}· {{ contenido.fecha_creacion|date:"d/m/Y H:i" }}{% endif %}
+            </div>
+          </div>
+          <div class="post-content">
+            <div class="post-text">{{ contenido.texto|safe }}</div>
+            {% if contenido.imagen %}
+              <img src="{{ contenido.imagen.url }}"
+                  alt="{{ contenido.titulo }}"
+                  class="post-image">
+            {% elif contenido.imagen_url %}
+              <img src="{{ contenido.imagen_url }}"
+                  alt="{{ contenido.titulo }}"
+                  class="post-image">
+            {% endif %}
+          </div>
+          <div class="post-footer">
+            Categoría: {{ contenido.categoria }}
+            {% if contenido.subcategoria %}· Subcategoría: {{ contenido.subcategoria }}{% endif %}
+          </div>
+        </div>
+      {% elif contenido.estado == 'Inactivo' and permisoContenido.verInactivo %}
+        <div class="post">
+          <div class="post-header">
+            <div class="post-title">
+              <a href="{% url 'visualizar_contenido' contenido.id %}">{{ contenido.titulo }}</a>
+            </div>
+            <div class="post-meta">
+              {% if contenido.fecha_creacion %}· {{ contenido.fecha_creacion|date:"d/m/Y H:i" }}{% endif %}
+            </div>
+          </div>
+          <div class="post-content">
+            <div class="post-text">{{ contenido.texto|safe }}</div>
+            {% if contenido.imagen %}
+              <img src="{{ contenido.imagen.url }}"
+                  alt="{{ contenido.titulo }}"
+                  class="post-image">
+            {% elif contenido.imagen_url %}
+              <img src="{{ contenido.imagen_url }}"
+                  alt="{{ contenido.titulo }}"
+                  class="post-image">
+            {% endif %}
+          </div>
+          <div class="post-footer">
+            Categoría: {{ contenido.categoria }}
+            {% if contenido.subcategoria %}· Subcategoría: {{ contenido.subcategoria }}{% endif %}
+          </div>
+        </div>
+      {% endif %}
+
     {% endfor %}
   </div>
 {% endblock content %}
