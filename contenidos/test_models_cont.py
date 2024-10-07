@@ -1,8 +1,9 @@
 from django.test import TestCase
 from appcms.models import Categoria
 from subcategorias.models import Subcategoria
-from contenidos.models_cont import Contenido
+from contenidos.models_cont import Contenido, Comentario
 from contenidos.models_cont import ContenidoForm
+from django.utils import timezone
 
 class ContenidoModelTest(TestCase):
     
@@ -97,8 +98,20 @@ class ContenidoFormTest(TestCase):
 
 class ComentarioTestCase(TestCase):
     
-    def setUp(self): #Configura el contenido y el comentario que usarás en las pruebas.
-        self.contenido = Contenido.objects.create(titulo="Test Content")
+    def setUp(self):  
+        # Crear una categoría para asociarla con el contenido
+        self.categoria = Categoria.objects.create(
+            nombre="Test Category",
+            descripcion="A test category"
+        )
+        
+        # Crear un contenido asignando la categoría
+        self.contenido = Contenido.objects.create(
+            titulo="Test Content",
+            categoria=self.categoria  # Aquí asignas la categoría
+        )
+
+        # Crear un comentario asociado al contenido
         self.comentario = Comentario.objects.create(
             contenido=self.contenido,
             usuario="Test User",
@@ -106,6 +119,7 @@ class ComentarioTestCase(TestCase):
             comentario="Este es un comentario de prueba.",
             active=True
         )
+
 
     def test_comentario_str(self): #Verifica que la representación en cadena del comentario sea correcta.
         self.assertEqual(str(self.comentario), "Comentario Este es un comentario de prueba. por Test User")
