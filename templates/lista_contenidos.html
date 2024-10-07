@@ -10,15 +10,16 @@
 {% block content %}
   {% load permisos %}
   {% tienePermiso 'contenido' '["verBorrador","verEdicion","verAPublicar","verPublicado","verInactivo"]' as permisoContenido %}
-  <div class="filter-container">
+  <div class="buscador-contenedor">
     <form method="get">
       <!-- Cuadro de búsqueda -->
       <input type="text"
              name="busqueda"
+             class="campo-busqueda"
              placeholder="Buscar..."
              value="{{ busqueda }}">
       <!-- Filtro por categoría -->
-      <select name="categoria">
+      <select name="categoria" class="filtrador-select">
         <option value="">Todas las categorías</option>
         {% for categoria in categorias %}
           <option value="{{ categoria.id_categoria }}"
@@ -28,16 +29,16 @@
         {% endfor %}
       </select>
       <!-- Filtro por autor -->
-      <select id="autor" name="autor">
+      <select id="autor" name="autor" class="filtrador-select">
         <option value="">Selecciona un autor</option>
         {% for autor in autores %}<option value="{{ autor.id }}">{{ autor.username }}</option>{% endfor %}
       </select>
       <!-- Filtro por orden -->
-      <select name="orden">
+      <select name="orden" class="filtrador-select">
         <option value="desc" {% if request.GET.orden == 'desc' %}selected{% endif %}>Más recientes</option>
         <option value="asc" {% if request.GET.orden == 'asc' %}selected{% endif %}>Más antiguos</option>
       </select>
-      <button type="submit">Filtrar</button>
+      <button type="submit" class="minimalista">Filtrar</button>
     </form>
   </div>
   <div class="container">
