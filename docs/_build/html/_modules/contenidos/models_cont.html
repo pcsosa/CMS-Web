@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+
+<html lang="es" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>contenidos.models_cont &#8212; documentación de cmsweb - 0.1</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=def86cc0" />
+    
+    <script src="../../_static/documentation_options.js?v=9c9b61ad"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/translations.js?v=d190bf04"></script>
+    
+    <link rel="index" title="Índice" href="../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="Índice General"
+             accesskey="I">índice</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Índice de Módulos Python"
+             >módulos</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">documentación de cmsweb - 0.1</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Código de módulo</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">contenidos.models_cont</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Código fuente para contenidos.models_cont</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">django</span> <span class="kn">import</span> <span class="n">forms</span>
+<span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+
+<span class="kn">from</span> <span class="nn">appcms.models</span> <span class="kn">import</span> <span class="n">Categoria</span>
+<span class="kn">from</span> <span class="nn">subcategorias.models</span> <span class="kn">import</span> <span class="n">Subcategoria</span>
+
+
+<div class="viewcode-block" id="Contenido">
+<a class="viewcode-back" href="../../modulesf/contenidos/models_cont.html#contenidos.models_cont.Contenido">[documentos]</a>
+<span class="k">class</span> <span class="nc">Contenido</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Representa el contenido que puede ser de tipo Blog o Multimedia.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Opciones para el tipo de contenido</span>
+    <span class="n">TIPO_CONTENIDO</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s2">&quot;Blog&quot;</span><span class="p">,</span> <span class="s2">&quot;Blog&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;Multimedia&quot;</span><span class="p">,</span> <span class="s2">&quot;Multimedia&quot;</span><span class="p">),</span>
+    <span class="p">]</span>
+
+    <span class="c1"># Opciones para el estado del contenido</span>
+    <span class="n">ESTADO_CONTENIDO</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s2">&quot;Borrador&quot;</span><span class="p">,</span> <span class="s2">&quot;Borrador&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;Revisión&quot;</span><span class="p">,</span> <span class="s2">&quot;Revisión&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;A Publicar&quot;</span><span class="p">,</span> <span class="s2">&quot;A Publicar&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;Publicado&quot;</span><span class="p">,</span> <span class="s2">&quot;Publicado&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;Inactivo&quot;</span><span class="p">,</span> <span class="s2">&quot;Inactivo&quot;</span><span class="p">),</span>
+    <span class="p">]</span>
+
+    <span class="n">tipo</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="n">TIPO_CONTENIDO</span><span class="p">)</span>
+    <span class="n">estado</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="n">ESTADO_CONTENIDO</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;Borrador&quot;</span>
+    <span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Modelo que representa un contenido en el sistema.</span>
+
+<span class="sd">    :param titulo: Título del contenido, con un máximo de 255 caracteres.</span>
+<span class="sd">    :param texto: Texto completo del contenido.</span>
+<span class="sd">    :param imagen: Imagen opcional asociada al contenido, almacenada en la carpeta &#39;imagenes/&#39;.</span>
+<span class="sd">    :param fecha_creacion: Fecha en que el contenido fue creado, asignada automáticamente.</span>
+<span class="sd">    :param fecha_actualizacion: Fecha de la última actualización del contenido, asignada automáticamente.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">titulo</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">)</span>  <span class="c1"># Campo para el título del contenido</span>
+    <span class="n">texto</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">()</span>  <span class="c1"># Campo para el texto</span>
+    <span class="n">imagen</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ImageField</span><span class="p">(</span>
+        <span class="n">upload_to</span><span class="o">=</span><span class="s2">&quot;multimedia/&quot;</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>  <span class="c1"># Para imágenes subidas</span>
+    <span class="n">imagen_url</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">URLField</span><span class="p">(</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>  <span class="c1"># Para imágenes desde una URL externa</span>
+    <span class="n">categoria</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">Categoria</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;contenidos&quot;</span>
+    <span class="p">)</span>  <span class="c1"># Categoría obligatoria</span>
+    <span class="n">subcategoria</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">Subcategoria</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">SET_NULL</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;subcontenidos&quot;</span><span class="p">,</span>
+    <span class="p">)</span>  <span class="c1"># Subcategoría opcional</span>
+    <span class="n">id_historial_mod</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>  <span class="c1"># ID del historial de modificaciones</span>
+    <span class="n">publicador_id</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>  <span class="c1"># Almacena el ID de Keycloak</span>
+    <span class="n">autor_id</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">editor_id</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">fecha_creacion</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span>
+        <span class="n">auto_now_add</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>  <span class="c1"># Fecha de creación automática</span>
+    <span class="n">fecha_modificacion</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span>
+        <span class="n">auto_now</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>  <span class="c1"># Se actualiza en cada modificación</span>
+
+<div class="viewcode-block" id="Contenido.obtener_imagen">
+<a class="viewcode-back" href="../../modulesf/contenidos/models_cont.html#contenidos.models_cont.Contenido.obtener_imagen">[documentos]</a>
+    <span class="k">def</span> <span class="nf">obtener_imagen</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">imagen</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">imagen</span><span class="o">.</span><span class="n">url</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">imagen_url</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">imagen_url</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Metadatos para el modelo Contenido.</span>
+
+<span class="sd">        :param verbose_name_plural: Nombre en plural de la clase.</span>
+<span class="sd">        :param app_label: Etiqueta de la aplicación asociada.</span>
+<span class="sd">        :param db_table: Nombre de la tabla en la base de datos.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">verbose_name_plural</span> <span class="o">=</span> <span class="s2">&quot;Contenidos&quot;</span>
+        <span class="n">app_label</span> <span class="o">=</span> <span class="s2">&quot;contenidos&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Representación en cadena del contenido.</span>
+
+<span class="sd">        :return: El título del contenido.</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">titulo</span></div>
+
+
+
+<div class="viewcode-block" id="ContenidoForm">
+<a class="viewcode-back" href="../../modulesf/contenidos/models_cont.html#contenidos.models_cont.ContenidoForm">[documentos]</a>
+<span class="k">class</span> <span class="nc">ContenidoForm</span><span class="p">(</span><span class="n">forms</span><span class="o">.</span><span class="n">ModelForm</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Formulario para el modelo Contenido.</span>
+
+<span class="sd">    :param model: El modelo asociado al formulario.</span>
+<span class="sd">    :param fields: Los campos que serán utilizados en el formulario.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ContenidoForm.Meta">
+<a class="viewcode-back" href="../../modulesf/contenidos/models_cont.html#contenidos.models_cont.ContenidoForm.Meta">[documentos]</a>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Contenido</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;tipo&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;titulo&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;texto&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;imagen&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;imagen_url&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;categoria&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;subcategoria&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;estado&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;autor_id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;editor_id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;publicador_id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;id_historial_mod&quot;</span><span class="p">,</span>
+        <span class="p">]</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Comentario">
+<a class="viewcode-back" href="../../modulesf/contenidos/models_cont.html#contenidos.models_cont.Comentario">[documentos]</a>
+<span class="k">class</span> <span class="nc">Comentario</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Modelo que representa un comentario asociado a un contenido específico.</span>
+
+<span class="sd">    Atributos:</span>
+<span class="sd">        contenido (ForeignKey): Referencia al contenido relacionado con este comentario.</span>
+<span class="sd">        usuario (str): Nombre del usuario que realizó el comentario.</span>
+<span class="sd">        email (EmailField): Dirección de correo del usuario.</span>
+<span class="sd">        comentario (TextField): Texto del comentario.</span>
+<span class="sd">        fecha (DateTimeField): Fecha en que fue creado el comentario.</span>
+<span class="sd">        active (bool): Indica si el comentario está activo y es visible.</span>
+
+<span class="sd">    Meta:</span>
+<span class="sd">        ordering (list): Ordena los comentarios por fecha, mostrando los más recientes primero.</span>
+
+<span class="sd">    Métodos:</span>
+<span class="sd">        __str__: Devuelve una representación en cadena del comentario, incluyendo el texto del comentario y el usuario que lo realizó.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">contenido</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">Contenido</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;comments&quot;</span>
+    <span class="p">)</span>
+    <span class="n">usuario</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">)</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">EmailField</span><span class="p">()</span>
+    <span class="n">comentario</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">()</span>
+    <span class="n">fecha</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">active</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">ordering</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;-fecha&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;Comentario </span><span class="si">{}</span><span class="s2"> por </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comentario</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">usuario</span><span class="p">)</span></div>
+
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Búsqueda rápida</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Ir a" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="Índice General"
+             >índice</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Índice de Módulos Python"
+             >módulos</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">documentación de cmsweb - 0.1</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Código de módulo</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">contenidos.models_cont</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, equipo01.
+      Creado usando <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    </div>
+  </body>
+</html>
