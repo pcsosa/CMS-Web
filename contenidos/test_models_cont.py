@@ -94,3 +94,45 @@ class ContenidoFormTest(TestCase):
         form = ContenidoForm(data=form_data)
         self.assertFalse(form.is_valid())
         self.assertIn('tipo', form.errors)
+
+class ComentarioTestCase(TestCase):
+    
+    def setUp(self): #Configura el contenido y el comentario que usarás en las pruebas.
+        self.contenido = Contenido.objects.create(titulo="Test Content")
+        self.comentario = Comentario.objects.create(
+            contenido=self.contenido,
+            usuario="Test User",
+            email="testuser@example.com",
+            comentario="Este es un comentario de prueba.",
+            active=True
+        )
+
+    def test_comentario_str(self): #Verifica que la representación en cadena del comentario sea correcta.
+        self.assertEqual(str(self.comentario), "Comentario Este es un comentario de prueba. por Test User")
+        
+    def test_comentario_active(self): #Comprueba que el comentario esté activo.
+        self.assertTrue(self.comentario.active)
+        
+    def test_comentario_fields(self): #Verifica los campos del comentario.
+        comentario = Comentario.objects.get(usuario="Test User")
+        self.assertEqual(comentario.email, "testuser@example.com")
+        self.assertEqual(comentario.comentario, "Este es un comentario de prueba.")
+
+    def test_comentario_fecha(self):
+        comentario = Comentario.objects.get(usuario="Test User")
+        # Chequea que la fecha del comentario sea reciente
+        self.assertTrue((timezone.now() - comentario.fecha).seconds < 60)
+
+    def test_comentario_ordering(self):
+        otro_comentario = Comentario.objects.create(
+            contenido=self.contenido,
+            usuario="Otro Usuario",
+            email="otrousuario@example.com",
+            comentario="Este es otro comentario.",
+            active=True
+        )
+        # Comprueba que los comentarios estén ordenados por fecha, mostrando el más reciente primero
+        comentarios = Comentario.objects.all()
+        self.assertEqual(comentarios[0], otro_comentario)
+        self.assertEqual(comentarios[1], self.comentario)
+
