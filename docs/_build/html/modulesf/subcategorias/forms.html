@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+
+<html lang="es" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Forms &#8212; documentación de cmsweb - 0.1</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=def86cc0" />
+    
+    <script src="../../_static/documentation_options.js?v=9c9b61ad"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/translations.js?v=d190bf04"></script>
+    
+    <link rel="index" title="Índice" href="../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../search.html" />
+    <link rel="next" title="Contenido" href="../contenidos/index.html" />
+    <link rel="prev" title="Models" href="models.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="Índice General"
+             accesskey="I">índice</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Índice de Módulos Python"
+             >módulos</a> |</li>
+        <li class="right" >
+          <a href="../contenidos/index.html" title="Contenido"
+             accesskey="N">siguiente</a> |</li>
+        <li class="right" >
+          <a href="models.html" title="Models"
+             accesskey="P">anterior</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">documentación de cmsweb - 0.1</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">subcategorias</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Forms</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-subcategorias.forms">
+<span id="forms"></span><h1>Forms<a class="headerlink" href="#module-subcategorias.forms" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="subcategorias.forms.SubcategoriaForm">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">subcategorias.forms.</span></span><span class="sig-name descname"><span class="pre">SubcategoriaForm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_id='id_%s'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_class=&lt;class</span> <span class="pre">'django.forms.utils.ErrorList'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_suffix=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">empty_permitted=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_required_attribute=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">renderer=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/subcategorias/forms.html#SubcategoriaForm"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#subcategorias.forms.SubcategoriaForm" title="Link to this definition">¶</a></dt>
+<dd><p>Formulario para crear una nueva subcategoría.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Fields<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Los campos que se incluirán en el formulario.</p>
+</dd>
+</dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="subcategorias.forms.SubcategoriaForm.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../../_modules/subcategorias/forms.html#SubcategoriaForm.Meta"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#subcategorias.forms.SubcategoriaForm.Meta" title="Link to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="subcategorias.forms.SubcategoriaForm.Meta.clean_categoria">
+<span class="sig-name descname"><span class="pre">clean_categoria</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/subcategorias/forms.html#SubcategoriaForm.Meta.clean_categoria"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#subcategorias.forms.SubcategoriaForm.Meta.clean_categoria" title="Link to this definition">¶</a></dt>
+<dd><p>Valida el campo “categoria” del formulario.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Muestra<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValidationError</strong> – Si la categoría no está seleccionada o es None.</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>La categoría validada si pasa todas las validaciones.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="subcategorias.forms.SubcategoriaForm.Meta.clean_nombre">
+<span class="sig-name descname"><span class="pre">clean_nombre</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/subcategorias/forms.html#SubcategoriaForm.Meta.clean_nombre"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#subcategorias.forms.SubcategoriaForm.Meta.clean_nombre" title="Link to this definition">¶</a></dt>
+<dd><p>Valida el campo “nombre” del formulario.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Muestra<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValidationError</strong> – Si el nombre está vacío, solo contiene espacios,
+o si ya existe en la base de datos (insensible a mayúsculas).</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>El nombre validado si pasa todas las validaciones.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="subcategorias.forms.SubcategoriaForm.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['nombre',</span> <span class="pre">'categoria']</span></em><a class="headerlink" href="#subcategorias.forms.SubcategoriaForm.Meta.fields" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="subcategorias.forms.SubcategoriaForm.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#subcategorias.forms.SubcategoriaForm.Meta.model" title="Link to this definition">¶</a></dt>
+<dd><p>alias de <a class="reference internal" href="models.html#subcategorias.models.Subcategoria" title="subcategorias.models.Subcategoria"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subcategoria</span></code></a></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="subcategorias.forms.SubcategoriaForm.base_fields">
+<span class="sig-name descname"><span class="pre">base_fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'categoria':</span> <span class="pre">&lt;django.forms.models.ModelChoiceField</span> <span class="pre">object&gt;,</span> <span class="pre">'nombre':</span> <span class="pre">&lt;django.forms.fields.CharField</span> <span class="pre">object&gt;}</span></em><a class="headerlink" href="#subcategorias.forms.SubcategoriaForm.base_fields" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="subcategorias.forms.SubcategoriaForm.declared_fields">
+<span class="sig-name descname"><span class="pre">declared_fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#subcategorias.forms.SubcategoriaForm.declared_fields" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="subcategorias.forms.SubcategoriaForm.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#subcategorias.forms.SubcategoriaForm.media" title="Link to this definition">¶</a></dt>
+<dd><p>Return all media required to render the widgets on this form.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../../index.html">Tabla de contenido</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Forms</a><ul>
+<li><a class="reference internal" href="#subcategorias.forms.SubcategoriaForm"><code class="docutils literal notranslate"><span class="pre">SubcategoriaForm</span></code></a><ul>
+<li><a class="reference internal" href="#subcategorias.forms.SubcategoriaForm.Meta"><code class="docutils literal notranslate"><span class="pre">SubcategoriaForm.Meta</span></code></a><ul>
+<li><a class="reference internal" href="#subcategorias.forms.SubcategoriaForm.Meta.clean_categoria"><code class="docutils literal notranslate"><span class="pre">SubcategoriaForm.Meta.clean_categoria()</span></code></a></li>
+<li><a class="reference internal" href="#subcategorias.forms.SubcategoriaForm.Meta.clean_nombre"><code class="docutils literal notranslate"><span class="pre">SubcategoriaForm.Meta.clean_nombre()</span></code></a></li>
+<li><a class="reference internal" href="#subcategorias.forms.SubcategoriaForm.Meta.fields"><code class="docutils literal notranslate"><span class="pre">SubcategoriaForm.Meta.fields</span></code></a></li>
+<li><a class="reference internal" href="#subcategorias.forms.SubcategoriaForm.Meta.model"><code class="docutils literal notranslate"><span class="pre">SubcategoriaForm.Meta.model</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#subcategorias.forms.SubcategoriaForm.base_fields"><code class="docutils literal notranslate"><span class="pre">SubcategoriaForm.base_fields</span></code></a></li>
+<li><a class="reference internal" href="#subcategorias.forms.SubcategoriaForm.declared_fields"><code class="docutils literal notranslate"><span class="pre">SubcategoriaForm.declared_fields</span></code></a></li>
+<li><a class="reference internal" href="#subcategorias.forms.SubcategoriaForm.media"><code class="docutils literal notranslate"><span class="pre">SubcategoriaForm.media</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Tema anterior</h4>
+    <p class="topless"><a href="models.html"
+                          title="capítulo anterior">Models</a></p>
+  </div>
+  <div>
+    <h4>Próximo tema</h4>
+    <p class="topless"><a href="../contenidos/index.html"
+                          title="próximo capítulo">Contenido</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>Esta página</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/modulesf/subcategorias/forms.rst.txt"
+            rel="nofollow">Mostrar el código</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Búsqueda rápida</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Ir a" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="Índice General"
+             >índice</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Índice de Módulos Python"
+             >módulos</a> |</li>
+        <li class="right" >
+          <a href="../contenidos/index.html" title="Contenido"
+             >siguiente</a> |</li>
+        <li class="right" >
+          <a href="models.html" title="Models"
+             >anterior</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">documentación de cmsweb - 0.1</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >subcategorias</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Forms</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, equipo01.
+      Creado usando <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    </div>
+  </body>
+</html>

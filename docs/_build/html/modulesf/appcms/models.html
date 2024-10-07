@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+
+<html lang="es" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Models &#8212; documentación de cmsweb - 0.1</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=def86cc0" />
+    
+    <script src="../../_static/documentation_options.js?v=9c9b61ad"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/translations.js?v=d190bf04"></script>
+    
+    <link rel="index" title="Índice" href="../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../search.html" />
+    <link rel="next" title="Forms" href="forms.html" />
+    <link rel="prev" title="Views" href="views.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="Índice General"
+             accesskey="I">índice</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Índice de Módulos Python"
+             >módulos</a> |</li>
+        <li class="right" >
+          <a href="forms.html" title="Forms"
+             accesskey="N">siguiente</a> |</li>
+        <li class="right" >
+          <a href="views.html" title="Views"
+             accesskey="P">anterior</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">documentación de cmsweb - 0.1</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">appcms</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Models</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-appcms.models">
+<span id="models"></span><h1>Models<a class="headerlink" href="#module-appcms.models" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="appcms.models.Categoria">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">appcms.models.</span></span><span class="sig-name descname"><span class="pre">Categoria</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/appcms/models.html#Categoria"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#appcms.models.Categoria" title="Link to this definition">¶</a></dt>
+<dd><p>Modelo que representa una categoría en el sistema.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id_categoria</strong> – Clave primaria de la categoría.</p></li>
+<li><p><strong>nombre</strong> – Nombre de la categoría, único en el sistema, con un máximo de 100 caracteres.</p></li>
+<li><p><strong>descripcion</strong> – Descripción detallada de la categoría, con un máximo de 500 caracteres.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py exception">
+<dt class="sig sig-object py" id="appcms.models.Categoria.DoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#appcms.models.Categoria.DoesNotExist" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="appcms.models.Categoria.MultipleObjectsReturned">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#appcms.models.Categoria.MultipleObjectsReturned" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="appcms.models.Categoria.contenidos">
+<span class="sig-name descname"><span class="pre">contenidos</span></span><a class="headerlink" href="#appcms.models.Categoria.contenidos" title="Link to this definition">¶</a></dt>
+<dd><p>Accessor to the related objects manager on the reverse side of a
+many-to-one relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Parent.children</span></code> is a <code class="docutils literal notranslate"><span class="pre">ReverseManyToOneDescriptor</span></code> instance.</p>
+<p>Most of the implementation is delegated to a dynamically defined manager
+class built by <code class="docutils literal notranslate"><span class="pre">create_forward_many_to_many_manager()</span></code> defined below.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="appcms.models.Categoria.descripcion">
+<span class="sig-name descname"><span class="pre">descripcion</span></span><a class="headerlink" href="#appcms.models.Categoria.descripcion" title="Link to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="appcms.models.Categoria.get_descripcion">
+<span class="sig-name descname"><span class="pre">get_descripcion</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/appcms/models.html#Categoria.get_descripcion"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#appcms.models.Categoria.get_descripcion" title="Link to this definition">¶</a></dt>
+<dd><p>Obtiene la descripción de la categoría.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Devuelve<span class="colon">:</span></dt>
+<dd class="field-odd"><p>La descripción de la categoría.</p>
+</dd>
+<dt class="field-even">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="appcms.models.Categoria.id_categoria">
+<span class="sig-name descname"><span class="pre">id_categoria</span></span><a class="headerlink" href="#appcms.models.Categoria.id_categoria" title="Link to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="appcms.models.Categoria.nombre">
+<span class="sig-name descname"><span class="pre">nombre</span></span><a class="headerlink" href="#appcms.models.Categoria.nombre" title="Link to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="appcms.models.Categoria.objects">
+<span class="sig-name descname"><span class="pre">objects</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;django.db.models.manager.Manager</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#appcms.models.Categoria.objects" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="appcms.models.Categoria.subcategorias">
+<span class="sig-name descname"><span class="pre">subcategorias</span></span><a class="headerlink" href="#appcms.models.Categoria.subcategorias" title="Link to this definition">¶</a></dt>
+<dd><p>Accessor to the related objects manager on the reverse side of a
+many-to-one relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Parent.children</span></code> is a <code class="docutils literal notranslate"><span class="pre">ReverseManyToOneDescriptor</span></code> instance.</p>
+<p>Most of the implementation is delegated to a dynamically defined manager
+class built by <code class="docutils literal notranslate"><span class="pre">create_forward_many_to_many_manager()</span></code> defined below.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../../index.html">Tabla de contenido</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Models</a><ul>
+<li><a class="reference internal" href="#appcms.models.Categoria"><code class="docutils literal notranslate"><span class="pre">Categoria</span></code></a><ul>
+<li><a class="reference internal" href="#appcms.models.Categoria.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">Categoria.DoesNotExist</span></code></a></li>
+<li><a class="reference internal" href="#appcms.models.Categoria.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">Categoria.MultipleObjectsReturned</span></code></a></li>
+<li><a class="reference internal" href="#appcms.models.Categoria.contenidos"><code class="docutils literal notranslate"><span class="pre">Categoria.contenidos</span></code></a></li>
+<li><a class="reference internal" href="#appcms.models.Categoria.descripcion"><code class="docutils literal notranslate"><span class="pre">Categoria.descripcion</span></code></a></li>
+<li><a class="reference internal" href="#appcms.models.Categoria.get_descripcion"><code class="docutils literal notranslate"><span class="pre">Categoria.get_descripcion()</span></code></a></li>
+<li><a class="reference internal" href="#appcms.models.Categoria.id_categoria"><code class="docutils literal notranslate"><span class="pre">Categoria.id_categoria</span></code></a></li>
+<li><a class="reference internal" href="#appcms.models.Categoria.nombre"><code class="docutils literal notranslate"><span class="pre">Categoria.nombre</span></code></a></li>
+<li><a class="reference internal" href="#appcms.models.Categoria.objects"><code class="docutils literal notranslate"><span class="pre">Categoria.objects</span></code></a></li>
+<li><a class="reference internal" href="#appcms.models.Categoria.subcategorias"><code class="docutils literal notranslate"><span class="pre">Categoria.subcategorias</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Tema anterior</h4>
+    <p class="topless"><a href="views.html"
+                          title="capítulo anterior">Views</a></p>
+  </div>
+  <div>
+    <h4>Próximo tema</h4>
+    <p class="topless"><a href="forms.html"
+                          title="próximo capítulo">Forms</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>Esta página</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/modulesf/appcms/models.rst.txt"
+            rel="nofollow">Mostrar el código</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Búsqueda rápida</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Ir a" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="Índice General"
+             >índice</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Índice de Módulos Python"
+             >módulos</a> |</li>
+        <li class="right" >
+          <a href="forms.html" title="Forms"
+             >siguiente</a> |</li>
+        <li class="right" >
+          <a href="views.html" title="Views"
+             >anterior</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">documentación de cmsweb - 0.1</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >appcms</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Models</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, equipo01.
+      Creado usando <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    </div>
+  </body>
+</html>

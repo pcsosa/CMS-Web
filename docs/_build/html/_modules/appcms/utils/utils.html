@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+
+<html lang="es" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>appcms.utils.utils &#8212; documentación de cmsweb - 0.1</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/classic.css?v=def86cc0" />
+    
+    <script src="../../../_static/documentation_options.js?v=9c9b61ad"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/translations.js?v=d190bf04"></script>
+    
+    <link rel="index" title="Índice" href="../../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="Índice General"
+             accesskey="I">índice</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Índice de Módulos Python"
+             >módulos</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">documentación de cmsweb - 0.1</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Código de módulo</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">appcms.utils.utils</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Código fuente para appcms.utils.utils</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">unicodedata</span>
+
+<span class="kn">import</span> <span class="nn">jwt</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">django.conf</span> <span class="kn">import</span> <span class="n">settings</span>
+<span class="kn">from</span> <span class="nn">django.core.cache</span> <span class="kn">import</span> <span class="n">cache</span>
+
+<span class="kn">from</span> <span class="nn">appcms.services.keycloak_service</span> <span class="kn">import</span> <span class="n">KeycloakService</span>
+
+
+<span class="c1"># Obtener información del usuario a partir del user id</span>
+<div class="viewcode-block" id="obtenerUserInfoById">
+<a class="viewcode-back" href="../../../modulesf/appcms/utils.html#appcms.utils.utils.obtenerUserInfoById">[documentos]</a>
+<span class="k">def</span> <span class="nf">obtenerUserInfoById</span><span class="p">(</span><span class="n">user_id</span><span class="p">):</span>
+    <span class="n">kc</span> <span class="o">=</span> <span class="n">KeycloakService</span><span class="p">()</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">kc</span><span class="o">.</span><span class="n">admin</span><span class="o">.</span><span class="n">get_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">user</span></div>
+
+
+
+<div class="viewcode-block" id="obtenerUserInfo">
+<a class="viewcode-back" href="../../../modulesf/appcms/utils.html#appcms.utils.utils.obtenerUserInfo">[documentos]</a>
+<span class="k">def</span> <span class="nf">obtenerUserInfo</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">token</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">decoded_token</span> <span class="o">=</span> <span class="n">decode_token</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+
+    <span class="n">user_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="n">decoded_token</span><span class="p">[</span><span class="s2">&quot;email&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">decoded_token</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;preferred_username&quot;</span><span class="p">:</span> <span class="n">decoded_token</span><span class="p">[</span><span class="s2">&quot;preferred_username&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;given_name&quot;</span><span class="p">:</span> <span class="n">decoded_token</span><span class="p">[</span><span class="s2">&quot;given_name&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;family_name&quot;</span><span class="p">:</span> <span class="n">decoded_token</span><span class="p">[</span><span class="s2">&quot;family_name&quot;</span><span class="p">],</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">user_info</span></div>
+
+
+
+<div class="viewcode-block" id="obtenerToken">
+<a class="viewcode-back" href="../../../modulesf/appcms/utils.html#appcms.utils.utils.obtenerToken">[documentos]</a>
+<span class="k">def</span> <span class="nf">obtenerToken</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="n">token</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;access_token&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">token</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Token obtenido de la sesión&quot;</span><span class="p">)</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;access_token&quot;</span><span class="p">)</span>
+        <span class="n">cache</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;access_token&quot;</span><span class="p">,</span> <span class="n">token</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">token</span></div>
+
+
+
+<div class="viewcode-block" id="tienePermiso">
+<a class="viewcode-back" href="../../../modulesf/appcms/utils.html#appcms.utils.utils.tienePermiso">[documentos]</a>
+<span class="k">def</span> <span class="nf">tienePermiso</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">resource</span><span class="p">,</span> <span class="n">scopes_to_check</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">token</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">scope</span><span class="p">:</span> <span class="kc">False</span> <span class="k">for</span> <span class="n">scope</span> <span class="ow">in</span> <span class="n">scopes_to_check</span><span class="p">}</span>
+
+    <span class="n">decoded_token</span> <span class="o">=</span> <span class="n">decode_token</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+    <span class="n">authorization</span> <span class="o">=</span> <span class="n">decoded_token</span><span class="p">[</span><span class="s2">&quot;authorization&quot;</span><span class="p">]</span>
+    <span class="n">permissions</span> <span class="o">=</span> <span class="n">authorization</span><span class="p">[</span><span class="s2">&quot;permissions&quot;</span><span class="p">]</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">scope_to_check</span> <span class="ow">in</span> <span class="n">scopes_to_check</span><span class="p">:</span>
+        <span class="n">has_permission</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">permission</span> <span class="ow">in</span> <span class="n">permissions</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">permission</span><span class="p">[</span><span class="s2">&quot;rsname&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">resource</span>
+                <span class="ow">and</span> <span class="n">scope_to_check</span> <span class="ow">in</span> <span class="n">permission</span><span class="p">[</span><span class="s2">&quot;scopes&quot;</span><span class="p">]</span>
+            <span class="p">):</span>
+                <span class="n">has_permission</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">break</span>
+        <span class="n">results</span><span class="p">[</span><span class="n">scope_to_check</span><span class="p">]</span> <span class="o">=</span> <span class="n">has_permission</span>
+
+    <span class="k">return</span> <span class="n">results</span></div>
+
+
+
+<div class="viewcode-block" id="obtenerRPT">
+<a class="viewcode-back" href="../../../modulesf/appcms/utils.html#appcms.utils.utils.obtenerRPT">[documentos]</a>
+<span class="k">def</span> <span class="nf">obtenerRPT</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">token</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">host</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">KEYCLOAK_SERVER_URL</span>
+    <span class="n">realm</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">KEYCLOAK_REALM</span>
+    <span class="n">client_id</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">KEYCLOAK_CLIENT_ID</span>
+    <span class="n">endpoint</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">host</span><span class="si">}</span><span class="s2">/realms/</span><span class="si">{</span><span class="n">realm</span><span class="si">}</span><span class="s2">/protocol/openid-connect/token&quot;</span>
+
+    <span class="c1"># Crear el payload para la solicitud de RPT</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;grant_type&quot;</span><span class="p">:</span> <span class="s2">&quot;urn:ietf:params:oauth:grant-type:uma-ticket&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;audience&quot;</span><span class="p">:</span> <span class="n">client_id</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Crear el encabezado de la solicitud</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Bearer </span><span class="si">{</span><span class="n">token</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/x-www-form-urlencoded&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Realizar la solicitud de RPT</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+
+    <span class="c1"># Verificar si la solicitud fue exitosa</span>
+    <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;No se pudo obtener el RPT&quot;</span><span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="obtenerUsersConRol">
+<a class="viewcode-back" href="../../../modulesf/appcms/utils.html#appcms.utils.utils.obtenerUsersConRol">[documentos]</a>
+<span class="k">def</span> <span class="nf">obtenerUsersConRol</span><span class="p">(</span><span class="n">rol</span><span class="p">):</span>
+    <span class="n">kc</span> <span class="o">=</span> <span class="n">KeycloakService</span><span class="p">()</span>
+    <span class="n">users</span> <span class="o">=</span> <span class="n">kc</span><span class="o">.</span><span class="n">admin</span><span class="o">.</span><span class="n">get_realm_role_members</span><span class="p">(</span><span class="n">rol</span><span class="p">)</span>
+
+    <span class="c1"># Usar comprensión de lista para extraer solo los campos &#39;id&#39; y &#39;username&#39;</span>
+    <span class="n">filtered_data</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">user</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">user</span><span class="p">[</span><span class="s2">&quot;username&quot;</span><span class="p">]}</span> <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">users</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">filtered_data</span></div>
+
+
+
+<div class="viewcode-block" id="obtenerUserId">
+<a class="viewcode-back" href="../../../modulesf/appcms/utils.html#appcms.utils.utils.obtenerUserId">[documentos]</a>
+<span class="k">def</span> <span class="nf">obtenerUserId</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">token</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">decode_token</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;sub&quot;</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="decode_token">
+<a class="viewcode-back" href="../../../modulesf/appcms/utils.html#appcms.utils.utils.decode_token">[documentos]</a>
+<span class="k">def</span> <span class="nf">decode_token</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">audience</span><span class="o">=</span><span class="s2">&quot;cmsweb&quot;</span><span class="p">,</span> <span class="n">verify_exp</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="n">public_key</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">KEYCLOAK_RS256_PUBLIC_KEY</span>
+    <span class="n">public_key</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">n&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">public_key</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">jwt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span>
+        <span class="n">token</span><span class="p">,</span>
+        <span class="n">public_key</span><span class="p">,</span>
+        <span class="n">algorithms</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;RS256&quot;</span><span class="p">],</span>
+        <span class="n">audience</span><span class="o">=</span><span class="n">audience</span><span class="p">,</span>
+        <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;verify_exp&quot;</span><span class="p">:</span> <span class="n">verify_exp</span><span class="p">},</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="expiroToken">
+<a class="viewcode-back" href="../../../modulesf/appcms/utils.html#appcms.utils.utils.expiroToken">[documentos]</a>
+<span class="k">def</span> <span class="nf">expiroToken</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">token</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">decoded_token</span> <span class="o">=</span> <span class="n">decode_token</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">verify_exp</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">decoded_token</span><span class="p">[</span><span class="s2">&quot;exp&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="comprobarToken">
+<a class="viewcode-back" href="../../../modulesf/appcms/utils.html#appcms.utils.utils.comprobarToken">[documentos]</a>
+<span class="k">def</span> <span class="nf">comprobarToken</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">token</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">expiroToken</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">token</span>
+
+    <span class="n">kc</span> <span class="o">=</span> <span class="n">KeycloakService</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span>
+
+    <span class="n">refresh_token</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;refresh_token&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">refresh_token</span><span class="p">:</span>
+        <span class="n">refresh_token</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;refresh_token&quot;</span><span class="p">)</span>
+        <span class="n">cache</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;refresh_token&quot;</span><span class="p">,</span> <span class="n">refresh_token</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">1800</span><span class="p">)</span>
+
+    <span class="n">newToken</span> <span class="o">=</span> <span class="n">kc</span><span class="o">.</span><span class="n">renovarToken</span><span class="p">(</span><span class="n">refresh_token</span><span class="p">)</span>
+    <span class="n">newToken</span> <span class="o">=</span> <span class="n">obtenerRPT</span><span class="p">(</span><span class="n">newToken</span><span class="p">[</span><span class="s2">&quot;access_token&quot;</span><span class="p">])</span>
+    <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s2">&quot;access_token&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">newToken</span><span class="p">[</span><span class="s2">&quot;access_token&quot;</span><span class="p">]</span>
+    <span class="n">cache</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;access_token&quot;</span><span class="p">,</span> <span class="n">newToken</span><span class="p">[</span><span class="s2">&quot;access_token&quot;</span><span class="p">],</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;TOKEN RENOVADO&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">newToken</span><span class="p">[</span><span class="s2">&quot;access_token&quot;</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="obtenerRolesUser">
+<a class="viewcode-back" href="../../../modulesf/appcms/utils.html#appcms.utils.utils.obtenerRolesUser">[documentos]</a>
+<span class="k">def</span> <span class="nf">obtenerRolesUser</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+    <span class="n">decoded_token</span> <span class="o">=</span> <span class="n">decode_token</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+    <span class="n">roles</span> <span class="o">=</span> <span class="n">decoded_token</span><span class="p">[</span><span class="s2">&quot;realm_access&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;roles&quot;</span><span class="p">,</span> <span class="p">[])</span>
+
+    <span class="n">roles</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">rol</span>
+        <span class="k">for</span> <span class="n">rol</span> <span class="ow">in</span> <span class="n">roles</span>
+        <span class="k">if</span> <span class="s2">&quot;default-roles-cmsweb&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rol</span>
+        <span class="ow">and</span> <span class="s2">&quot;offline_access&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rol</span>
+        <span class="ow">and</span> <span class="s2">&quot;uma_authorization&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rol</span>
+    <span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">roles</span></div>
+
+
+
+<div class="viewcode-block" id="quitar_acentos">
+<a class="viewcode-back" href="../../../modulesf/appcms/utils.html#appcms.utils.utils.quitar_acentos">[documentos]</a>
+<span class="k">def</span> <span class="nf">quitar_acentos</span><span class="p">(</span><span class="n">texto</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Elimina los acentos de un texto.</span>
+
+<span class="sd">    Este método normaliza el texto en forma NFD y filtra los caracteres con acentos.</span>
+
+<span class="sd">    :param texto: El texto al que se le quitarán los acentos.</span>
+<span class="sd">    :type texto: str</span>
+<span class="sd">    :return: El texto sin acentos.</span>
+<span class="sd">    :rtype: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">texto</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">texto_normalizado</span> <span class="o">=</span> <span class="n">unicodedata</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="s2">&quot;NFD&quot;</span><span class="p">,</span> <span class="n">texto</span><span class="p">)</span>
+    <span class="n">texto_sin_acentos</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">char</span> <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">texto_normalizado</span> <span class="k">if</span> <span class="n">unicodedata</span><span class="o">.</span><span class="n">category</span><span class="p">(</span><span class="n">char</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">&quot;Mn&quot;</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">texto_sin_acentos</span></div>
+
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Búsqueda rápida</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Ir a" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="Índice General"
+             >índice</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Índice de Módulos Python"
+             >módulos</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">documentación de cmsweb - 0.1</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Código de módulo</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">appcms.utils.utils</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, equipo01.
+      Creado usando <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    </div>
+  </body>
+</html>

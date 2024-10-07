@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+<html lang="es" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Views &#8212; documentación de cmsweb - 0.1</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=def86cc0" />
+    
+    <script src="../../_static/documentation_options.js?v=9c9b61ad"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/translations.js?v=d190bf04"></script>
+    
+    <link rel="index" title="Índice" href="../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../search.html" />
+    <link rel="next" title="Models" href="models.html" />
+    <link rel="prev" title="appcms" href="index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="Índice General"
+             accesskey="I">índice</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Índice de Módulos Python"
+             >módulos</a> |</li>
+        <li class="right" >
+          <a href="models.html" title="Models"
+             accesskey="N">siguiente</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="appcms"
+             accesskey="P">anterior</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">documentación de cmsweb - 0.1</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">appcms</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Views</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-appcms.views">
+<span id="views"></span><h1>Views<a class="headerlink" href="#module-appcms.views" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="appcms.views.callback">
+<span class="sig-prename descclassname"><span class="pre">appcms.views.</span></span><span class="sig-name descname"><span class="pre">callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/appcms/views.html#callback"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#appcms.views.callback" title="Link to this definition">¶</a></dt>
+<dd><p>Maneja el callback de Keycloak después del inicio de sesión.</p>
+<p>Recibe el código de autorización de Keycloak, lo intercambia por un token de acceso
+y lo guarda en la sesión del usuario. Si no se proporciona un código, devuelve un error.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>HttpRequest</em>) – El objeto HTTP request de Django que contiene los detalles de la solicitud.</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Si se proporciona un código válido, redirige al usuario al panel de control.
+Si no se proporciona el código, devuelve un error HTTP 400.</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="appcms.views.crear_categoria">
+<span class="sig-prename descclassname"><span class="pre">appcms.views.</span></span><span class="sig-name descname"><span class="pre">crear_categoria</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/appcms/views.html#crear_categoria"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#appcms.views.crear_categoria" title="Link to this definition">¶</a></dt>
+<dd><p>Crea una nueva categoría.</p>
+<p>Si se envía una solicitud POST, se guarda la nueva categoría.
+En caso contrario, se muestra un formulario para crear una nueva categoría.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>HttpRequest</em>) – La solicitud HTTP.</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>HttpResponse.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="appcms.views.editar_categoria">
+<span class="sig-prename descclassname"><span class="pre">appcms.views.</span></span><span class="sig-name descname"><span class="pre">editar_categoria</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pk</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/appcms/views.html#editar_categoria"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#appcms.views.editar_categoria" title="Link to this definition">¶</a></dt>
+<dd><p>Editar campos de categoria</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">param request<span class="colon">:</span></dt>
+<dd class="field-odd"><p>La solicitud HTTP.</p>
+</dd>
+<dt class="field-even">type request<span class="colon">:</span></dt>
+<dd class="field-even"><p>HttpRequest</p>
+</dd>
+<dt class="field-odd">param pk<span class="colon">:</span></dt>
+<dd class="field-odd"><p>La clave primaria de la categoría a modificar.</p>
+</dd>
+<dt class="field-even">type pk<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+<dt class="field-odd">return<span class="colon">:</span></dt>
+<dd class="field-odd"><p>HttpResponse.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="appcms.views.eliminar_categoria">
+<span class="sig-prename descclassname"><span class="pre">appcms.views.</span></span><span class="sig-name descname"><span class="pre">eliminar_categoria</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pk</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/appcms/views.html#eliminar_categoria"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#appcms.views.eliminar_categoria" title="Link to this definition">¶</a></dt>
+<dd><p>Elimina una categoría específica.</p>
+<p>Esta vista permite la eliminación de una categoría a partir de su clave primaria (pk).
+Después de la eliminación, se redirige a la lista de categorías.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>HttpRequest</em>) – La solicitud HTTP.</p></li>
+<li><p><strong>pk</strong> (<em>int</em>) – La clave primaria de la categoría a eliminar.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>HttpResponse.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="appcms.views.home">
+<span class="sig-prename descclassname"><span class="pre">appcms.views.</span></span><span class="sig-name descname"><span class="pre">home</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/appcms/views.html#home"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#appcms.views.home" title="Link to this definition">¶</a></dt>
+<dd><p>Vista para la página de inicio.</p>
+<p>Esta vista renderiza la plantilla “home.html”.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="appcms.views.lista_categorias">
+<span class="sig-prename descclassname"><span class="pre">appcms.views.</span></span><span class="sig-name descname"><span class="pre">lista_categorias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/appcms/views.html#lista_categorias"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#appcms.views.lista_categorias" title="Link to this definition">¶</a></dt>
+<dd><p>Muestra una lista de todas las categorías.</p>
+<p>Esta vista consulta todas las categorías de la base de datos y las muestra
+en la plantilla “lista_categorias.html”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>HttpRequest</em>) – La solicitud HTTP.</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>HttpResponse: La respuesta renderizada con la lista de categorías.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="appcms.views.login">
+<span class="sig-prename descclassname"><span class="pre">appcms.views.</span></span><span class="sig-name descname"><span class="pre">login</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/appcms/views.html#login"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#appcms.views.login" title="Link to this definition">¶</a></dt>
+<dd><p>Maneja el inicio de sesión del usuario.</p>
+<p>Esta función redirige al usuario a la página de autenticación de Keycloak.
+Se genera una URL de autorización con los permisos solicitados (“openid”, “profile”, “email”)
+y la redirección después del inicio de sesión exitoso es manejada por la URI proporcionada.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>HttpRequest</em>) – El objeto HTTP request de Django que contiene los detalles de la solicitud.</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Redirige al usuario a la página de inicio de sesión de Keycloak.</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="appcms.views.logout">
+<span class="sig-prename descclassname"><span class="pre">appcms.views.</span></span><span class="sig-name descname"><span class="pre">logout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/appcms/views.html#logout"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#appcms.views.logout" title="Link to this definition">¶</a></dt>
+<dd><p>Maneja el cierre de sesión del usuario.</p>
+<p>Limpia la sesión del usuario y llama al servicio de Keycloak para cerrar la sesión
+de forma remota. Luego, redirige al usuario a la página de inicio.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>HttpRequest</em>) – El objeto HTTP request de Django que contiene los detalles de la solicitud.</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Redirige al usuario a la página de inicio después de cerrar la sesión.</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="appcms.views.panel">
+<span class="sig-prename descclassname"><span class="pre">appcms.views.</span></span><span class="sig-name descname"><span class="pre">panel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/appcms/views.html#panel"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#appcms.views.panel" title="Link to this definition">¶</a></dt>
+<dd><p>Vista para la página del panel de administración.</p>
+<p>Esta vista renderiza la plantilla “panel.html”.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="appcms.views.upload_image">
+<span class="sig-prename descclassname"><span class="pre">appcms.views.</span></span><span class="sig-name descname"><span class="pre">upload_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/appcms/views.html#upload_image"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#appcms.views.upload_image" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../../index.html">Tabla de contenido</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Views</a><ul>
+<li><a class="reference internal" href="#appcms.views.callback"><code class="docutils literal notranslate"><span class="pre">callback()</span></code></a></li>
+<li><a class="reference internal" href="#appcms.views.crear_categoria"><code class="docutils literal notranslate"><span class="pre">crear_categoria()</span></code></a></li>
+<li><a class="reference internal" href="#appcms.views.editar_categoria"><code class="docutils literal notranslate"><span class="pre">editar_categoria()</span></code></a></li>
+<li><a class="reference internal" href="#appcms.views.eliminar_categoria"><code class="docutils literal notranslate"><span class="pre">eliminar_categoria()</span></code></a></li>
+<li><a class="reference internal" href="#appcms.views.home"><code class="docutils literal notranslate"><span class="pre">home()</span></code></a></li>
+<li><a class="reference internal" href="#appcms.views.lista_categorias"><code class="docutils literal notranslate"><span class="pre">lista_categorias()</span></code></a></li>
+<li><a class="reference internal" href="#appcms.views.login"><code class="docutils literal notranslate"><span class="pre">login()</span></code></a></li>
+<li><a class="reference internal" href="#appcms.views.logout"><code class="docutils literal notranslate"><span class="pre">logout()</span></code></a></li>
+<li><a class="reference internal" href="#appcms.views.panel"><code class="docutils literal notranslate"><span class="pre">panel()</span></code></a></li>
+<li><a class="reference internal" href="#appcms.views.upload_image"><code class="docutils literal notranslate"><span class="pre">upload_image()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Tema anterior</h4>
+    <p class="topless"><a href="index.html"
+                          title="capítulo anterior">appcms</a></p>
+  </div>
+  <div>
+    <h4>Próximo tema</h4>
+    <p class="topless"><a href="models.html"
+                          title="próximo capítulo">Models</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>Esta página</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/modulesf/appcms/views.rst.txt"
+            rel="nofollow">Mostrar el código</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Búsqueda rápida</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Ir a" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="Índice General"
+             >índice</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Índice de Módulos Python"
+             >módulos</a> |</li>
+        <li class="right" >
+          <a href="models.html" title="Models"
+             >siguiente</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="appcms"
+             >anterior</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">documentación de cmsweb - 0.1</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >appcms</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Views</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, equipo01.
+      Creado usando <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    </div>
+  </body>
+</html>

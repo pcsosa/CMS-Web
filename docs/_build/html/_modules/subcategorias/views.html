@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+
+<html lang="es" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>subcategorias.views &#8212; documentación de cmsweb - 0.1</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=def86cc0" />
+    
+    <script src="../../_static/documentation_options.js?v=9c9b61ad"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/translations.js?v=d190bf04"></script>
+    
+    <link rel="index" title="Índice" href="../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="Índice General"
+             accesskey="I">índice</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Índice de Módulos Python"
+             >módulos</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">documentación de cmsweb - 0.1</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Código de módulo</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">subcategorias.views</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Código fuente para subcategorias.views</h1><div class="highlight"><pre>
+<span></span><span class="c1"># subcategorias/views.py</span>
+<span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">get_object_or_404</span>
+<span class="kn">from</span> <span class="nn">appcms.models</span> <span class="kn">import</span> <span class="n">Categoria</span>
+<span class="kn">from</span> <span class="nn">subcategorias.forms</span> <span class="kn">import</span> <span class="n">SubcategoriaForm</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Subcategoria</span>
+<span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">messages</span>
+<span class="kn">from</span> <span class="nn">django.views.decorators.http</span> <span class="kn">import</span> <span class="n">require_POST</span>
+<span class="kn">from</span> <span class="nn">contenidos.models_cont</span> <span class="kn">import</span> <span class="n">Contenido</span>
+
+<div class="viewcode-block" id="administrar_subcategorias">
+<a class="viewcode-back" href="../../modulesf/subcategorias/views.html#subcategorias.views.administrar_subcategorias">[documentos]</a>
+<span class="k">def</span> <span class="nf">administrar_subcategorias</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Administra subcategorías, mostrando un formulario para crear nuevas subcategorías</span>
+<span class="sd">    y listando las subcategorías existentes.</span>
+<span class="sd">    </span>
+<span class="sd">    :param request: La solicitud HTTP.</span>
+<span class="sd">    :type request: HttpRequest</span>
+<span class="sd">    :return: Una respuesta con la vista de administración de subcategorías.</span>
+<span class="sd">    :rtype: HttpResponse</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;create&#39;</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">:</span>
+            <span class="n">form</span> <span class="o">=</span> <span class="n">SubcategoriaForm</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+                <span class="n">form</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+                <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;administrar_subcategorias&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">SubcategoriaForm</span><span class="p">()</span>
+    
+    <span class="n">subcategorias</span> <span class="o">=</span> <span class="n">Subcategoria</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;administrar_subcategorias.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;subcategorias&#39;</span><span class="p">:</span> <span class="n">subcategorias</span><span class="p">,</span> <span class="s1">&#39;form&#39;</span><span class="p">:</span> <span class="n">form</span><span class="p">})</span></div>
+
+
+<div class="viewcode-block" id="crear_subcategoria">
+<a class="viewcode-back" href="../../modulesf/subcategorias/views.html#subcategorias.views.crear_subcategoria">[documentos]</a>
+<span class="k">def</span> <span class="nf">crear_subcategoria</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Crea una nueva subcategoría dentro de una categoría existente.</span>
+<span class="sd">    </span>
+<span class="sd">    :param request: La solicitud HTTP.</span>
+<span class="sd">    :type request: HttpRequest</span>
+<span class="sd">    :return: Una respuesta con la vista para crear una nueva subcategoría.</span>
+<span class="sd">    :rtype: HttpResponse</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="c1"># Obtener el nombre de la subcategoría y el ID de la categoría desde la solicitud POST</span>
+        <span class="n">nombre</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nombre&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>  <span class="c1"># Elimina espacios en blanco</span>
+        <span class="n">categoria_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;categoria_id&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Validar que el nombre no esté vacío</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">nombre</span><span class="p">:</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;El nombre de la subcategoría no puede estar vacío.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">META</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;HTTP_REFERER&#39;</span><span class="p">))</span>  <span class="c1"># Regresar a la página anterior con el mensaje de error</span>
+        
+        <span class="c1"># Obtener la categoría correspondiente al ID</span>
+        <span class="n">categoria</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Categoria</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">categoria_id</span><span class="p">)</span>
+    
+        <span class="c1"># Validar que no exista una subcategoría con el mismo nombre en la categoría</span>
+        <span class="k">if</span> <span class="n">Subcategoria</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">nombre</span><span class="o">=</span><span class="n">nombre</span><span class="p">,</span> <span class="n">categoria</span><span class="o">=</span><span class="n">categoria</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;Ya existe una subcategoría con este nombre en la categoría seleccionada.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">META</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;HTTP_REFERER&#39;</span><span class="p">))</span>  <span class="c1"># Regresar a la página anterior con el mensaje de error</span>
+        
+        <span class="c1"># Crear una nueva subcategoría</span>
+        <span class="n">Subcategoria</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">nombre</span><span class="o">=</span><span class="n">nombre</span><span class="p">,</span> <span class="n">categoria</span><span class="o">=</span><span class="n">categoria</span><span class="p">)</span>
+        <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;Subcategoría creada con éxito.&quot;</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;lista_subcategorias&#39;</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">categoria_id</span><span class="p">)</span>  <span class="c1"># Redirigir a la lista de subcategorías de la categoría</span></div>
+
+
+
+<div class="viewcode-block" id="lista_subcategorias">
+<a class="viewcode-back" href="../../modulesf/subcategorias/views.html#subcategorias.views.lista_subcategorias">[documentos]</a>
+<span class="k">def</span> <span class="nf">lista_subcategorias</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">pk</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Lista todas las subcategorías existentes.</span>
+<span class="sd">    </span>
+<span class="sd">    :param request: La solicitud HTTP.</span>
+<span class="sd">    :type request: HttpRequest</span>
+<span class="sd">    :param pk: primary key de categoria</span>
+<span class="sd">    :type: int</span>
+<span class="sd">    :return: Una respuesta con la vista de la lista de subcategorías.</span>
+<span class="sd">    :rtype: HttpResponse</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">categoria</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Categoria</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
+    <span class="c1"># Filtrar subcategorías que pertenecen a esta categoría</span>
+    <span class="n">subcategorias</span> <span class="o">=</span> <span class="n">Subcategoria</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">categoria</span><span class="o">=</span><span class="n">categoria</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;lista_subcategorias.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;subcategorias&#39;</span><span class="p">:</span> <span class="n">subcategorias</span><span class="p">,</span>
+                                                        <span class="s1">&#39;categoria&#39;</span><span class="p">:</span> <span class="n">categoria</span><span class="p">})</span></div>
+
+
+<div class="viewcode-block" id="eliminar_subcategoria">
+<a class="viewcode-back" href="../../modulesf/subcategorias/views.html#subcategorias.views.eliminar_subcategoria">[documentos]</a>
+<span class="k">def</span> <span class="nf">eliminar_subcategoria</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">pk</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Elimina una subcategoría específica.</span>
+<span class="sd">    </span>
+<span class="sd">    :param request: La solicitud HTTP.</span>
+<span class="sd">    :type request: HttpRequest</span>
+<span class="sd">    :param pk: La clave primaria de la subcategoría a eliminar.</span>
+<span class="sd">    :type pk: int</span>
+<span class="sd">    :return: Una respuesta con la vista de confirmación de eliminación.</span>
+<span class="sd">    :rtype: HttpResponse</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">subcategoria_</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Subcategoria</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
+    <span class="n">categoria_</span> <span class="o">=</span> <span class="n">subcategoria_</span><span class="o">.</span><span class="n">categoria</span>
+    <span class="n">contenidos</span> <span class="o">=</span> <span class="n">Contenido</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">subcategoria</span> <span class="o">=</span> <span class="n">pk</span> <span class="p">,</span> <span class="n">categoria</span> <span class="o">=</span> <span class="n">categoria_</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">contenidos</span><span class="p">:</span>
+            <span class="n">subcategoria_</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;La eliminacion ha sido exitosa&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;lista_subcategorias&#39;</span><span class="p">,</span><span class="n">pk</span><span class="o">=</span><span class="n">categoria_</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>  <span class="c1"># Redirige a la lista de subcategorías después de eliminar</span>
+        <span class="k">else</span> <span class="p">:</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="s2">&quot;No se pudo borrar la subcategoria. Verifique si existen contenidos publicados.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;lista_subcategorias&#39;</span><span class="p">,</span><span class="n">pk</span><span class="o">=</span><span class="n">categoria_</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="actualizar_subcategoria">
+<a class="viewcode-back" href="../../modulesf/subcategorias/views.html#subcategorias.views.actualizar_subcategoria">[documentos]</a>
+<span class="nd">@require_POST</span>
+<span class="k">def</span> <span class="nf">actualizar_subcategoria</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Actualiza el nombre de una subcategoría existente.</span>
+<span class="sd">    </span>
+<span class="sd">    :param request: La solicitud HTTP.</span>
+<span class="sd">    :type request: HttpRequest</span>
+<span class="sd">    :return: Redirige a la lista de subcategorías.</span>
+<span class="sd">    :rtype: HttpResponseRedirect</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span>
+    <span class="n">nombre</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nombre&#39;</span><span class="p">)</span>
+    
+    <span class="n">subcategoria</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Subcategoria</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span>
+    <span class="n">subcategoria</span><span class="o">.</span><span class="n">nombre</span> <span class="o">=</span> <span class="n">nombre</span>
+    <span class="n">subcategoria</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">META</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;HTTP_REFERER&#39;</span><span class="p">))</span></div>
+
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Búsqueda rápida</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Ir a" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="Índice General"
+             >índice</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Índice de Módulos Python"
+             >módulos</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">documentación de cmsweb - 0.1</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Código de módulo</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">subcategorias.views</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, equipo01.
+      Creado usando <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    </div>
+  </body>
+</html>
