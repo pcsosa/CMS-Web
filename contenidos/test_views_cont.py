@@ -2,10 +2,12 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from appcms.models import Categoria
 from subcategorias.models import Subcategoria
-from contenidos.models_cont import Contenido
+from contenidos.models_cont import Contenido, Comentario, Categoria
 from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
 from unittest.mock import patch
+from django.utils import timezone
+from appcms.utils.utils import obtenerUserInfoById
 
 
 class ContenidoViewsTest(TestCase):
@@ -165,7 +167,13 @@ class VisualizarContenidoTestCase(TestCase):
    
     def setUp(self):
         self.client = Client()
-        self.contenido = Contenido.objects.create(titulo="Test Content", autor_id=1)
+        self.categoria = Categoria.objects.create(nombre="Test Category")
+        self.contenido = Contenido.objects.create(
+            titulo="Test Content",
+            estado="Borrador",
+            categoria=self.categoria,
+            autor_id=1
+        )
         self.comentario = Comentario.objects.create(
             contenido=self.contenido,
             usuario=1,
@@ -203,8 +211,11 @@ class VisualizarContenidoTestCase(TestCase):
 
 
 #Verificar que los IDs de usuario se reemplazan correctamente por los nombres de usuario:
+    #def test_import():
+    #    assert obtenerUserInfoById(1) == {"username": "Usuario1"}
+                                      
     def test_visualizar_contenido_replace_user_id(self):
-        with patch('tu_app.views.obtenerUserInfoById') as mock_obtenerUserInfoById:
+        with patch('appcms.utils.utils.obtenerUserInfoById') as mock_obtenerUserInfoById:
             mock_obtenerUserInfoById.side_effect = lambda user_id: {"username": f"Usuario{user_id}"}
             response = self.client.get(reverse('visualizar_contenido', args=[self.contenido.pk]))
             contenido = response.context['contenido']
@@ -213,8 +224,6 @@ class VisualizarContenidoTestCase(TestCase):
             for comentario in comentarios:
                 self.assertEqual(comentario.usuario, f"Usuario{comentario.usuario}")
 
-
-#
     def test_comentario_fecha(self):
         comentario = Comentario.objects.get(pk=self.comentario.pk)
         self.assertTrue((timezone.now() - comentario.fecha).seconds < 60)
@@ -232,12 +241,14 @@ class VisualizarContenidoTestCase(TestCase):
         self.assertEqual(comentarios[0], otro_comentario)
         self.assertEqual(comentarios[1], self.comentario)
 
-
 class CambiarEstadoTestCase(TestCase):
    
     def setUp(self):
         self.client = Client()
-        self.contenido = Contenido.objects.create(titulo="Test Content", estado="Borrador")
+        # Crea una categoría para el contenido de prueba
+        self.categoria = Categoria.objects.create(nombre="Test Category")
+        # Asegúrate de incluir la categoría en la creación de contenido
+        self.contenido = Contenido.objects.create(titulo="Test Content", estado="Borrador", categoria=self.categoria)
 
 
 # Verifica una transición válida entre estados.
@@ -273,6 +284,65 @@ class CambiarEstadoTestCase(TestCase):
 #Verifica las redirecciones dependiendo del referer HTTP.
     def test_cambiar_estado_redirect(self):
         response = self.client.post(reverse('cambiar_estado', args=[self.contenido.pk, 'Borrador', 'Revisión']), HTTP_REFERER='/anterior/')
+        self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, '/anterior/')
         response = self.client.post(reverse('cambiar_estado', args=[self.contenido.pk, 'Revisión', 'A Publicar']))
         self.assertRedirects(response, reverse('tablero_kanban'))
+
+class GuardarComentarioTestCase(TestCase):
+   
+    def setUp(self):
+        self.client = Client()
+        self.categoria = Categoria.objects.create(nombre="Test Category")
+        self.contenido = Contenido.objects.create(titulo="Test Content", estado="Borrador", categoria=self.categoria)
+
+    @patch('appcms.utils.utils.obtenerUserId')
+    @patch('appcms.utils.utils.obtenerToken')
+
+
+#Verifica que un comentario se guarda exitosamente y se asocia al contenido.
+    def test_guardar_comentario_exitoso(self, mock_obtenerToken, mock_obtenerUserId):
+        mock_obtenerToken.return_value = 'mock_token'
+        mock_obtenerUserId.return_value = 1
+
+
+        response = self.client.post(reverse('guardar_comentario', args=[self.contenido.pk]), {'comentario': 'Este es un comentario.'})
+        self.assertEqual(response.status_code, 302)  # Redirección
+        self.assertEqual(Comentario.objects.count(), 1)
+        comentario = Comentario.objects.first()
+        self.assertEqual(comentario.comentario, 'Este es un comentario.')
+        self.assertEqual(comentario.usuario, 1)
+
+
+#Verifica que no se guarda un comentario vacío.
+    def test_guardar_comentario_vacio(self):
+        response = self.client.post(reverse('guardar_comentario', args=[self.contenido.pk]), {'comentario': ''})
+        self.assertEqual(response.status_code, 302)  # Redirección
+        self.assertEqual(Comentario.objects.count(), 0)
+
+
+#Verifica que el HTML en los comentarios se limpia correctamente.
+    def test_guardar_comentario_html_injection(self):
+        with patch('tu_app.views.obtenerUserId') as mock_obtenerUserId, patch('tu_app.views.obtenerToken') as mock_obtenerToken:
+            mock_obtenerToken.return_value = 'mock_token'
+            mock_obtenerUserId.return_value = 1
+
+
+            comentario_con_html = "<p>Este es un comentario.</p>"
+            response = self.client.post(reverse('guardar_comentario', args=[self.contenido.pk]), {'comentario': comentario_con_html})
+            self.assertEqual(response.status_code, 302)  # Redirección
+            comentario = Comentario.objects.first()
+            self.assertEqual(comentario.comentario, 'Este es un comentario.')
+
+
+#Verifica que se maneja correctamente la ausencia del contenido.
+    def test_guardar_comentario_no_contenido(self):
+        response = self.client.post(reverse('guardar_comentario', args=[999]), {'comentario': 'Este es un comentario.'})
+        self.assertEqual(response.status_code, 404)  # No encontrado
+
+
+#Verifica que la redirección después de guardar un comentario es correcta.
+    def test_guardar_comentario_redireccion(self):
+        response = self.client.post(reverse('guardar_comentario', args=[self.contenido.pk]), {'comentario': 'Este es un comentario.'})
+        self.assertRedirects(response, reverse('visualizar_contenido', args=[self.contenido.pk]))
+

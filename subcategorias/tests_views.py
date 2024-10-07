@@ -14,7 +14,7 @@ class SubcategoriaViewTests(TestCase):
         self.categoria = Categoria.objects.create(nombre='Categoria 1')
         # Crear una instancia de Subcategoria con la categoria_id correcta
         self.subcategoria = Subcategoria.objects.create(nombre='Subcategoria 1', categoria=self.categoria)
-    
+
     def test_lista_subcategorias(self):
         """
         Prueba para verificar que la vista 'lista_subcategorias' se renderiza correctamente
@@ -24,6 +24,7 @@ class SubcategoriaViewTests(TestCase):
         response = self.client.get(reverse('lista_subcategorias',args=[self.subcategoria.pk]))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Subcategoria 1')
+        
     
     def test_crear_subcategoria(self):
         # Simular el envío de un formulario para crear una nueva subcategoría
