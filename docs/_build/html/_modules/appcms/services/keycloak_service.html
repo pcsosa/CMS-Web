@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+
+<html lang="es" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>appcms.services.keycloak_service &#8212; documentación de cmsweb - 0.1</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/classic.css?v=def86cc0" />
+    
+    <script src="../../../_static/documentation_options.js?v=9c9b61ad"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/translations.js?v=d190bf04"></script>
+    
+    <link rel="index" title="Índice" href="../../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="Índice General"
+             accesskey="I">índice</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Índice de Módulos Python"
+             >módulos</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">documentación de cmsweb - 0.1</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Código de módulo</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">appcms.services.keycloak_service</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Código fuente para appcms.services.keycloak_service</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">django.conf</span> <span class="kn">import</span> <span class="n">settings</span>
+<span class="kn">from</span> <span class="nn">keycloak</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">KeycloakAdmin</span><span class="p">,</span>
+    <span class="n">KeycloakOpenID</span><span class="p">,</span>
+    <span class="n">KeycloakOpenIDConnection</span><span class="p">,</span>
+    <span class="n">KeycloakUMA</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="KeycloakService">
+<a class="viewcode-back" href="../../../modulesf/appcms/services.html#appcms.services.keycloak_service.KeycloakService">[documentos]</a>
+<span class="k">class</span> <span class="nc">KeycloakService</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Clase que proporciona servicios de autenticación e interacción con Keycloak.</span>
+
+<span class="sd">    Esta clase encapsula las operaciones relacionadas con la autenticación de usuarios y la administración</span>
+<span class="sd">    utilizando el cliente KeycloakOpenID y KeycloakAdmin.</span>
+
+<span class="sd">    :param server_url: La URL del servidor Keycloak.</span>
+<span class="sd">    :type server_url: str</span>
+<span class="sd">    :param client_id: El ID del cliente registrado en Keycloak.</span>
+<span class="sd">    :type client_id: str</span>
+<span class="sd">    :param realm_name: El nombre del reino en Keycloak.</span>
+<span class="sd">    :type realm_name: str</span>
+<span class="sd">    :param client_secret_key: La clave secreta del cliente para autenticación.</span>
+<span class="sd">    :type client_secret_key: str</span>
+<span class="sd">    :param username: Nombre de usuario para la administración de Keycloak.</span>
+<span class="sd">    :type username: str</span>
+<span class="sd">    :param password: Contraseña para la administración de Keycloak.</span>
+<span class="sd">    :type password: str</span>
+<span class="sd">    :param user_realm_name: Nombre del reino del usuario para la administración.</span>
+<span class="sd">    :type user_realm_name: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_instance</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Inicializa una instancia de KeycloakService con las configuraciones necesarias.</span>
+
+<span class="sd">        Configura los clientes KeycloakOpenID y KeycloakAdmin usando las configuraciones del entorno.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">openid</span> <span class="o">=</span> <span class="n">KeycloakOpenID</span><span class="p">(</span>
+            <span class="n">server_url</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">KEYCLOAK_SERVER_URL</span> <span class="o">+</span> <span class="s2">&quot;/auth&quot;</span><span class="p">,</span>
+            <span class="n">client_id</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">KEYCLOAK_CLIENT_ID</span><span class="p">,</span>
+            <span class="n">realm_name</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">KEYCLOAK_REALM</span><span class="p">,</span>
+            <span class="n">client_secret_key</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">KEYCLOAK_CLIENT_SECRET</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">admin</span> <span class="o">=</span> <span class="n">KeycloakAdmin</span><span class="p">(</span>
+            <span class="n">server_url</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">KEYCLOAK_SERVER_URL</span> <span class="o">+</span> <span class="s2">&quot;/auth&quot;</span><span class="p">,</span>
+            <span class="n">username</span><span class="o">=</span><span class="s2">&quot;dios&quot;</span><span class="p">,</span>
+            <span class="n">password</span><span class="o">=</span><span class="s2">&quot;dios&quot;</span><span class="p">,</span>
+            <span class="n">realm_name</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">KEYCLOAK_REALM</span><span class="p">,</span>
+            <span class="n">user_realm_name</span><span class="o">=</span><span class="s2">&quot;master&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="KeycloakService.get_instance">
+<a class="viewcode-back" href="../../../modulesf/appcms/services.html#appcms.services.keycloak_service.KeycloakService.get_instance">[documentos]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_instance</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="n">KeycloakService</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span></div>
+
+
+<div class="viewcode-block" id="KeycloakService.get_token">
+<a class="viewcode-back" href="../../../modulesf/appcms/services.html#appcms.services.keycloak_service.KeycloakService.get_token">[documentos]</a>
+    <span class="k">def</span> <span class="nf">get_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Obtiene un token de acceso de Keycloak usando un código de autorización.</span>
+
+<span class="sd">        Utiliza el código de autorización recibido para obtener un token de acceso y de actualización.</span>
+
+<span class="sd">        :param code: El código de autorización recibido de Keycloak.</span>
+<span class="sd">        :type code: str</span>
+<span class="sd">        :return: Un diccionario con el token de acceso y otros datos relacionados.</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">redirect_uri</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">DJ_URL</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="n">settings</span><span class="o">.</span><span class="n">DJ_PORT</span> <span class="o">+</span> <span class="s2">&quot;/callback/&quot;</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">openid</span><span class="o">.</span><span class="n">token</span><span class="p">(</span>
+            <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span> <span class="n">redirect_uri</span><span class="o">=</span><span class="n">redirect_uri</span><span class="p">,</span> <span class="n">grant_type</span><span class="o">=</span><span class="s2">&quot;authorization_code&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">token</span></div>
+
+
+<div class="viewcode-block" id="KeycloakService.get_userId">
+<a class="viewcode-back" href="../../../modulesf/appcms/services.html#appcms.services.keycloak_service.KeycloakService.get_userId">[documentos]</a>
+    <span class="k">def</span> <span class="nf">get_userId</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Obtiene el ID del usuario a partir del token de acceso.</span>
+
+<span class="sd">        Extrae el ID del usuario (sub) del token de acceso proporcionado.</span>
+
+<span class="sd">        :param token: El token de acceso de Keycloak.</span>
+<span class="sd">        :type token: dict</span>
+<span class="sd">        :return: El ID del usuario.</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">user_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">openid</span><span class="o">.</span><span class="n">userinfo</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">user_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sub&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="KeycloakService.isActive">
+<a class="viewcode-back" href="../../../modulesf/appcms/services.html#appcms.services.keycloak_service.KeycloakService.isActive">[documentos]</a>
+    <span class="k">def</span> <span class="nf">isActive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Verifica si el token de acceso está activo.</span>
+
+<span class="sd">        Realiza una introspección del token para determinar su estado de actividad.</span>
+
+<span class="sd">        :param token: El token de acceso de Keycloak.</span>
+<span class="sd">        :type token: dict</span>
+<span class="sd">        :return: Verdadero si el token está activo, falso en caso contrario.</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">openid</span><span class="o">.</span><span class="n">introspect</span><span class="p">(</span><span class="n">token</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;active&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="KeycloakService.renovarToken">
+<a class="viewcode-back" href="../../../modulesf/appcms/services.html#appcms.services.keycloak_service.KeycloakService.renovarToken">[documentos]</a>
+    <span class="k">def</span> <span class="nf">renovarToken</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">refresh_token</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Renueva el token de acceso usando el token de actualización.</span>
+
+<span class="sd">        Solicita un nuevo token de acceso utilizando el token de actualización proporcionado.</span>
+
+<span class="sd">        :param token: El token de actualización de Keycloak.</span>
+<span class="sd">        :type token: dict</span>
+<span class="sd">        :return: Un diccionario con el nuevo token de acceso y otros datos relacionados.</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">openid</span><span class="o">.</span><span class="n">refresh_token</span><span class="p">(</span><span class="n">refresh_token</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="KeycloakService.get_permisos">
+<a class="viewcode-back" href="../../../modulesf/appcms/services.html#appcms.services.keycloak_service.KeycloakService.get_permisos">[documentos]</a>
+    <span class="k">def</span> <span class="nf">get_permisos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">openid</span><span class="o">.</span><span class="n">uma_permissions</span><span class="p">(</span><span class="n">token</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Búsqueda rápida</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Ir a" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="Índice General"
+             >índice</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Índice de Módulos Python"
+             >módulos</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">documentación de cmsweb - 0.1</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Código de módulo</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">appcms.services.keycloak_service</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, equipo01.
+      Creado usando <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    </div>
+  </body>
+</html>

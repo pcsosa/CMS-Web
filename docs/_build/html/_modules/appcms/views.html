@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+
+<html lang="es" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>appcms.views &#8212; documentación de cmsweb - 0.1</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=def86cc0" />
+    
+    <script src="../../_static/documentation_options.js?v=9c9b61ad"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/translations.js?v=d190bf04"></script>
+    
+    <link rel="index" title="Índice" href="../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="Índice General"
+             accesskey="I">índice</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Índice de Módulos Python"
+             >módulos</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">documentación de cmsweb - 0.1</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Código de módulo</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">appcms.views</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Código fuente para appcms.views</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">django.conf</span> <span class="kn">import</span> <span class="n">settings</span>
+<span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">messages</span>
+<span class="kn">from</span> <span class="nn">django.core.cache</span> <span class="kn">import</span> <span class="n">cache</span>
+<span class="kn">from</span> <span class="nn">django.db.models</span> <span class="kn">import</span> <span class="n">Q</span>
+<span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span><span class="p">,</span> <span class="n">JsonResponse</span>
+<span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">get_object_or_404</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">render</span>
+<span class="kn">from</span> <span class="nn">django.views.decorators.csrf</span> <span class="kn">import</span> <span class="n">csrf_exempt</span>
+<span class="kn">from</span> <span class="nn">dotenv</span> <span class="kn">import</span> <span class="n">load_dotenv</span>
+
+<span class="kn">from</span> <span class="nn">appcms.utils.utils</span> <span class="kn">import</span> <span class="n">obtenerUserId</span>
+<span class="kn">from</span> <span class="nn">contenidos.models_cont</span> <span class="kn">import</span> <span class="n">Contenido</span>
+<span class="kn">from</span> <span class="nn">subcategorias.models</span> <span class="kn">import</span> <span class="n">Subcategoria</span>
+
+<span class="kn">from</span> <span class="nn">.forms</span> <span class="kn">import</span> <span class="n">CategoriaForm</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Categoria</span>
+<span class="kn">from</span> <span class="nn">.services.keycloak_service</span> <span class="kn">import</span> <span class="n">KeycloakService</span>
+<span class="kn">from</span> <span class="nn">.utils.utils</span> <span class="kn">import</span> <span class="n">obtenerRPT</span><span class="p">,</span> <span class="n">obtenerToken</span><span class="p">,</span> <span class="n">quitar_acentos</span>
+
+<span class="n">load_dotenv</span><span class="p">()</span>
+
+
+<span class="c1"># --------------- PRINCIPAL----------------</span>
+
+
+<div class="viewcode-block" id="home">
+<a class="viewcode-back" href="../../modulesf/appcms/views.html#appcms.views.home">[documentos]</a>
+<span class="k">def</span> <span class="nf">home</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Vista para la página de inicio.</span>
+
+<span class="sd">    Esta vista renderiza la plantilla &#39;home.html&#39;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;home.html&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="panel">
+<a class="viewcode-back" href="../../modulesf/appcms/views.html#appcms.views.panel">[documentos]</a>
+<span class="k">def</span> <span class="nf">panel</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Vista para la página del panel de administración.</span>
+
+<span class="sd">    Esta vista renderiza la plantilla &#39;panel.html&#39;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;panel.html&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># --------------- CATEGORIAS ----------------</span>
+
+
+<div class="viewcode-block" id="lista_categorias">
+<a class="viewcode-back" href="../../modulesf/appcms/views.html#appcms.views.lista_categorias">[documentos]</a>
+<span class="k">def</span> <span class="nf">lista_categorias</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Muestra una lista de todas las categorías.</span>
+
+<span class="sd">    Esta vista consulta todas las categorías de la base de datos y las muestra</span>
+<span class="sd">    en la plantilla &#39;lista_categorias.html&#39;.</span>
+
+<span class="sd">    :param request: La solicitud HTTP.</span>
+<span class="sd">    :type request: HttpRequest</span>
+<span class="sd">    :return: HttpResponse: La respuesta renderizada con la lista de categorías.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">consulta</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;q&quot;</span><span class="p">)</span>
+    <span class="n">consulta</span> <span class="o">=</span> <span class="n">quitar_acentos</span><span class="p">(</span><span class="n">consulta</span><span class="p">)</span>
+    <span class="n">categorias</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="n">consulta</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">consulta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">categorias</span> <span class="o">=</span> <span class="n">Categoria</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Q</span><span class="p">(</span><span class="n">nombre__icontains</span><span class="o">=</span><span class="n">consulta</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">categorias</span> <span class="o">=</span> <span class="n">Categoria</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+    <span class="n">contexto</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;categorias&quot;</span><span class="p">:</span> <span class="n">categorias</span><span class="p">,</span> <span class="s2">&quot;consulta&quot;</span><span class="p">:</span> <span class="n">consulta</span><span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;lista_categorias.html&quot;</span><span class="p">,</span> <span class="n">contexto</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="crear_categoria">
+<a class="viewcode-back" href="../../modulesf/appcms/views.html#appcms.views.crear_categoria">[documentos]</a>
+<span class="k">def</span> <span class="nf">crear_categoria</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Crea una nueva categoría.</span>
+
+<span class="sd">    Si se envía una solicitud POST, se guarda la nueva categoría.</span>
+<span class="sd">    En caso contrario, se muestra un formulario para crear una nueva categoría.</span>
+
+<span class="sd">    :param request: La solicitud HTTP.</span>
+<span class="sd">    :type request: HttpRequest</span>
+<span class="sd">    :return: HttpResponse.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">CategoriaForm</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+            <span class="n">form</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;lista_categorias&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s2">&quot;Error: Método no permitido&quot;</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="mi">405</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="eliminar_categoria">
+<a class="viewcode-back" href="../../modulesf/appcms/views.html#appcms.views.eliminar_categoria">[documentos]</a>
+<span class="k">def</span> <span class="nf">eliminar_categoria</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">pk</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Elimina una categoría específica.</span>
+
+<span class="sd">    Esta vista permite la eliminación de una categoría a partir de su clave primaria (pk).</span>
+<span class="sd">    Después de la eliminación, se redirige a la lista de categorías.</span>
+
+<span class="sd">    :param request: La solicitud HTTP.</span>
+<span class="sd">    :type request: HttpRequest</span>
+<span class="sd">    :param pk: La clave primaria de la categoría a eliminar.</span>
+<span class="sd">    :type pk: int</span>
+<span class="sd">    :return: HttpResponse.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">categoria</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Categoria</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
+    <span class="n">articulos</span> <span class="o">=</span> <span class="n">Contenido</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">categoria</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
+    <span class="n">subcategorias</span> <span class="o">=</span> <span class="n">Subcategoria</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">categoria</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">articulos</span><span class="p">:</span>
+            <span class="n">categoria</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span>
+                <span class="n">request</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;La categoría &quot;</span><span class="si">{</span><span class="n">categoria</span><span class="o">.</span><span class="n">nombre</span><span class="si">}</span><span class="s1">&quot; ha sido eliminada correctamente.&#39;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;lista_categorias&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="n">request</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;La categoría &quot;</span><span class="si">{</span><span class="n">categoria</span><span class="o">.</span><span class="n">nombre</span><span class="si">}</span><span class="s1">&quot; no se pudo borrar.Tiene articulos y subcategorias publicadas&#39;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;lista_categorias&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s2">&quot;Error: Método no permitido&quot;</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="mi">405</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="n">categoria</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">&#39;La categoría &quot;</span><span class="si">{</span><span class="n">categoria</span><span class="o">.</span><span class="n">nombre</span><span class="si">}</span><span class="s1">&quot; ha sido eliminada correctamente.&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;lista_categorias&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s2">&quot;Error: Método no permitido&quot;</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="mi">405</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="editar_categoria">
+<a class="viewcode-back" href="../../modulesf/appcms/views.html#appcms.views.editar_categoria">[documentos]</a>
+<span class="k">def</span> <span class="nf">editar_categoria</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">pk</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Editar campos de categoria</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        :param request: La solicitud HTTP.</span>
+<span class="sd">        :type request: HttpRequest</span>
+<span class="sd">        :param pk: La clave primaria de la categoría a modificar.</span>
+<span class="sd">        :type pk: int</span>
+<span class="sd">        :return: HttpResponse.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">categoria</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Categoria</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">CategoriaForm</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">,</span> <span class="n">instance</span><span class="o">=</span><span class="n">categoria</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+            <span class="n">form</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span>
+                <span class="n">request</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;La categoría &quot;</span><span class="si">{</span><span class="n">categoria</span><span class="o">.</span><span class="n">nombre</span><span class="si">}</span><span class="s1">&quot; ha sido modificado correctamente.&#39;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;lista_categorias&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s2">&quot;Error: Método no permitido&quot;</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="mi">405</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># --------------- AUTENTICACIÓN --------------</span>
+
+
+<div class="viewcode-block" id="login">
+<a class="viewcode-back" href="../../modulesf/appcms/views.html#appcms.views.login">[documentos]</a>
+<span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Maneja el inicio de sesión del usuario.</span>
+
+<span class="sd">    Esta función redirige al usuario a la página de autenticación de Keycloak.</span>
+<span class="sd">    Se genera una URL de autorización con los permisos solicitados (&#39;openid&#39;, &#39;profile&#39;, &#39;email&#39;)</span>
+<span class="sd">    y la redirección después del inicio de sesión exitoso es manejada por la URI proporcionada.</span>
+
+<span class="sd">    :param request: El objeto HTTP request de Django que contiene los detalles de la solicitud.</span>
+<span class="sd">    :type request: HttpRequest</span>
+<span class="sd">    :return: Redirige al usuario a la página de inicio de sesión de Keycloak.</span>
+<span class="sd">    :rtype: HttpResponse</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">kc</span> <span class="o">=</span> <span class="n">KeycloakService</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span>
+    <span class="n">authorization_url</span> <span class="o">=</span> <span class="n">kc</span><span class="o">.</span><span class="n">openid</span><span class="o">.</span><span class="n">auth_url</span><span class="p">(</span>
+        <span class="n">redirect_uri</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">DJ_URL</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="n">settings</span><span class="o">.</span><span class="n">DJ_PORT</span> <span class="o">+</span> <span class="s2">&quot;/callback/&quot;</span><span class="p">,</span>
+        <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;openid profile email&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">authorization_url</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="callback">
+<a class="viewcode-back" href="../../modulesf/appcms/views.html#appcms.views.callback">[documentos]</a>
+<span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Maneja el callback de Keycloak después del inicio de sesión.</span>
+
+<span class="sd">    Recibe el código de autorización de Keycloak, lo intercambia por un token de acceso</span>
+<span class="sd">    y lo guarda en la sesión del usuario. Si no se proporciona un código, devuelve un error.</span>
+
+<span class="sd">    :param request: El objeto HTTP request de Django que contiene los detalles de la solicitud.</span>
+<span class="sd">    :type request: HttpRequest</span>
+<span class="sd">    :return: Si se proporciona un código válido, redirige al usuario al panel de control.</span>
+<span class="sd">             Si no se proporciona el código, devuelve un error HTTP 400.</span>
+<span class="sd">    :rtype: HttpResponse</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">code</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;code&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">code</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s2">&quot;Error: No code provided&quot;</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
+
+    <span class="n">kc</span> <span class="o">=</span> <span class="n">KeycloakService</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span>
+    <span class="n">token</span> <span class="o">=</span> <span class="n">kc</span><span class="o">.</span><span class="n">get_token</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>  <span class="c1"># Obtener token normal sin permisos</span>
+    <span class="n">token</span> <span class="o">=</span> <span class="n">obtenerRPT</span><span class="p">(</span><span class="n">token</span><span class="p">[</span><span class="s2">&quot;access_token&quot;</span><span class="p">])</span>  <span class="c1"># Obtener token con permisos incluidos</span>
+
+    <span class="n">access_token</span> <span class="o">=</span> <span class="n">token</span><span class="p">[</span><span class="s2">&quot;access_token&quot;</span><span class="p">]</span>  <span class="c1"># Token normal</span>
+    <span class="n">refresh_token</span> <span class="o">=</span> <span class="n">token</span><span class="p">[</span><span class="s2">&quot;refresh_token&quot;</span><span class="p">]</span>  <span class="c1"># Token con permisos</span>
+
+    <span class="c1"># Guardar tokens en la sesión</span>
+    <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s2">&quot;access_token&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">access_token</span>
+    <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s2">&quot;refresh_token&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">refresh_token</span>
+
+    <span class="c1"># Cachear los tokens para mayor rendimiento</span>
+    <span class="n">cache</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;access_token&quot;</span><span class="p">,</span> <span class="n">access_token</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+    <span class="n">cache</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;refresh_token&quot;</span><span class="p">,</span> <span class="n">refresh_token</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">1800</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;panel&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="logout">
+<a class="viewcode-back" href="../../modulesf/appcms/views.html#appcms.views.logout">[documentos]</a>
+<span class="k">def</span> <span class="nf">logout</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Maneja el cierre de sesión del usuario.</span>
+
+<span class="sd">    Limpia la sesión del usuario y llama al servicio de Keycloak para cerrar la sesión</span>
+<span class="sd">    de forma remota. Luego, redirige al usuario a la página de inicio.</span>
+
+<span class="sd">    :param request: El objeto HTTP request de Django que contiene los detalles de la solicitud.</span>
+<span class="sd">    :type request: HttpRequest</span>
+<span class="sd">    :return: Redirige al usuario a la página de inicio después de cerrar la sesión.</span>
+<span class="sd">    :rtype: HttpResponse</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">kc</span> <span class="o">=</span> <span class="n">KeycloakService</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span>
+
+    <span class="n">refresh_token</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;refresh_token&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">refresh_token</span><span class="p">:</span>
+        <span class="n">refresh_token</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;refresh_token&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">refresh_token</span><span class="p">:</span>
+        <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">cache</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">kc</span><span class="o">.</span><span class="n">openid</span><span class="o">.</span><span class="n">logout</span><span class="p">(</span><span class="n">refresh_token</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;home&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="upload_image">
+<a class="viewcode-back" href="../../modulesf/appcms/views.html#appcms.views.upload_image">[documentos]</a>
+<span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">upload_image</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">FILES</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">]</span>
+        <span class="c1"># Guardar la imagen en el servidor</span>
+        <span class="n">image_url</span> <span class="o">=</span> <span class="s2">&quot;ruta/donde/guardas/la/imagen/&quot;</span> <span class="o">+</span> <span class="n">image</span><span class="o">.</span><span class="n">name</span>
+        <span class="c1"># Retornar la URL de la imagen</span>
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="n">image_url</span><span class="p">})</span></div>
+
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Búsqueda rápida</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Ir a" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="Índice General"
+             >índice</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Índice de Módulos Python"
+             >módulos</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">documentación de cmsweb - 0.1</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Código de módulo</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">appcms.views</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, equipo01.
+      Creado usando <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    </div>
+  </body>
+</html>
