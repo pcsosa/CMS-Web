@@ -1,4 +1,5 @@
 {% extends "panel.html" %}
+{% load permisos %}
 {% load static %}
 {% load custom_filters %}
 {% block title %}
@@ -9,67 +10,84 @@
   <link rel="stylesheet" href="{% static 'css/kanban.css' %}">
 {% endblock head %}
 {% block content %}
+{% tienePermiso 'kanban' '["verBorrador","verEdicion","verAPublicar","verPublicado","verInactivo"]' as permisoKanban%}
   <div class="kanban-board">
-    <div class="kanban-column" data-estado="Borrador">
-      <h2>Borrador</h2>
-      {% for contenido in borrador %}
-        <div class="kanban-item"
-             data-id="{{ contenido.id }}"
-             data-estado="Borrador"
-             onclick="window.location.href='{% url 'visualizar_contenido' contenido.id %}'">
-          <h3>{{ contenido.titulo }}</h3>
-          <p>{{ contenido.texto|safe_truncate:5 }}</p>
-        </div>
-      {% endfor %}
-    </div>
+    {% if permisoKanban.verBorrador %}
+      <div class="kanban-column" data-estado="Borrador">
+          <h2>Borrador</h2>
+          {% for contenido in borrador %}
+            <div class="kanban-item"
+                data-id="{{ contenido.id }}"
+                data-estado="Borrador"
+                onclick=window.location.href="{% url 'visualizar_contenido' contenido.id %}">
+              <h3>{{ contenido.titulo }}</h3>
+              <p>{{ contenido.texto|safe_truncate:5 }}</p>
+            </div>
+          {% endfor %}
+      </div>
+    {% endif %}
+    {% if permisoKanban.verEdicion %}
     <div class="kanban-column" data-estado="Revisión">
-      <h2>En Revisión</h2>
-      {% for contenido in en_revision %}
-        <div class="kanban-item"
-             data-id="{{ contenido.id }}"
-             data-estado="Revisión"
-             onclick="window.location.href='{% url 'visualizar_contenido' contenido.id %}'">
-          <h3>{{ contenido.titulo }}</h3>
-          <p>{{ contenido.texto|safe_truncate:5 }}</p>
-        </div>
-      {% endfor %}
+      
+        <h2>En Revisión</h2>
+        {% for contenido in en_revision %}
+          <div class="kanban-item"
+              data-id="{{ contenido.id }}"
+              data-estado="Revisión"
+              onclick=window.location.href="{% url 'visualizar_contenido' contenido.id %}">
+            <h3>{{ contenido.titulo }}</h3>
+            <p>{{ contenido.texto|safe_truncate:5 }}</p>
+          </div>
+        {% endfor %}
+      
     </div>
+    {% endif %}
+    {% if permisoKanban.verAPublicar %}
     <div class="kanban-column" data-estado="A Publicar">
-      <h2>A Publicar</h2>
-      {% for contenido in a_publicar %}
-        <div class="kanban-item"
-             data-id="{{ contenido.id }}"
-             data-estado="A Publicar"
-             onclick="window.location.href='{% url 'visualizar_contenido' contenido.id %}'">
-          <h3>{{ contenido.titulo }}</h3>
-          <p>{{ contenido.texto|safe_truncate:5 }}</p>
-        </div>
-      {% endfor %}
+      
+        <h2>A Publicar</h2>
+        {% for contenido in a_publicar %}
+          <div class="kanban-item"
+              data-id="{{ contenido.id }}"
+              data-estado="A Publicar"
+              onclick=window.location.href="{% url 'visualizar_contenido' contenido.id %}">
+            <h3>{{ contenido.titulo }}</h3>
+            <p>{{ contenido.texto|safe_truncate:5 }}</p>
+          </div>
+        {% endfor %}
     </div>
+    {% endif %}
+    {% if permisoKanban.verPublicado %}
     <div class="kanban-column" data-estado="Publicado">
-      <h2>Publicado</h2>
-      {% for contenido in publicado %}
-        <div class="kanban-item"
-             data-id="{{ contenido.id }}"
-             data-estado="Publicado"
-             onclick="window.location.href='{% url 'visualizar_contenido' contenido.id %}'">
-          <h3>{{ contenido.titulo }}</h3>
-          <p>{{ contenido.texto|safe_truncate:5 }}</p>
-        </div>
-      {% endfor %}
+      
+        <h2>Publicado</h2>
+        {% for contenido in publicado %}
+          <div class="kanban-item"
+              data-id="{{ contenido.id }}"
+              data-estado="Publicado"
+              onclick=window.location.href="{% url 'visualizar_contenido' contenido.id %}">
+            <h3>{{ contenido.titulo }}</h3>
+            <p>{{ contenido.texto|safe_truncate:5 }}</p>
+          </div>
+        {% endfor %}
+      
     </div>
+    {% endif %}
+    {% if permisoKanban.verInactivo %}
     <div class="kanban-column" data-estado="Inactivo">
-      <h2>Inactivo</h2>
-      {% for contenido in inactivo %}
-        <div class="kanban-item"
-             data-id="{{ contenido.id }}"
-             data-estado="Inactivo"
-             onclick="window.location.href='{% url 'visualizar_contenido' contenido.id %}'">
-          <h3>{{ contenido.titulo }}</h3>
-          <p>{{ contenido.texto|safe_truncate:5 }}</p>
-        </div>
-      {% endfor %}
+      
+        <h2>Inactivo</h2>
+        {% for contenido in inactivo %}
+          <div class="kanban-item"
+              data-id="{{ contenido.id }}"
+              data-estado="Inactivo"
+              onclick=window.location.href="{% url 'visualizar_contenido' contenido.id %}">
+            <h3>{{ contenido.titulo }}</h3>
+            <p>{{ contenido.texto|safe_truncate:5 }}</p>
+          </div>
+        {% endfor %}
     </div>
+    {% endif %}
   </div>
   <script src="{% static 'js/sortable.min.js' %}"></script>
   <script>
