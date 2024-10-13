@@ -24,7 +24,7 @@ class SubcategoriaViewTests(TestCase):
         response = self.client.get(reverse('lista_subcategorias',args=[self.subcategoria.pk]))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Subcategoria 1')
-        
+       
     
     def test_crear_subcategoria(self):
         # Simular el envío de un formulario para crear una nueva subcategoría
