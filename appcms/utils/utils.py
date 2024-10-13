@@ -111,7 +111,8 @@ def obtenerUserId(token):
     if not token:
         return None
     payload = decode_token(token)
-    return payload["sub"]
+    return payload.get("sub")
+    #return payload["sub"]
 
 
 def decode_token(token, audience="cmsweb", verify_exp=True):
