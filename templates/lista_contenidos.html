@@ -8,17 +8,24 @@
   <link rel="stylesheet" href="{% static 'css/lista_contenidos.css' %}">
 {% endblock head %}
 {% block content %}
+<<<<<<< HEAD
   {% load permisos %}
   {% tienePermiso 'contenido' '["verBorrador","verEdicion","verAPublicar","verPublicado","verInactivo"]' as permisoContenido %}
+=======
+>>>>>>> 78e12aa (Clases agregadas al css de listar contenidos.)
   <div class="buscador-contenedor">
     <form method="get">
-      <!-- Cuadro de búsqueda -->
+<!-- Cuadro de búsqueda -->
       <input type="text"
              name="busqueda"
              class="campo-busqueda"
              placeholder="Buscar..."
              value="{{ busqueda }}">
+<<<<<<< HEAD
       <!-- Filtro por categoría -->
+=======
+<!-- Filtro por categoría -->
+>>>>>>> 78e12aa (Clases agregadas al css de listar contenidos.)
       <select name="categoria" class="filtrador-select">
         <option value="">Todas las categorías</option>
         {% for categoria in categorias %}
@@ -28,12 +35,21 @@
           </option>
         {% endfor %}
       </select>
+<<<<<<< HEAD
       <!-- Filtro por autor -->
       <select id="autor" name="autor" class="filtrador-select">
         <option value="">Selecciona un autor</option>
         {% for autor in autores %}<option value="{{ autor.id }}">{{ autor.username }}</option>{% endfor %}
       </select>
       <!-- Filtro por orden -->
+=======
+<!-- Filtro por autor -->
+      <select id="autor" name="autor" class="filtrador-select" required>
+        <option value="">Selecciona un autor</option>
+        {% for autor in autores %}<option value="{{ autor.id }}">{{ autor.username }}</option>{% endfor %}
+      </select>
+<!-- Filtro por orden -->
+>>>>>>> 78e12aa (Clases agregadas al css de listar contenidos.)
       <select name="orden" class="filtrador-select">
         <option value="desc" {% if request.GET.orden == 'desc' %}selected{% endif %}>Más recientes</option>
         <option value="asc" {% if request.GET.orden == 'asc' %}selected{% endif %}>Más antiguos</option>
@@ -183,3 +199,10 @@
     {% endfor %}
   </div>
 {% endblock content %}
+
+
+
+
+
+
+
