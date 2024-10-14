@@ -10,7 +10,7 @@ from django.utils import timezone
 from appcms.utils.utils import decode_token, obtenerUserId, obtenerToken
 from cmsweb.settings import KEYCLOAK_RS256_PUBLIC_KEY
 from datetime import datetime, timedelta
-from .test_serUp import get_token
+from .test_serUp import get_token, get_valid_token
 from django.core.cache import cache
 
 
@@ -31,7 +31,8 @@ class ContenidoViewsTest(TestCase):
             publicador_id='publicador1'
         )
         self.user = User.objects.create_user(username='editor', password='password')
-    
+        self.client.login(username='editor', password='password')
+
     def test_lista_contenidos_view(self):
         """Prueba que la vista lista_contenidos devuelve una respuesta correcta."""
         response = self.client.get(reverse('lista_contenidos'))
@@ -303,6 +304,7 @@ class GuardarComentarioTestCase(TestCase):
         #self.contenido = Contenido.objects.create(titulo="Test Content", estado="Borrador", categoria=self.categoria)
         # Crear una categoría de prueba, ya que es requerida por el modelo Contenido
         self.factory = RequestFactory()  # Inicializar RequestFactory
+        self.client = Client()
         self.categoria = Categoria.objects.create(nombre="Categoría de prueba", descripcion="Descripción de prueba")
         
         # Crear un contenido asociado a la categoría
@@ -317,11 +319,13 @@ class GuardarComentarioTestCase(TestCase):
 
 #Verifica que un comentario se guarda exitosamente y se asocia al contenido.    
     def test_guardar_comentario_exitoso(self):
+        self.token = get_token()
         # Simular una solicitud POST para guardar un comentario
         response = self.client.post(f'/contenido/{self.contenido.id}/comentar/', {
             'comentario_texto': 'Este es un comentario de prueba.',
         })
-
+        print("GUARDAR COMENTARIO: ")
+        print(response)
         # Verifica que la respuesta fue exitosa
         self.assertEqual(response.status_code, 200)
 
@@ -331,6 +335,7 @@ class GuardarComentarioTestCase(TestCase):
 
 #Verifica que no se guarda un comentario vacío.
     def test_guardar_comentario_vacio(self):
+        self.token = get_token()
         # Simular una solicitud POST para guardar un comentario
         response = self.client.post(f'/contenido/{self.contenido.id}/comentar/', {
             'comentario_texto': 'Este es un comentario de prueba.',
@@ -343,8 +348,10 @@ class GuardarComentarioTestCase(TestCase):
         comentario = Comentario.objects.get(contenido=self.contenido)
         self.assertEqual(comentario.texto, 'Este es un comentario de prueba.')
 
+
 #Verifica que el HTML en los comentarios se limpia correctamente.
     def test_guardar_comentario_html_injection(self):
+        self.token = get_token()
         request = self.factory.post('/dummy-url/', {'comentario': '<p>Este es un comentario.</p>'})
         request.session = {'access_token': self.token}
         cache.set('access_token', self.token)
@@ -362,12 +369,14 @@ class GuardarComentarioTestCase(TestCase):
 
 #Verifica que se maneja correctamente la ausencia del contenido.
     def test_guardar_comentario_no_contenido(self):
+        self.token = get_token()
         response = self.client.post(reverse('guardar_comentario', args=[999]), {'comentario': 'Este es un comentario.'})
         self.assertEqual(response.status_code, 404)  # No encontrado
 
 
 #Verifica que la redirección después de guardar un comentario es correcta.
     def test_guardar_comentario_redireccion(self):
+        self.token = get_token()
         response = self.client.post(reverse('guardar_comentario', args=[self.contenido.pk]), {'comentario': 'Este es un comentario.'})
         self.assertRedirects(response, reverse('visualizar_contenido', args=[self.contenido.pk]))
 

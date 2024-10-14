@@ -1,5 +1,6 @@
 import os
 import requests
+from django.core.cache import cache  
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -34,8 +35,22 @@ def get_token():
     response.raise_for_status()
     return response.json()['access_token']
 
+def get_valid_token():
+    token = cache.get("access_token")
+    if not token:
+        print("Generating a new token")
+        token = get_token()
+        cache.set("access_token", token, timeout=300)
+    return token
+
 try:
-    token = get_token()
+    token = get_valid_token()
     print(f'Token de acceso: {token}')
 except requests.exceptions.HTTPError as e:
     print(f'Error al obtener el token: {e}')
+
+#try:
+#    token = get_token()
+#    print(f'Token de acceso: {token}')
+#except requests.exceptions.HTTPError as e:
+#    print(f'Error al obtener el token: {e}')
