@@ -8,7 +8,9 @@ from django.conf import settings
 from django.core.cache import cache
 
 from appcms.services.keycloak_service import KeycloakService
-
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 # Obtener información del usuario a partir del user id
 def obtenerUserInfoById(user_id):
@@ -189,3 +191,18 @@ def quitar_acentos(texto):
         char for char in texto_normalizado if unicodedata.category(char) != "Mn"
     )
     return texto_sin_acentos
+
+def enviar_notificacion(asunto, mensaje, destinatarios):
+    
+    html_mensaje = render_to_string('notificacion.html', {
+        'mensaje': mensaje,
+    })
+    mensaje_plano = strip_tags(html_mensaje)
+    send_mail(
+        asunto,
+        mensaje_plano,
+        settings.EMAIL_HOST_USER,  # Remitente
+        destinatarios,  # Lista de destinatarios
+        fail_silently=False,
+        html_message=html_mensaje,
+    )

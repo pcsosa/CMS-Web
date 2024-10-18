@@ -13,3 +13,6 @@ class AppcmsConfig(AppConfig):
     """
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'appcms'
+    
+    def ready(self):
+        import appcms.notificacion  
