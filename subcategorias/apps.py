@@ -10,3 +10,6 @@ class SubcategoriasConfig(AppConfig):
     """
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'subcategorias'
+    
+    def ready(self):
+        import subcategorias.notificacion  
