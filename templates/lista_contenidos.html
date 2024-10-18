@@ -8,6 +8,8 @@
   <link rel="stylesheet" href="{% static 'css/lista_contenidos.css' %}">
 {% endblock head %}
 {% block content %}
+{% load permisos %}
+  {% tienePermiso 'contenido' '["verBorrador","verEdicion","verAPublicar","verPublicado","verInactivo"]' as permisoContenido %}
   <div class="buscador-contenedor">
     <form method="get">
 <!-- Cuadro de búsqueda -->
