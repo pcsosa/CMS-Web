@@ -13,6 +13,34 @@ from appcms.utils.utils import (
 #Notificacion para contenido
 @receiver(post_save, sender=Contenido)
 def notificar_nuevo_contenido(sender, instance, created, **kwargs):
+    """
+    notificar_nuevo_contenido
+
+    Envía una notificación por correo electrónico cuando se crea un nuevo contenido.
+
+    :param sender: El modelo que envía la señal.
+    :type sender: type
+
+    :param instance: La instancia del contenido que ha sido creado.
+    :type instance: Contenido
+
+    :param created: Un booleano que indica si se ha creado un nuevo contenido.
+    :type created: bool
+
+    :param kwargs: Parámetros adicionales que pueden ser utilizados en la señal.
+
+    :description: 
+        Esta función se activa cuando se crea un nuevo contenido y envía una notificación al autor del contenido.
+        El asunto del correo está formado por el texto 'Contenido creado en', y el mensaje informa al autor 
+        que un nuevo contenido ha sido creado.
+
+    :process:
+        1. Verifica si el contenido ha sido creado.
+        2. Obtiene el ID del autor del contenido.
+        3. Extrae el correo electrónico del autor utilizando la función `obtenerUserInfoById`.
+        4. Envía la notificación al autor utilizando la función `enviar_notificacion`.
+
+    """
     if created:
         # Un nuevo comentario ha sido creado
         asunto = f'Contenido creado en'
@@ -23,6 +51,24 @@ def notificar_nuevo_contenido(sender, instance, created, **kwargs):
         enviar_notificacion(asunto, mensaje, destinatarios)
         
 def notificar_edicion_contenido(contenido): 
+    """
+    notificar_edicion_contenido
+
+    Envía una notificación por correo electrónico cuando se edita un contenido.
+
+    :param contenido: La instancia del contenido que ha sido editada.
+    :type contenido: Contenido
+
+    :description: 
+        Esta función envía una notificación al autor del contenido editado.
+        El asunto del correo está formado por el texto 'Edición de contenido' seguido del título del contenido editado.
+        El mensaje informa al autor que el contenido ha sido editado.
+
+    :process:
+        1. Obtiene el ID del autor del contenido.
+        2. Extrae el correo electrónico del autor utilizando la función `obtenerUserInfoById`.
+        3. Envía la notificación al autor utilizando la función `enviar_notificacion`.
+    """
     asunto = f'Edicion de contenido {contenido.titulo}'
     mensaje = f'El contenido "{contenido.titulo}" ha sido editada.'
     autor_id= contenido.autor_id
@@ -31,6 +77,24 @@ def notificar_edicion_contenido(contenido):
     enviar_notificacion(asunto, mensaje, destinatarios)
     
 def notificar_borrar_contenido(contenido):
+    """
+    notificar_borrar_contenido
+
+    Envía una notificación por correo electrónico cuando se elimina un contenido.
+
+    :param contenido: La instancia del contenido que ha sido eliminado.
+    :type contenido: Contenido
+
+    :description: 
+        Esta función envía una notificación al autor del contenido eliminado.
+        El asunto del correo está formado por el texto 'Eliminación de contenido' seguido del título del contenido eliminado.
+        El mensaje informa al autor que el contenido ha sido eliminado.
+
+    :process:
+        1. Obtiene el ID del autor del contenido.
+        2. Extrae el correo electrónico del autor utilizando la función `obtenerUserInfoById`.
+        3. Envía la notificación al autor utilizando la función `enviar_notificacion`.
+    """
     asunto = f'eliminacion de contenido {contenido.titulo}'
     mensaje = f'El contenido "{contenido.titulo}" ha sido eliminado.'
     autor_id= contenido.autor_id
@@ -40,6 +104,33 @@ def notificar_borrar_contenido(contenido):
 
 @receiver(post_save, sender=Comentario)
 def notificar_nuevo_comentario(sender, instance, created, **kwargs):
+    """
+    notificar_nuevo_comentario
+
+    Envía una notificación por correo electrónico cuando se crea un nuevo comentario.
+
+    :param sender: El modelo que envía la señal.
+    :type sender: type
+
+    :param instance: La instancia del comentario que ha sido creado.
+    :type instance: Comentario
+
+    :param created: Un booleano que indica si se ha creado un nuevo comentario.
+    :type created: bool
+
+    :param kwargs: Parámetros adicionales que pueden ser utilizados en la señal.
+
+    :description: 
+        Esta función se activa cuando se crea un nuevo comentario y envía una notificación al autor del contenido asociado.
+        El asunto del correo está formado por el texto 'Nuevo comentario en' seguido del título del contenido relacionado.
+        El mensaje informa al autor que se ha agregado un nuevo comentario al contenido.
+
+    :process:
+        1. Verifica si el comentario ha sido creado.
+        2. Obtiene el ID del autor del contenido asociado al comentario.
+        3. Extrae el correo electrónico del autor utilizando la función `obtenerUserInfoById`.
+        4. Envía la notificación al autor utilizando la función `enviar_notificacion`.
+    """
     if created:
         # Un nuevo comentario ha sido creado
         asunto = f'Nuevo comentario en {instance.contenido.titulo}'
@@ -51,6 +142,30 @@ def notificar_nuevo_comentario(sender, instance, created, **kwargs):
 
 #notificacion para cambio de estado
 def enviar_notificacion_cambio_estado(estado, contenido):
+    """
+    enviar_notificacion_cambio_estado
+
+    Envía una notificación por correo electrónico cuando el estado de un contenido cambia.
+
+    :param estado: El nuevo estado del contenido.
+    :type estado: str
+
+    :param contenido: La instancia del contenido cuyo estado ha cambiado.
+    :type contenido: Contenido
+
+    :description: 
+        Esta función construye un asunto y un mensaje para la notificación que indica el nuevo estado del contenido.
+        El mensaje informa a los destinatarios que el contenido ha cambiado de estado y proporciona el nuevo estado en un formato legible.
+
+    :process:
+        1. Define un diccionario que relaciona cada estado con su descripción correspondiente.
+        2. Crea el asunto del correo utilizando el nuevo estado y el título del contenido.
+        3. Genera el mensaje del correo usando la descripción del estado correspondiente.
+        4. Define un diccionario que relaciona cada estado con el rol de los usuarios que deben recibir la notificación.
+        5. Obtiene todos los usuarios con el rol correspondiente al nuevo estado.
+        6. Extrae los correos electrónicos de los usuarios y del autor del contenido.
+        7. Envía la notificación a todos los destinatarios utilizando la función `enviar_notificacion`.
+    """
     diccionario={ 'Borrador':' guardado como borrador',
                  'Revisión':'enviado para edición',
                  'A Publicar':'enviado al publicador',
