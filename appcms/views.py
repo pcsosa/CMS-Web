@@ -15,6 +15,7 @@ from .forms import CategoriaForm
 from .models import Categoria
 from .services.keycloak_service import KeycloakService
 from .utils.utils import obtenerRPT, obtenerToken, quitar_acentos
+from appcms.notificacion import *
 
 load_dotenv()
 
@@ -113,6 +114,7 @@ def eliminar_categoria(request, pk):
                 request,
                 f'La categoría "{categoria.nombre}" ha sido eliminada correctamente.',
             )
+            notificar_borrar_categoria(categoria)
             return redirect("lista_categorias")
         else:
             messages.error(
@@ -154,6 +156,7 @@ def editar_categoria(request, pk):
                 request,
                 f'La categoría "{categoria.nombre}" ha sido modificado correctamente.',
             )
+            #notificar_editar_categoria(categoria)
             return redirect("lista_categorias")
     else:
         return HttpResponse("Error: Método no permitido", status=405)
