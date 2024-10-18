@@ -6,7 +6,7 @@ from .models import Subcategoria
 from django.contrib import messages
 from django.views.decorators.http import require_POST
 from contenidos.models_cont import Contenido
-
+from subcategorias.notificacion import *
 def administrar_subcategorias(request):
     """
     Administra subcategorías, mostrando un formulario para crear nuevas subcategorías
@@ -99,6 +99,7 @@ def eliminar_subcategoria(request, pk):
         if not contenidos:
             subcategoria_.delete()
             messages.success(request, "La eliminacion ha sido exitosa")
+            notificar_borrar_subcategoria(subcategoria_)
             return redirect('lista_subcategorias',pk=categoria_.pk)  # Redirige a la lista de subcategorías después de eliminar
         else :
             messages.error(request,"No se pudo borrar la subcategoria. Verifique si existen contenidos publicados.")
@@ -120,5 +121,5 @@ def actualizar_subcategoria(request):
     subcategoria = get_object_or_404(Subcategoria, pk=id)
     subcategoria.nombre = nombre
     subcategoria.save()
-
+    notificar_editar_subcategoria(subcategoria)
     return redirect(request.META.get('HTTP_REFERER'))
