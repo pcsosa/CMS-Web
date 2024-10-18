@@ -1,8 +1,8 @@
-from django.contrib import messages
+
 from django.core.paginator import Paginator
 from django.core.serializers import serialize
 from django.db.models import Q  # Para realizar búsquedas
-from django.http import HttpResponseForbidden, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import csrf_exempt
 
@@ -15,6 +15,7 @@ from appcms.utils.utils import (
 )
 from contenidos.models_cont import Categoria, Comentario, Contenido, ContenidoForm
 from subcategorias.models import Subcategoria
+from contenidos.notificacion import *
 
 
 def crear_contenido(request):
@@ -191,32 +192,6 @@ def gestion_contenido(request):
     contenidos = Contenido.objects.all()
     return render(request, "gestion_contenido.html", {"contenidos": contenidos})
 
-
-def editar_contenido(request):
-    """
-    Muestra la página para editar un contenido específico.
-
-    :param request: Objeto HttpRequest que contiene los datos de la solicitud.
-    :return: Respuesta renderizada con la plantilla 'editar_contenido.html'.
-    :rtype: HttpResponse
-    """
-
-    # Falta codigo para editar contenido
-    return render(request, "editar_contenido.html")
-
-
-def eliminar_contenido(request):
-    """
-    Muestra la página para eliminar un contenido específico.
-
-    :param request: Objeto HttpRequest que contiene los datos de la solicitud.
-    :return: Respuesta renderizada con la plantilla 'eliminar_contenido.html'.
-    :rtype: HttpResponse
-    """
-    # Falta codigo para eliminar contenido
-    return render(request, "eliminar_contenido.html")
-
-
 @csrf_exempt
 def upload_image(request):
     """
@@ -253,6 +228,7 @@ def eliminar_contenido(request, pk):
     try:
         contenido = Contenido.objects.get(pk=pk)
         contenido.delete()
+        notificar_borrar_contenido(contenido)
         return redirect("gestion_contenido")
     except Contenido.DoesNotExist:
         return JsonResponse({"error": "Contenido no encontrado"}, status=404)
@@ -338,7 +314,7 @@ def editar_contenido(request, pk):
 
         # Guardar los cambios en el contenido
         contenido.save()
-
+        notificar_edicion_contenido(contenido)
         # Redireccionar a la lista de contenidos después de guardar
         return redirect("gestion_contenido")
 
@@ -475,12 +451,14 @@ def cambiar_estado(request, pk, estado_actual, estado_siguiente):
             if abs(actual - siguiente) == 1 or estado_actual == "Inactivo":
                 contenido.estado = estado_siguiente
                 contenido.save()
+                enviar_notificacion_cambio_estado(estado_siguiente,contenido)
                 # messages.success(request, "El estado ha sido cambiado exitosamente.")
             # else:
             # messages.error(request, "No se pudo cambiar de estado.")
         else:
             contenido.estado = estado_siguiente
             contenido.save()
+            enviar_notificacion_cambio_estado(estado_siguiente,contenido)
             # messages.success(request, "El contenido ha sido inactivado.")
     # else:
     # messages.error(request, "Estados inválidos proporcionados.")
