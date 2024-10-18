@@ -208,3 +208,12 @@ USE_I18N = True
 
 # Tipo de dato predeterminado para los id de los modelos
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Configuración para enviar correos electrónicos a través de Gmail
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'cmsequipo1@gmail.com'  
+#EMAIL_HOST_PASSWORD = 'E1P2J3E4s5'
+EMAIL_HOST_PASSWORD = 'aemmajvqqsawyedn'
