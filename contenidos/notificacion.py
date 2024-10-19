@@ -182,9 +182,25 @@ def enviar_notificacion_cambio_estado(estado, contenido):
                     'Publicado':'Suscriptor',
                     'Inactivo':'Autor'}
     # Obtiene todos los usuarios del rol en el que se va a mover elcontenido
-    users = obtenerUsersConRol(diccionario_Rol[estado])  # retora una lista de los usuarios con el rol del publicador
-    print(users)
-    correos= [obtenerUserInfoById(usuario['id']).get("email") for usuario in users ]+ [obtenerUserInfoById(contenido.autor_id).get("email")]
+    
+    #segun el estado se envian las notificaciones
+    # Cuando se envia de vuelta a borrador, se le notifica solo al autor - SOLO
+    # Cuando se envia a edicion, se le notifica solo al editor designado y al autor
+    # Cuando se envia a "a publicar", se le notifica solo al publicador y al autor
+    # cuando se envia a publicado, se le notifica a los suscriptores y al autor
+    # Cuando se envia a inactivo, se le notifica solo al autor - SOLO
+    if estado == 'Borrador':
+        correos = [obtenerUserInfoById(contenido.autor_id).get("email")]
+    elif estado == 'Revisión':
+        correos = [obtenerUserInfoById(contenido.editor_id).get("email")]+[obtenerUserInfoById(contenido.autor_id).get("email")]
+    elif estado in ('A Publicar','Publicado'):
+        users = obtenerUsersConRol(diccionario_Rol[estado])
+        correos = [obtenerUserInfoById(usuario['id']).get("email") for usuario in users ]+ [obtenerUserInfoById(contenido.autor_id).get("email")]
+    elif estado == 'Inactivo':
+        correos = [obtenerUserInfoById(contenido.autor_id).get("email")]
+    
+
+    #correos= [obtenerUserInfoById(usuario['id']).get("email") for usuario in users ]+ [obtenerUserInfoById(contenido.autor_id).get("email")]
     destinatarios = correos
 
     # Enviar correo a todos los que tengan los permisos
