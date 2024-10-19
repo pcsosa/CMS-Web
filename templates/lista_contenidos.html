@@ -6,6 +6,7 @@
 {% block head %}
   {{ block.super }}
   <link rel="stylesheet" href="{% static 'css/lista_contenidos.css' %}">
+  <script src="{% static 'js/lista_contenido.js' %}" defer></script>
 {% endblock head %}
 {% block content %}
 {% load permisos %}
@@ -29,9 +30,10 @@
         {% endfor %}
       </select>
 <!-- Filtro por autor -->
-      <select id="autor" name="autor" class="filtrador-select" required>
+      <select id="autor" name="autor" class="filtrador-select">
         <option value="">Selecciona un autor</option>
-        {% for autor in autores %}<option value="{{ autor.id }}">{{ autor.username }}</option>{% endfor %}
+        {% for autor in autores %}<option value="{{ autor.id }}" {% if request.GET.autor == autor.id|stringformat:"s" %}selected{% endif %}>
+            {{ autor.username }}</option>{% endfor %}
       </select>
 <!-- Filtro por orden -->
       <select name="orden" class="filtrador-select">
@@ -39,6 +41,7 @@
         <option value="asc" {% if request.GET.orden == 'asc' %}selected{% endif %}>Más antiguos</option>
       </select>
       <button type="submit" class="minimalista">Filtrar</button>
+      <button  class="minimalista" onclick="limpiarCampos()">Limpiar</button>
     </form>
   </div>
   <div class="container">
