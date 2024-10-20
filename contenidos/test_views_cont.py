@@ -60,12 +60,25 @@ class ContenidoViewsTest(TestCase):
             'subcategoria': self.subcategoria.id_subcategoria,
             'editor': self.user.id,
         })
-        
+   
+        # Verificar que los campos del contenido creado coinciden con lo que se envió en el POST   
         self.assertEqual(response.status_code, 302)  # Redirección después de crear contenido
-        nuevo_contenido = Contenido.objects.get(titulo='Nuevo contenido')
+        
+        # Intentar obtener el contenido recién creado
+        try:
+            nuevo_contenido = Contenido.objects.get(titulo='Nuevo contenido')
+        except Contenido.DoesNotExist:
+            self.fail("El contenido no fue creado correctamente.")
+         
         self.assertIsNotNone(nuevo_contenido)
         self.assertEqual(nuevo_contenido.texto, 'Este es un nuevo contenido')
-    
+        self.assertEqual(nuevo_contenido.categoria.id_categoria, self.categoria.id_categoria)
+        self.assertEqual(nuevo_contenido.subcategoria.id_subcategoria, self.subcategoria.id_subcategoria)
+        self.assertEqual(nuevo_contenido.editor_id, self.user.id)
+
+        # Verificar que la imagen se haya guardado correctamente
+        self.assertTrue(nuevo_contenido.imagen.name.endswith("test_image.jpg"))
+
     def test_editar_contenido_view_get(self):
         """Prueba que la vista editar_contenido devuelve el formulario correctamente."""
         response = self.client.get(reverse('editar_contenido', kwargs={'pk': self.contenido.id}))

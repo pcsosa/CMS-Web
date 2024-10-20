@@ -118,6 +118,16 @@ def obtenerUserId(token):
 def decode_token(token, audience="cmsweb", verify_exp=True):
     public_key = settings.KEYCLOAK_RS256_PUBLIC_KEY
     public_key = re.sub(r"\\n", "\n", public_key)
+    # Decodifica sin validar la audiencia para inspeccionarla
+    payload = jwt.decode(
+        token,
+        public_key,
+        algorithms=["RS256"],
+        options={"verify_exp": verify_exp, "verify_aud": False},
+    )
+    print("Audiencia encontrada en el token:", payload.get('aud'))
+
+    # Ahora valida la audiencia correcta
     return jwt.decode(
         token,
         public_key,
@@ -126,7 +136,7 @@ def decode_token(token, audience="cmsweb", verify_exp=True):
         options={"verify_exp": verify_exp},
     )
 
-
+    
 def expiroToken(token):
     if not token:
         return None
