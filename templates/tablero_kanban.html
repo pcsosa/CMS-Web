@@ -12,7 +12,6 @@
 {% block content %}
 {% tienePermiso 'kanban' '["verBorrador","verEdicion","verAPublicar","verPublicado","verInactivo"]' as permisoKanban%}
   <div class="kanban-board">
-    {% if permisoKanban.verBorrador  or borrador %}
       <div class="kanban-column" data-estado="Borrador">
           <h2>Borrador</h2>
           {% for contenido in borrador %}
@@ -25,8 +24,6 @@
             </div>
           {% endfor %}
       </div>
-    {% endif %}
-    {% if permisoKanban.verEdicion or en_revision%}
     <div class="kanban-column" data-estado="Revisión">
       
         <h2>En Revisión</h2>
@@ -41,8 +38,6 @@
         {% endfor %}
       
     </div>
-    {% endif %}
-    {% if permisoKanban.verAPublicar or a_publicar %}
     <div class="kanban-column" data-estado="A Publicar">
       
         <h2>A Publicar</h2>
@@ -56,8 +51,6 @@
           </div>
         {% endfor %}
     </div>
-    {% endif %}
-    {% if permisoKanban.verPublicado or publicado %}
     <div class="kanban-column" data-estado="Publicado">
       
         <h2>Publicado</h2>
@@ -72,8 +65,6 @@
         {% endfor %}
       
     </div>
-    {% endif %}
-    {% if permisoKanban.verInactivo or inactivo %}
     <div class="kanban-column" data-estado="Inactivo">
       
         <h2>Inactivo</h2>
@@ -87,7 +78,6 @@
           </div>
         {% endfor %}
     </div>
-    {% endif %}
   </div>
   <script src="{% static 'js/sortable.min.js' %}"></script>
   <script>
