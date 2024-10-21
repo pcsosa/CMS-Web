@@ -24,7 +24,9 @@ $('#editModal').on('show.bs.modal', function (event) {
   modal.find('#nombre').val(nombre)
   modal.find('#descripcion').val(descripcion)
 
+  let curr = window.location.href;
+
   // Actualiza la URL del formulario en el modal
-  var actionUrl = "{% url 'editar_categoria' 0 %}".replace('0', id)
+  var actionUrl = curr.replace('/cat/',`/cat/editar/${id}/`)
   modal.find('form').attr('action', actionUrl)
 })
