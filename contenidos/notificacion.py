@@ -167,10 +167,10 @@ def enviar_notificacion_cambio_estado(estado, contenido):
         7. Envía la notificación a todos los destinatarios utilizando la función `enviar_notificacion`.
     """
     diccionario={ 'Borrador':' guardado como borrador',
-                 'Revisión':'enviado para edición',
-                 'A Publicar':'enviado al publicador',
+                 'Revisión':'agregado a la lista de contenidos listos para su edición',
+                 'A Publicar':'agregado a la lista de contenidos a publicar',
                  'Publicado':'publicado',
-                 'Inactivo':'inactivado'}
+                 'Inactivo':'inactivado :('}
     
     asunto = f'Contenido en {estado}: {contenido.titulo}'
     
