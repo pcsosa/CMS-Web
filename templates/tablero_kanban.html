@@ -12,7 +12,7 @@
 {% block content %}
 {% tienePermiso 'kanban' '["verBorrador","verEdicion","verAPublicar","verPublicado","verInactivo"]' as permisoKanban%}
   <div class="kanban-board">
-    {% if permisoKanban.verBorrador %}
+    {% if permisoKanban.verBorrador  or borrador %}
       <div class="kanban-column" data-estado="Borrador">
           <h2>Borrador</h2>
           {% for contenido in borrador %}
@@ -26,7 +26,7 @@
           {% endfor %}
       </div>
     {% endif %}
-    {% if permisoKanban.verEdicion %}
+    {% if permisoKanban.verEdicion or en_revision%}
     <div class="kanban-column" data-estado="Revisión">
       
         <h2>En Revisión</h2>
@@ -42,7 +42,7 @@
       
     </div>
     {% endif %}
-    {% if permisoKanban.verAPublicar %}
+    {% if permisoKanban.verAPublicar or a_publicar %}
     <div class="kanban-column" data-estado="A Publicar">
       
         <h2>A Publicar</h2>
@@ -57,7 +57,7 @@
         {% endfor %}
     </div>
     {% endif %}
-    {% if permisoKanban.verPublicado %}
+    {% if permisoKanban.verPublicado or publicado %}
     <div class="kanban-column" data-estado="Publicado">
       
         <h2>Publicado</h2>
@@ -73,7 +73,7 @@
       
     </div>
     {% endif %}
-    {% if permisoKanban.verInactivo %}
+    {% if permisoKanban.verInactivo or inactivo %}
     <div class="kanban-column" data-estado="Inactivo">
       
         <h2>Inactivo</h2>
