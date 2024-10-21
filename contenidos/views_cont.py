@@ -12,6 +12,7 @@ from appcms.utils.utils import (
     obtenerUserId,
     obtenerUserInfoById,
     obtenerUsersConRol,
+    tienePermiso,
 )
 from contenidos.models_cont import Categoria, Comentario, Contenido, ContenidoForm
 from subcategorias.models import Subcategoria
@@ -328,6 +329,21 @@ def editar_contenido(request, pk):
     # Renderizar el formulario de edición con los datos actuales del contenido
     return render(request, "editar_contenido.html", contexto)
 
+def filtrar(lista,rol, id):
+    nuevo =[]
+    if rol == "Autor":
+        for contenido in lista:
+            if contenido.autor_id == id :
+                nuevo += [contenido]
+    elif rol == "Editor":
+        for contenido in lista:
+            if contenido.editor_id == id :
+                nuevo += [contenido]
+    elif rol in ("Publicador","Administrador"):
+        for contenido in lista:
+            nuevo += [contenido]
+    return nuevo          
+    
 
 def tablero_kanban(request):
     """
@@ -362,7 +378,34 @@ def tablero_kanban(request):
     a_publicar = Contenido.objects.filter(estado="A Publicar")
     publicado = Contenido.objects.filter(estado="Publicado")
     inactivo = Contenido.objects.filter(estado="Inactivo")
+    
+    token = obtenerToken(request)
+    user_id = obtenerUserId(token)
+    
+    users_autores = obtenerUsersConRol("Autor")
+    users_editores = obtenerUsersConRol("Editor")
+    users_publicadores = obtenerUsersConRol("Publicador")
+    users_administradores = obtenerUsersConRol("Administrador")
+    rol = ""
+    for user in users_autores:
+        if user["id"] == user_id :
+            rol="Autor"
+    for user in users_editores:
+        if user["id"] == user_id :
+            rol="Editor"
+    for user in users_publicadores:
+        if user["id"]== user_id :
+            rol="Publicador"
+    for user in users_administradores:
+        if user["id"] == user_id :
+            rol="Administrador"   
+    borrador = filtrar(borrador,rol,user_id)
+    en_revision = filtrar(en_revision,rol,user_id)
+    a_publicar = filtrar(a_publicar,rol,user_id)
+    publicado = filtrar(publicado,rol,user_id)
+    inactivo =filtrar(inactivo,rol,user_id)
 
+        
     contexto = {
         "borrador": borrador,
         "en_revision": en_revision,
@@ -439,6 +482,18 @@ def cambiar_estado(request, pk, estado_actual, estado_siguiente):
         "Publicado",
         "Inactivo",
     )
+    
+    scopes = ["enviar-borrador-revision","enviar-revision-Apublicar","enviar-Apublicar-Publicado"]
+    scopes += ["enviar-revision-borrador","enviar-Apublicar-revision","enviar-Publicado-Apublicar"]
+    token = obtenerToken(request)
+    permiso={ 
+             ("Borrador","Revisión"):"enviar-borrador-revision",
+             ("Revisión","A Publicar"):"enviar-revision-Apublicar",
+             ("A Publicar","Publicado"):"enviar-Apublicar-Publicado",
+             ("Revisión","Borrador"):"enviar-revision-borrador",
+             ("A Publicar","Revisión"):"enviar-Apublicar-revision",
+             ("Publicado","A Publicar"):"enviar-Publicado-Apublicar",
+             }
 
     # Verifica que los estados actual y siguiente existan en la lista de estados
     if estado_actual in estados_disponibles and estado_siguiente in estados_disponibles:
@@ -446,15 +501,16 @@ def cambiar_estado(request, pk, estado_actual, estado_siguiente):
         siguiente = estados_disponibles.index(estado_siguiente)
 
         # Si el estado siguiente no es 'Inactivo' y el estado actual no es 'Publicado'
-        if estado_siguiente != "Inactivo":
+        if estado_siguiente != "Inactivo" and estado_actual!="Inactivo":
             # Verifica que los estados estén uno al lado del otro
             if abs(actual - siguiente) == 1 or estado_actual == "Inactivo":
-                contenido.estado = estado_siguiente
-                contenido.save()
-                enviar_notificacion_cambio_estado(estado_siguiente,contenido)
-                # messages.success(request, "El estado ha sido cambiado exitosamente.")
-            # else:
-            # messages.error(request, "No se pudo cambiar de estado.")
+                if tienePermiso(token,"contenido",scopes)[permiso[(estado_actual,estado_siguiente)]]:
+                    contenido.estado = estado_siguiente
+                    contenido.save()
+                    enviar_notificacion_cambio_estado(estado_siguiente,contenido)
+                    # messages.success(request, "El estado ha sido cambiado exitosamente.")
+                # else:
+                # messages.error(request, "No se pudo cambiar de estado.")
         else:
             contenido.estado = estado_siguiente
             contenido.save()
