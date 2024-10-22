@@ -14,7 +14,7 @@ class KeycloakTokenMiddleware:
                                   después de que se ejecuta el middleware.
     """
     def __init__(self, get_response):
-         """Inicializa el middleware.
+        """Inicializa el middleware.
 
         Args:
             get_response (callable): Función que se llama para procesar la solicitud
