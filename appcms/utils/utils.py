@@ -14,12 +14,34 @@ from django.utils.html import strip_tags
 
 # Obtener información del usuario a partir del user id
 def obtenerUserInfoById(user_id):
+    """Obtener información del usuario a partir del user id.
+
+    Esta función utiliza el servicio de Keycloak para obtener la información
+    del usuario correspondiente al ID proporcionado.
+
+    Args:
+        user_id (str): El ID del usuario del cual se desea obtener la información.
+
+    Returns:
+        dict: Un diccionario con la información del usuario.
+    """
     kc = KeycloakService()
     user = kc.admin.get_user(user_id)
     return user
 
 
 def obtenerUserInfo(token):
+    """Obtiene la información del usuario a partir del token.
+
+    Esta función decodifica el token y extrae la información del usuario,
+    incluyendo el correo electrónico, nombre y nombre de usuario preferido.
+
+    Args:
+        token (str): El token de acceso del usuario.
+
+    Returns:
+        dict: Un diccionario con la información del usuario, o None si no hay token.
+    """
     if not token:
         return None
 
@@ -37,6 +59,17 @@ def obtenerUserInfo(token):
 
 
 def obtenerToken(request):
+    """Obtiene el token de acceso del usuario.
+
+    Esta función intenta obtener el token de la caché o de la sesión del usuario.
+    Si no se encuentra, se imprime un mensaje y se devuelve el token.
+
+    Args:
+        request (HttpRequest): La solicitud HTTP del usuario.
+
+    Returns:
+        str: El token de acceso del usuario, o None si no se encuentra.
+    """
     token = cache.get("access_token")
     if not token:
         print("Token obtenido de la sesión")
@@ -46,6 +79,19 @@ def obtenerToken(request):
 
 
 def tienePermiso(token, resource, scopes_to_check):
+    """Verifica si el usuario tiene permiso para acceder a un recurso específico.
+
+    Esta función decodifica el token y verifica si el usuario tiene los permisos
+    necesarios para acceder al recurso solicitado, en función de los scopes proporcionados.
+
+    Args:
+        token (str): El token de acceso del usuario.
+        resource (str): El recurso al que se desea acceder.
+        scopes_to_check (list): Una lista de scopes que se deben verificar.
+
+    Returns:
+        dict: Un diccionario que indica si el usuario tiene permiso para cada scope.
+    """
     if not token:
         return {scope: False for scope in scopes_to_check}
 
@@ -69,6 +115,17 @@ def tienePermiso(token, resource, scopes_to_check):
 
 
 def obtenerRPT(token):
+    """Obtiene el RPT (Requesting Party Token) a partir del token de acceso.
+
+    Esta función realiza una solicitud para obtener un RPT utilizando el token de acceso
+    del usuario. Si la solicitud es exitosa, devuelve el RPT.
+
+    Args:
+        token (str): El token de acceso del usuario.
+
+    Returns:
+        dict: Un diccionario con el RPT, o un mensaje de error si no se pudo obtener.
+    """
     if not token:
         return None
 
@@ -100,6 +157,17 @@ def obtenerRPT(token):
 
 
 def obtenerUsersConRol(rol):
+    """Obtiene los usuarios que tienen un rol específico.
+
+    Esta función utiliza el servicio de Keycloak para obtener los usuarios
+    que tienen el rol especificado.
+
+    Args:
+        rol (str): El nombre del rol para el cual se desean obtener los usuarios.
+
+    Returns:
+        list: Una lista de diccionarios con los IDs y nombres de usuario de los usuarios.
+    """
     kc = KeycloakService()
     users = kc.admin.get_realm_role_members(rol)
 
@@ -110,6 +178,16 @@ def obtenerUsersConRol(rol):
 
 
 def obtenerUserId(token):
+    """Obtiene el ID del usuario a partir del token.
+
+    Esta función decodifica el token y extrae el ID del usuario.
+
+    Args:
+        token (str): El token de acceso del usuario.
+
+    Returns:
+        str: El ID del usuario, o None si no hay token.
+    """
     if not token:
         return None
     payload = decode_token(token)
@@ -117,6 +195,19 @@ def obtenerUserId(token):
 
 
 def decode_token(token, audience="cmsweb", verify_exp=True):
+    """Decodifica un token JWT.
+
+    Esta función utiliza la clave pública de Keycloak para decodificar el token
+    y verificar su validez.
+
+    Args:
+        token (str): El token JWT a decodificar.
+        audience (str): La audiencia esperada del token.
+        verify_exp (bool): Indica si se debe verificar la expiración del token.
+
+    Returns:
+        dict: El payload decodificado del token.
+    """
     public_key = settings.KEYCLOAK_RS256_PUBLIC_KEY
     public_key = re.sub(r"\\n", "\n", public_key)
     return jwt.decode(
@@ -129,6 +220,17 @@ def decode_token(token, audience="cmsweb", verify_exp=True):
 
 
 def expiroToken(token):
+    """Verifica si el token ha expirado.
+
+    Esta función decodifica el token y comprueba si la fecha de expiración
+    es anterior al tiempo actual.
+
+    Args:
+        token (str): El token de acceso del usuario.
+
+    Returns:
+        bool: True si el token ha expirado, False en caso contrario.
+    """
     if not token:
         return None
     decoded_token = decode_token(token, verify_exp=False)
@@ -136,6 +238,18 @@ def expiroToken(token):
 
 
 def comprobarToken(request, token):
+    """Verifica y renueva el token si ha expirado.
+
+    Esta función comprueba si el token ha expirado y, si es así, intenta
+    renovarlo utilizando el refresh token.
+
+    Args:
+        request (HttpRequest): La solicitud HTTP del usuario.
+        token (str): El token de acceso del usuario.
+
+    Returns:
+        str: El nuevo token de acceso si se renueva, o el token original si no ha expirado.
+    """
     if not token:
         return None
 
@@ -159,6 +273,17 @@ def comprobarToken(request, token):
 
 
 def obtenerRolesUser(token):
+    """Obtiene los roles del usuario a partir del token.
+
+    Esta función decodifica el token y extrae los roles del usuario,
+    excluyendo ciertos roles predeterminados.
+
+    Args:
+        token (str): El token de acceso del usuario.
+
+    Returns:
+        list: Una lista de roles del usuario.
+    """
     decoded_token = decode_token(token)
     roles = decoded_token["realm_access"].get("roles", [])
 
@@ -193,7 +318,21 @@ def quitar_acentos(texto):
     return texto_sin_acentos
 
 def enviar_notificacion(asunto, mensaje, destinatarios):
-    
+    """Envía una notificación por correo electrónico.
+
+    Esta función genera un mensaje de correo electrónico en formato HTML y
+    lo envía a una lista de destinatarios. Utiliza una plantilla HTML para
+    el contenido del mensaje.
+
+    Args:
+        asunto (str): El asunto del correo electrónico.
+        mensaje (str): El mensaje que se incluirá en el cuerpo del correo.
+        destinatarios (list): Una lista de direcciones de correo electrónico
+                              de los destinatarios.
+
+    Returns:
+        None: Esta función no devuelve ningún valor.
+    """
     html_mensaje = render_to_string('notificacion.html', {
         'mensaje': mensaje,
     })
