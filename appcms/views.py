@@ -253,6 +253,14 @@ def logout(request):
 
 @csrf_exempt
 def upload_image(request):
+    """Esta funcion maneja la subida de imagen en el contenido a traves de una solicitud POST
+
+    Args:
+        request (HttpRequest): la solicitud http que contiene la imagen
+
+    Returns:
+        JsonResponse: un objeto JSON que contiene la URL donde se ha guardado la imagen
+    """
     if request.method == "POST":
         image = request.FILES["file"]
         # Guardar la imagen en el servidor
