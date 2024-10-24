@@ -7,10 +7,21 @@
 {% endblock title %}
 {% block head %}
   {{ block.super }}
-  <link rel="stylesheet" href="{% static 'css/kanban.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/kanban.css' %}">
 {% endblock head %}
 {% block content %}
 {% tienePermiso 'kanban' '["verBorrador","verEdicion","verAPublicar","verPublicado","verInactivo"]' as permisoKanban%}
+
+  {% if messages %}
+    {% for message in messages %}
+      {% if message.tags == 'error' %}
+          <div class="message-error">
+              {{ message }}
+          </div>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
   <div class="kanban-board">
       <div class="kanban-column" data-estado="Borrador">
           <h2>Borrador</h2>

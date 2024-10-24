@@ -50,3 +50,15 @@
     min-width: 100%;
   }
 }
+.message-error {
+  color: #0d1b56 !important;
+  padding: 15px !important;
+  border: 1px solid #0d1b56 !important;
+  border-radius: 5px !important;
+  margin-bottom: 20px !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
+  text-align: center !important;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1) !important;
+}
+

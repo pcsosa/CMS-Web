@@ -1,4 +1,5 @@
 
+from django.contrib import messages
 from django.core.paginator import Paginator
 from django.core.serializers import serialize
 from django.db.models import Q  # Para realizar búsquedas
@@ -509,15 +510,17 @@ def cambiar_estado(request, pk, estado_actual, estado_siguiente):
                     contenido.save()
                     enviar_notificacion_cambio_estado(estado_siguiente,contenido)
                     # messages.success(request, "El estado ha sido cambiado exitosamente.")
-                # else:
-                # messages.error(request, "No se pudo cambiar de estado.")
+                else:
+                    messages.error(request, "No posee los permisos necesarios para cambiar a ese estado")
+            else:
+                messages.error(request, "Error. Se debe respetar el flujo de estados de los contenidos")
         else:
             contenido.estado = estado_siguiente
             contenido.save()
             enviar_notificacion_cambio_estado(estado_siguiente,contenido)
             # messages.success(request, "El contenido ha sido inactivado.")
-    # else:
-    # messages.error(request, "Estados inválidos proporcionados.")
+    else:
+        messages.error(request, "Error. Estados proporcionados invalidos")
 
     # Manejar la redirección si HTTP_REFERER no está presente
     referer = request.META.get("HTTP_REFERER")
