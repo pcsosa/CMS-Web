@@ -27,10 +27,7 @@ KEYCLOAK_CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET")
 KEYCLOAK_RS256_PUBLIC_KEY = os.getenv("KEYCLOAK_RS256_PUBLIC_KEY")
 DJ_PORT = os.getenv("DJ_PORT")
 DJ_URL = os.getenv("DJ_URL")
-<<<<<<< HEAD
-=======
 TESTING = os.getenv("TESTING")
->>>>>>> johis_dev
 
 # Mostrar todas las variables de entorno (para depuración)
 # expected_keys = [
@@ -79,11 +76,7 @@ INSTALLED_APPS = [
     "appcms",
     "contenidos",
     "subcategorias",
-<<<<<<< HEAD
 ] #
-=======
-]  #
->>>>>>> johis_dev
 
 # -------------------------------------------------
 # ----------------- MIDDLEWARES -------------------
@@ -172,21 +165,12 @@ AUTHENTICATION_BACKENDS = [
 DATABASES = {"default": dj_database_url.parse(DATABASE_URL)}
 
 # SQLite en memoria (para pruebas)
-<<<<<<< HEAD
 #DATABASES = {
  #  'default': {
  #      'ENGINE': 'django.db.backends.sqlite3',
 #       'NAME': ':memory:',
 #   }
 #}
-=======
-# DATABASES = {
-#  'default': {
-#      'ENGINE': 'django.db.backends.sqlite3',
-#       'NAME': ':memory:',
-#   }
-# }
->>>>>>> johis_dev
 
 # SQLite archivo local
 # DATABASES = {
@@ -225,7 +209,6 @@ USE_I18N = True
 
 # Tipo de dato predeterminado para los id de los modelos
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-<<<<<<< HEAD
 
 # Configuración para enviar correos electrónicos a través de Gmail
 EMAIL_BACKEND = os.getenv("EMAIL_BACKEND")
@@ -234,5 +217,3 @@ EMAIL_PORT = os.getenv("EMAIL_PORT")
 EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS")
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-=======
->>>>>>> johis_dev
