@@ -68,7 +68,7 @@ def notificar_editar_subcategoria(subcategoria):
         5. Envía la notificación a todos los destinatarios utilizando la función `enviar_notificacion`.
     """
     asunto = f'Edicion de subcategoria {subcategoria.nombre}'
-    mensaje = f'La subcategoria "{subcategoria.titulo}" ha sido editada.'
+    mensaje = f'La subcategoria "{subcategoria.nombre}" ha sido editada.'
     autores = obtenerUsersConRol('Autor')
     editores = obtenerUsersConRol('Editor')
     publicadores = obtenerUsersConRol('Publicador')
