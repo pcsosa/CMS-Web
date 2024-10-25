@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+
+<html lang="es" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>notificacion &#8212; documentación de cmsweb - 0.1</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=def86cc0" />
+    
+    <script src="../../_static/documentation_options.js?v=9c9b61ad"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/translations.js?v=d190bf04"></script>
+    
+    <link rel="index" title="Índice" href="../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../search.html" />
+    <link rel="prev" title="models_cont" href="models_cont.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="Índice General"
+             accesskey="I">índice</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Índice de Módulos Python"
+             >módulos</a> |</li>
+        <li class="right" >
+          <a href="models_cont.html" title="models_cont"
+             accesskey="P">anterior</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">documentación de cmsweb - 0.1</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Contenido</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">notificacion</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-contenidos.notificacion">
+<span id="notificacion"></span><h1>notificacion<a class="headerlink" href="#module-contenidos.notificacion" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="contenidos.notificacion.enviar_notificacion_cambio_estado">
+<span class="sig-prename descclassname"><span class="pre">contenidos.notificacion.</span></span><span class="sig-name descname"><span class="pre">enviar_notificacion_cambio_estado</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">estado</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contenido</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/contenidos/notificacion.html#enviar_notificacion_cambio_estado"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#contenidos.notificacion.enviar_notificacion_cambio_estado" title="Link to this definition">¶</a></dt>
+<dd><p>Envía una notificación por correo electrónico cuando el estado de un contenido cambia.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>estado</strong> (<em>str</em>) – El nuevo estado del contenido.</p></li>
+<li><p><strong>contenido</strong> (<a class="reference internal" href="models_cont.html#contenidos.models_cont.Contenido" title="contenidos.models_cont.Contenido"><em>Contenido</em></a>) – La instancia del contenido cuyo estado ha cambiado.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Description<span class="colon">:</span></dt>
+<dd class="field-even"><p>Esta función construye un asunto y un mensaje para la notificación que indica el nuevo estado del contenido.
+El mensaje informa a los destinatarios que el contenido ha cambiado de estado y proporciona el nuevo estado en un formato legible.</p>
+</dd>
+<dt class="field-odd">Process<span class="colon">:</span></dt>
+<dd class="field-odd"><ol class="arabic simple">
+<li><p>Define un diccionario que relaciona cada estado con su descripción correspondiente.</p></li>
+<li><p>Crea el asunto del correo utilizando el nuevo estado y el título del contenido.</p></li>
+<li><p>Genera el mensaje del correo usando la descripción del estado correspondiente.</p></li>
+<li><p>Define un diccionario que relaciona cada estado con el rol de los usuarios que deben recibir la notificación.</p></li>
+<li><p>Obtiene todos los usuarios con el rol correspondiente al nuevo estado.</p></li>
+<li><p>Extrae los correos electrónicos de los usuarios y del autor del contenido.</p></li>
+<li><p>Envía la notificación a todos los destinatarios utilizando la función <cite>enviar_notificacion</cite>.</p></li>
+</ol>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="contenidos.notificacion.notificar_borrar_contenido">
+<span class="sig-prename descclassname"><span class="pre">contenidos.notificacion.</span></span><span class="sig-name descname"><span class="pre">notificar_borrar_contenido</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contenido</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/contenidos/notificacion.html#notificar_borrar_contenido"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#contenidos.notificacion.notificar_borrar_contenido" title="Link to this definition">¶</a></dt>
+<dd><p>Envía una notificación por correo electrónico cuando se elimina un contenido.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>contenido</strong> (<a class="reference internal" href="models_cont.html#contenidos.models_cont.Contenido" title="contenidos.models_cont.Contenido"><em>Contenido</em></a>) – La instancia del contenido que ha sido eliminado.</p>
+</dd>
+<dt class="field-even">Description<span class="colon">:</span></dt>
+<dd class="field-even"><p>Esta función envía una notificación al autor del contenido eliminado.
+El asunto del correo está formado por el texto “Eliminación de contenido” seguido del título del contenido eliminado.
+El mensaje informa al autor que el contenido ha sido eliminado.</p>
+</dd>
+<dt class="field-odd">Process<span class="colon">:</span></dt>
+<dd class="field-odd"><ol class="arabic simple">
+<li><p>Obtiene el ID del autor del contenido.</p></li>
+<li><p>Extrae el correo electrónico del autor utilizando la función <cite>obtenerUserInfoById</cite>.</p></li>
+<li><p>Envía la notificación al autor utilizando la función <cite>enviar_notificacion</cite>.</p></li>
+</ol>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="contenidos.notificacion.notificar_edicion_contenido">
+<span class="sig-prename descclassname"><span class="pre">contenidos.notificacion.</span></span><span class="sig-name descname"><span class="pre">notificar_edicion_contenido</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contenido</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/contenidos/notificacion.html#notificar_edicion_contenido"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#contenidos.notificacion.notificar_edicion_contenido" title="Link to this definition">¶</a></dt>
+<dd><p>Envía una notificación por correo electrónico cuando se edita un contenido.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>contenido</strong> (<a class="reference internal" href="models_cont.html#contenidos.models_cont.Contenido" title="contenidos.models_cont.Contenido"><em>Contenido</em></a>) – La instancia del contenido que ha sido editada.</p>
+</dd>
+<dt class="field-even">Description<span class="colon">:</span></dt>
+<dd class="field-even"><p>Esta función envía una notificación al autor del contenido editado.
+El asunto del correo está formado por el texto “Edición de contenido” seguido del título del contenido editado.
+El mensaje informa al autor que el contenido ha sido editado.</p>
+</dd>
+<dt class="field-odd">Process<span class="colon">:</span></dt>
+<dd class="field-odd"><ol class="arabic simple">
+<li><p>Obtiene el ID del autor del contenido.</p></li>
+<li><p>Extrae el correo electrónico del autor utilizando la función <cite>obtenerUserInfoById</cite>.</p></li>
+<li><p>Envía la notificación al autor utilizando la función <cite>enviar_notificacion</cite>.</p></li>
+</ol>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="contenidos.notificacion.notificar_nuevo_comentario">
+<span class="sig-prename descclassname"><span class="pre">contenidos.notificacion.</span></span><span class="sig-name descname"><span class="pre">notificar_nuevo_comentario</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sender</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">created</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/contenidos/notificacion.html#notificar_nuevo_comentario"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#contenidos.notificacion.notificar_nuevo_comentario" title="Link to this definition">¶</a></dt>
+<dd><p>Envía una notificación por correo electrónico cuando se crea un nuevo comentario.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sender</strong> (<em>type</em>) – El modelo que envía la señal.</p></li>
+<li><p><strong>instance</strong> (<a class="reference internal" href="models_cont.html#contenidos.models_cont.Comentario" title="contenidos.models_cont.Comentario"><em>Comentario</em></a>) – La instancia del comentario que ha sido creado.</p></li>
+<li><p><strong>created</strong> (<em>bool</em>) – Un booleano que indica si se ha creado un nuevo comentario.</p></li>
+<li><p><strong>kwargs</strong> – Parámetros adicionales que pueden ser utilizados en la señal.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Description<span class="colon">:</span></dt>
+<dd class="field-even"><p>Esta función se activa cuando se crea un nuevo comentario y envía una notificación al autor del contenido asociado.
+El asunto del correo está formado por el texto “Nuevo comentario en” seguido del título del contenido relacionado.
+El mensaje informa al autor que se ha agregado un nuevo comentario al contenido.</p>
+</dd>
+<dt class="field-odd">Process<span class="colon">:</span></dt>
+<dd class="field-odd"><ol class="arabic simple">
+<li><p>Verifica si el comentario ha sido creado.</p></li>
+<li><p>Obtiene el ID del autor del contenido asociado al comentario.</p></li>
+<li><p>Extrae el correo electrónico del autor utilizando la función <cite>obtenerUserInfoById</cite>.</p></li>
+<li><p>Envía la notificación al autor utilizando la función <cite>enviar_notificacion</cite>.</p></li>
+</ol>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="contenidos.notificacion.notificar_nuevo_contenido">
+<span class="sig-prename descclassname"><span class="pre">contenidos.notificacion.</span></span><span class="sig-name descname"><span class="pre">notificar_nuevo_contenido</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sender</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">created</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/contenidos/notificacion.html#notificar_nuevo_contenido"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#contenidos.notificacion.notificar_nuevo_contenido" title="Link to this definition">¶</a></dt>
+<dd><p>Envía una notificación por correo electrónico cuando se crea un nuevo contenido.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sender</strong> (<em>type</em>) – El modelo que envía la señal.</p></li>
+<li><p><strong>instance</strong> (<a class="reference internal" href="models_cont.html#contenidos.models_cont.Contenido" title="contenidos.models_cont.Contenido"><em>Contenido</em></a>) – La instancia del contenido que ha sido creado.</p></li>
+<li><p><strong>created</strong> (<em>bool</em>) – Un booleano que indica si se ha creado un nuevo contenido.</p></li>
+<li><p><strong>kwargs</strong> – Parámetros adicionales que pueden ser utilizados en la señal.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Description<span class="colon">:</span></dt>
+<dd class="field-even"><p>Esta función se activa cuando se crea un nuevo contenido y envía una notificación al autor del contenido.
+El asunto del correo está formado por el texto “Contenido creado en”, y el mensaje informa al autor 
+que un nuevo contenido ha sido creado.</p>
+</dd>
+<dt class="field-odd">Process<span class="colon">:</span></dt>
+<dd class="field-odd"><ol class="arabic simple">
+<li><p>Verifica si el contenido ha sido creado.</p></li>
+<li><p>Obtiene el ID del autor del contenido.</p></li>
+<li><p>Extrae el correo electrónico del autor utilizando la función <cite>obtenerUserInfoById</cite>.</p></li>
+<li><p>Envía la notificación al autor utilizando la función <cite>enviar_notificacion</cite>.</p></li>
+</ol>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../../index.html">Tabla de contenido</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">notificacion</a><ul>
+<li><a class="reference internal" href="#contenidos.notificacion.enviar_notificacion_cambio_estado"><code class="docutils literal notranslate"><span class="pre">enviar_notificacion_cambio_estado()</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.notificacion.notificar_borrar_contenido"><code class="docutils literal notranslate"><span class="pre">notificar_borrar_contenido()</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.notificacion.notificar_edicion_contenido"><code class="docutils literal notranslate"><span class="pre">notificar_edicion_contenido()</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.notificacion.notificar_nuevo_comentario"><code class="docutils literal notranslate"><span class="pre">notificar_nuevo_comentario()</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.notificacion.notificar_nuevo_contenido"><code class="docutils literal notranslate"><span class="pre">notificar_nuevo_contenido()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Tema anterior</h4>
+    <p class="topless"><a href="models_cont.html"
+                          title="capítulo anterior">models_cont</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>Esta página</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/modulesf/contenidos/notificacion.rst.txt"
+            rel="nofollow">Mostrar el código</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Búsqueda rápida</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Ir a" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="Índice General"
+             >índice</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Índice de Módulos Python"
+             >módulos</a> |</li>
+        <li class="right" >
+          <a href="models_cont.html" title="models_cont"
+             >anterior</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">documentación de cmsweb - 0.1</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Contenido</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">notificacion</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, equipo01.
+      Creado usando <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    </div>
+  </body>
+</html>

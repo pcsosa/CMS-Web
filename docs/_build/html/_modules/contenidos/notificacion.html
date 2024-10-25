@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+
+<html lang="es" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>contenidos.notificacion &#8212; documentación de cmsweb - 0.1</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=def86cc0" />
+    
+    <script src="../../_static/documentation_options.js?v=9c9b61ad"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/translations.js?v=d190bf04"></script>
+    
+    <link rel="index" title="Índice" href="../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="Índice General"
+             accesskey="I">índice</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Índice de Módulos Python"
+             >módulos</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">documentación de cmsweb - 0.1</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Código de módulo</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">contenidos.notificacion</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Código fuente para contenidos.notificacion</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">django.db.models.signals</span> <span class="kn">import</span> <span class="n">post_save</span>
+<span class="kn">from</span> <span class="nn">django.dispatch</span> <span class="kn">import</span> <span class="n">receiver</span>
+<span class="kn">from</span> <span class="nn">contenidos.models_cont</span> <span class="kn">import</span> <span class="n">Comentario</span><span class="p">,</span><span class="n">Contenido</span>
+<span class="kn">from</span> <span class="nn">appcms.utils.utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">obtenerUserInfoById</span><span class="p">,</span>
+    <span class="n">obtenerUsersConRol</span><span class="p">,</span>
+    <span class="n">enviar_notificacion</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="c1">#-------------------------------------------------------------------------------------------------</span>
+<span class="c1">#-------------------------------------------------------------------------------------------------</span>
+<span class="c1">#Notificacion para contenido</span>
+<div class="viewcode-block" id="notificar_nuevo_contenido">
+<a class="viewcode-back" href="../../modulesf/contenidos/notificacion.html#contenidos.notificacion.notificar_nuevo_contenido">[documentos]</a>
+<span class="nd">@receiver</span><span class="p">(</span><span class="n">post_save</span><span class="p">,</span> <span class="n">sender</span><span class="o">=</span><span class="n">Contenido</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">notificar_nuevo_contenido</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">created</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    notificar_nuevo_contenido</span>
+
+<span class="sd">    Envía una notificación por correo electrónico cuando se crea un nuevo contenido.</span>
+
+<span class="sd">    :param sender: El modelo que envía la señal.</span>
+<span class="sd">    :type sender: type</span>
+
+<span class="sd">    :param instance: La instancia del contenido que ha sido creado.</span>
+<span class="sd">    :type instance: Contenido</span>
+
+<span class="sd">    :param created: Un booleano que indica si se ha creado un nuevo contenido.</span>
+<span class="sd">    :type created: bool</span>
+
+<span class="sd">    :param kwargs: Parámetros adicionales que pueden ser utilizados en la señal.</span>
+
+<span class="sd">    :description: </span>
+<span class="sd">        Esta función se activa cuando se crea un nuevo contenido y envía una notificación al autor del contenido.</span>
+<span class="sd">        El asunto del correo está formado por el texto &#39;Contenido creado en&#39;, y el mensaje informa al autor </span>
+<span class="sd">        que un nuevo contenido ha sido creado.</span>
+
+<span class="sd">    :process:</span>
+<span class="sd">        1. Verifica si el contenido ha sido creado.</span>
+<span class="sd">        2. Obtiene el ID del autor del contenido.</span>
+<span class="sd">        3. Extrae el correo electrónico del autor utilizando la función `obtenerUserInfoById`.</span>
+<span class="sd">        4. Envía la notificación al autor utilizando la función `enviar_notificacion`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">created</span><span class="p">:</span>
+        <span class="c1"># Un nuevo comentario ha sido creado</span>
+        <span class="n">asunto</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Contenido creado en&#39;</span>
+        <span class="n">mensaje</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Un nuevo contenido ha sido creado .&#39;</span>
+        <span class="n">autor_id</span><span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">autor_id</span>
+        <span class="n">email</span> <span class="o">=</span> <span class="n">obtenerUserInfoById</span><span class="p">(</span><span class="n">autor_id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">)</span>
+        <span class="n">destinatarios</span> <span class="o">=</span> <span class="p">[</span><span class="n">email</span><span class="p">]</span>
+        <span class="n">enviar_notificacion</span><span class="p">(</span><span class="n">asunto</span><span class="p">,</span> <span class="n">mensaje</span><span class="p">,</span> <span class="n">destinatarios</span><span class="p">)</span></div>
+
+        
+<div class="viewcode-block" id="notificar_edicion_contenido">
+<a class="viewcode-back" href="../../modulesf/contenidos/notificacion.html#contenidos.notificacion.notificar_edicion_contenido">[documentos]</a>
+<span class="k">def</span> <span class="nf">notificar_edicion_contenido</span><span class="p">(</span><span class="n">contenido</span><span class="p">):</span> 
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    notificar_edicion_contenido</span>
+
+<span class="sd">    Envía una notificación por correo electrónico cuando se edita un contenido.</span>
+
+<span class="sd">    :param contenido: La instancia del contenido que ha sido editada.</span>
+<span class="sd">    :type contenido: Contenido</span>
+
+<span class="sd">    :description: </span>
+<span class="sd">        Esta función envía una notificación al autor del contenido editado.</span>
+<span class="sd">        El asunto del correo está formado por el texto &#39;Edición de contenido&#39; seguido del título del contenido editado.</span>
+<span class="sd">        El mensaje informa al autor que el contenido ha sido editado.</span>
+
+<span class="sd">    :process:</span>
+<span class="sd">        1. Obtiene el ID del autor del contenido.</span>
+<span class="sd">        2. Extrae el correo electrónico del autor utilizando la función `obtenerUserInfoById`.</span>
+<span class="sd">        3. Envía la notificación al autor utilizando la función `enviar_notificacion`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">asunto</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Edicion de contenido </span><span class="si">{</span><span class="n">contenido</span><span class="o">.</span><span class="n">titulo</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">mensaje</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;El contenido &quot;</span><span class="si">{</span><span class="n">contenido</span><span class="o">.</span><span class="n">titulo</span><span class="si">}</span><span class="s1">&quot; ha sido editada.&#39;</span>
+    <span class="n">autor_id</span><span class="o">=</span> <span class="n">contenido</span><span class="o">.</span><span class="n">autor_id</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">obtenerUserInfoById</span><span class="p">(</span><span class="n">autor_id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">)</span>
+    <span class="n">destinatarios</span><span class="o">=</span> <span class="p">[</span><span class="n">email</span><span class="p">]</span>
+    <span class="n">enviar_notificacion</span><span class="p">(</span><span class="n">asunto</span><span class="p">,</span> <span class="n">mensaje</span><span class="p">,</span> <span class="n">destinatarios</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="notificar_borrar_contenido">
+<a class="viewcode-back" href="../../modulesf/contenidos/notificacion.html#contenidos.notificacion.notificar_borrar_contenido">[documentos]</a>
+<span class="k">def</span> <span class="nf">notificar_borrar_contenido</span><span class="p">(</span><span class="n">contenido</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    notificar_borrar_contenido</span>
+
+<span class="sd">    Envía una notificación por correo electrónico cuando se elimina un contenido.</span>
+
+<span class="sd">    :param contenido: La instancia del contenido que ha sido eliminado.</span>
+<span class="sd">    :type contenido: Contenido</span>
+
+<span class="sd">    :description: </span>
+<span class="sd">        Esta función envía una notificación al autor del contenido eliminado.</span>
+<span class="sd">        El asunto del correo está formado por el texto &#39;Eliminación de contenido&#39; seguido del título del contenido eliminado.</span>
+<span class="sd">        El mensaje informa al autor que el contenido ha sido eliminado.</span>
+
+<span class="sd">    :process:</span>
+<span class="sd">        1. Obtiene el ID del autor del contenido.</span>
+<span class="sd">        2. Extrae el correo electrónico del autor utilizando la función `obtenerUserInfoById`.</span>
+<span class="sd">        3. Envía la notificación al autor utilizando la función `enviar_notificacion`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">asunto</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;eliminacion de contenido </span><span class="si">{</span><span class="n">contenido</span><span class="o">.</span><span class="n">titulo</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">mensaje</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;El contenido &quot;</span><span class="si">{</span><span class="n">contenido</span><span class="o">.</span><span class="n">titulo</span><span class="si">}</span><span class="s1">&quot; ha sido eliminado.&#39;</span>
+    <span class="n">autor_id</span><span class="o">=</span> <span class="n">contenido</span><span class="o">.</span><span class="n">autor_id</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">obtenerUserInfoById</span><span class="p">(</span><span class="n">autor_id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">)</span>
+    <span class="n">destinatarios</span><span class="o">=</span> <span class="p">[</span><span class="n">email</span><span class="p">]</span>
+    <span class="n">enviar_notificacion</span><span class="p">(</span><span class="n">asunto</span><span class="p">,</span> <span class="n">mensaje</span><span class="p">,</span> <span class="n">destinatarios</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="notificar_nuevo_comentario">
+<a class="viewcode-back" href="../../modulesf/contenidos/notificacion.html#contenidos.notificacion.notificar_nuevo_comentario">[documentos]</a>
+<span class="nd">@receiver</span><span class="p">(</span><span class="n">post_save</span><span class="p">,</span> <span class="n">sender</span><span class="o">=</span><span class="n">Comentario</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">notificar_nuevo_comentario</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">created</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    notificar_nuevo_comentario</span>
+
+<span class="sd">    Envía una notificación por correo electrónico cuando se crea un nuevo comentario.</span>
+
+<span class="sd">    :param sender: El modelo que envía la señal.</span>
+<span class="sd">    :type sender: type</span>
+
+<span class="sd">    :param instance: La instancia del comentario que ha sido creado.</span>
+<span class="sd">    :type instance: Comentario</span>
+
+<span class="sd">    :param created: Un booleano que indica si se ha creado un nuevo comentario.</span>
+<span class="sd">    :type created: bool</span>
+
+<span class="sd">    :param kwargs: Parámetros adicionales que pueden ser utilizados en la señal.</span>
+
+<span class="sd">    :description: </span>
+<span class="sd">        Esta función se activa cuando se crea un nuevo comentario y envía una notificación al autor del contenido asociado.</span>
+<span class="sd">        El asunto del correo está formado por el texto &#39;Nuevo comentario en&#39; seguido del título del contenido relacionado.</span>
+<span class="sd">        El mensaje informa al autor que se ha agregado un nuevo comentario al contenido.</span>
+
+<span class="sd">    :process:</span>
+<span class="sd">        1. Verifica si el comentario ha sido creado.</span>
+<span class="sd">        2. Obtiene el ID del autor del contenido asociado al comentario.</span>
+<span class="sd">        3. Extrae el correo electrónico del autor utilizando la función `obtenerUserInfoById`.</span>
+<span class="sd">        4. Envía la notificación al autor utilizando la función `enviar_notificacion`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">created</span><span class="p">:</span>
+        <span class="c1"># Un nuevo comentario ha sido creado</span>
+        <span class="n">asunto</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Nuevo comentario en </span><span class="si">{</span><span class="n">instance</span><span class="o">.</span><span class="n">contenido</span><span class="o">.</span><span class="n">titulo</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">mensaje</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Un nuevo comentario ha sido agregado al contenido &quot;</span><span class="si">{</span><span class="n">instance</span><span class="o">.</span><span class="n">contenido</span><span class="o">.</span><span class="n">titulo</span><span class="si">}</span><span class="s1">&quot;.&#39;</span>
+        <span class="n">contenido_id</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">contenido</span><span class="o">.</span><span class="n">autor_id</span>
+        <span class="n">autor_email</span><span class="o">=</span> <span class="n">obtenerUserInfoById</span><span class="p">(</span><span class="n">contenido_id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">)</span>
+        <span class="n">destinatarios</span> <span class="o">=</span> <span class="p">[</span><span class="n">autor_email</span><span class="p">]</span>
+        <span class="n">enviar_notificacion</span><span class="p">(</span><span class="n">asunto</span><span class="p">,</span> <span class="n">mensaje</span><span class="p">,</span> <span class="n">destinatarios</span><span class="p">)</span></div>
+
+
+<span class="c1">#notificacion para cambio de estado</span>
+<div class="viewcode-block" id="enviar_notificacion_cambio_estado">
+<a class="viewcode-back" href="../../modulesf/contenidos/notificacion.html#contenidos.notificacion.enviar_notificacion_cambio_estado">[documentos]</a>
+<span class="k">def</span> <span class="nf">enviar_notificacion_cambio_estado</span><span class="p">(</span><span class="n">estado</span><span class="p">,</span> <span class="n">contenido</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    enviar_notificacion_cambio_estado</span>
+
+<span class="sd">    Envía una notificación por correo electrónico cuando el estado de un contenido cambia.</span>
+
+<span class="sd">    :param estado: El nuevo estado del contenido.</span>
+<span class="sd">    :type estado: str</span>
+
+<span class="sd">    :param contenido: La instancia del contenido cuyo estado ha cambiado.</span>
+<span class="sd">    :type contenido: Contenido</span>
+
+<span class="sd">    :description: </span>
+<span class="sd">        Esta función construye un asunto y un mensaje para la notificación que indica el nuevo estado del contenido.</span>
+<span class="sd">        El mensaje informa a los destinatarios que el contenido ha cambiado de estado y proporciona el nuevo estado en un formato legible.</span>
+
+<span class="sd">    :process:</span>
+<span class="sd">        1. Define un diccionario que relaciona cada estado con su descripción correspondiente.</span>
+<span class="sd">        2. Crea el asunto del correo utilizando el nuevo estado y el título del contenido.</span>
+<span class="sd">        3. Genera el mensaje del correo usando la descripción del estado correspondiente.</span>
+<span class="sd">        4. Define un diccionario que relaciona cada estado con el rol de los usuarios que deben recibir la notificación.</span>
+<span class="sd">        5. Obtiene todos los usuarios con el rol correspondiente al nuevo estado.</span>
+<span class="sd">        6. Extrae los correos electrónicos de los usuarios y del autor del contenido.</span>
+<span class="sd">        7. Envía la notificación a todos los destinatarios utilizando la función `enviar_notificacion`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">diccionario</span><span class="o">=</span><span class="p">{</span> <span class="s1">&#39;Borrador&#39;</span><span class="p">:</span><span class="s1">&#39; guardado como borrador&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;Revisión&#39;</span><span class="p">:</span><span class="s1">&#39;agregado a la lista de contenidos listos para su edición&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;A Publicar&#39;</span><span class="p">:</span><span class="s1">&#39;agregado a la lista de contenidos a publicar&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;Publicado&#39;</span><span class="p">:</span><span class="s1">&#39;publicado&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;Inactivo&#39;</span><span class="p">:</span><span class="s1">&#39;inactivado :(&#39;</span><span class="p">}</span>
+    
+    <span class="n">asunto</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Contenido en </span><span class="si">{</span><span class="n">estado</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">contenido</span><span class="o">.</span><span class="n">titulo</span><span class="si">}</span><span class="s1">&#39;</span>
+    
+    <span class="n">mensaje</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;El contenido &quot;</span><span class="si">{</span><span class="n">contenido</span><span class="o">.</span><span class="n">titulo</span><span class="si">}</span><span class="s1">&quot; ha sido </span><span class="si">{</span><span class="n">diccionario</span><span class="p">[</span><span class="n">estado</span><span class="p">]</span><span class="si">}</span><span class="s1">.&#39;</span>
+    
+    <span class="n">diccionario_Rol</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Borrador&#39;</span><span class="p">:</span><span class="s1">&#39;Autor&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;Revisión&#39;</span><span class="p">:</span><span class="s1">&#39;Editor&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;A Publicar&#39;</span><span class="p">:</span><span class="s1">&#39;Publicador&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;Publicado&#39;</span><span class="p">:</span><span class="s1">&#39;Suscriptor&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;Inactivo&#39;</span><span class="p">:</span><span class="s1">&#39;Autor&#39;</span><span class="p">}</span>
+    <span class="c1"># Obtiene todos los usuarios del rol en el que se va a mover elcontenido</span>
+    
+    <span class="c1">#segun el estado se envian las notificaciones</span>
+    <span class="c1"># Cuando se envia de vuelta a borrador, se le notifica solo al autor - SOLO</span>
+    <span class="c1"># Cuando se envia a edicion, se le notifica solo al editor designado y al autor</span>
+    <span class="c1"># Cuando se envia a &quot;a publicar&quot;, se le notifica solo al publicador y al autor</span>
+    <span class="c1"># cuando se envia a publicado, se le notifica a los suscriptores y al autor</span>
+    <span class="c1"># Cuando se envia a inactivo, se le notifica solo al autor - SOLO</span>
+    <span class="k">if</span> <span class="n">estado</span> <span class="o">==</span> <span class="s1">&#39;Borrador&#39;</span><span class="p">:</span>
+        <span class="n">correos</span> <span class="o">=</span> <span class="p">[</span><span class="n">obtenerUserInfoById</span><span class="p">(</span><span class="n">contenido</span><span class="o">.</span><span class="n">autor_id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">)]</span>
+    <span class="k">elif</span> <span class="n">estado</span> <span class="o">==</span> <span class="s1">&#39;Revisión&#39;</span><span class="p">:</span>
+        <span class="n">correos</span> <span class="o">=</span> <span class="p">[</span><span class="n">obtenerUserInfoById</span><span class="p">(</span><span class="n">contenido</span><span class="o">.</span><span class="n">editor_id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">)]</span><span class="o">+</span><span class="p">[</span><span class="n">obtenerUserInfoById</span><span class="p">(</span><span class="n">contenido</span><span class="o">.</span><span class="n">autor_id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">)]</span>
+    <span class="k">elif</span> <span class="n">estado</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;A Publicar&#39;</span><span class="p">,</span><span class="s1">&#39;Publicado&#39;</span><span class="p">):</span>
+        <span class="n">users</span> <span class="o">=</span> <span class="n">obtenerUsersConRol</span><span class="p">(</span><span class="n">diccionario_Rol</span><span class="p">[</span><span class="n">estado</span><span class="p">])</span>
+        <span class="n">correos</span> <span class="o">=</span> <span class="p">[</span><span class="n">obtenerUserInfoById</span><span class="p">(</span><span class="n">usuario</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">usuario</span> <span class="ow">in</span> <span class="n">users</span> <span class="p">]</span><span class="o">+</span> <span class="p">[</span><span class="n">obtenerUserInfoById</span><span class="p">(</span><span class="n">contenido</span><span class="o">.</span><span class="n">autor_id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">)]</span>
+    <span class="k">elif</span> <span class="n">estado</span> <span class="o">==</span> <span class="s1">&#39;Inactivo&#39;</span><span class="p">:</span>
+        <span class="n">correos</span> <span class="o">=</span> <span class="p">[</span><span class="n">obtenerUserInfoById</span><span class="p">(</span><span class="n">contenido</span><span class="o">.</span><span class="n">autor_id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">)]</span>
+    
+
+    <span class="c1">#correos= [obtenerUserInfoById(usuario[&#39;id&#39;]).get(&quot;email&quot;) for usuario in users ]+ [obtenerUserInfoById(contenido.autor_id).get(&quot;email&quot;)]</span>
+    <span class="n">destinatarios</span> <span class="o">=</span> <span class="n">correos</span>
+
+    <span class="c1"># Enviar correo a todos los que tengan los permisos</span>
+    <span class="n">enviar_notificacion</span><span class="p">(</span><span class="n">asunto</span><span class="p">,</span> <span class="n">mensaje</span><span class="p">,</span><span class="n">destinatarios</span><span class="p">)</span></div>
+
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Búsqueda rápida</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Ir a" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="Índice General"
+             >índice</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Índice de Módulos Python"
+             >módulos</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">documentación de cmsweb - 0.1</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Código de módulo</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">contenidos.notificacion</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, equipo01.
+      Creado usando <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    </div>
+  </body>
+</html>

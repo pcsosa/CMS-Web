@@ -7,3 +7,4 @@ Contenido
 
    views_cont.rst
    models_cont.rst
+   notificacion.rst

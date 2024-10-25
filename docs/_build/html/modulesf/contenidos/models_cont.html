@@ -16,6 +16,7 @@
     
     <link rel="index" title="Índice" href="../../genindex.html" />
     <link rel="search" title="Búsqueda" href="../../search.html" />
+    <link rel="next" title="notificacion" href="notificacion.html" />
     <link rel="prev" title="Views_Cont" href="views_cont.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="Related">
@@ -27,6 +28,9 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Índice de Módulos Python"
              >módulos</a> |</li>
+        <li class="right" >
+          <a href="notificacion.html" title="notificacion"
+             accesskey="N">siguiente</a> |</li>
         <li class="right" >
           <a href="views_cont.html" title="Views_Cont"
              accesskey="P">anterior</a> |</li>
@@ -148,6 +152,103 @@ object the first time, the query is executed.</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="contenidos.models_cont.ComentarioRoles">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">contenidos.models_cont.</span></span><span class="sig-name descname"><span class="pre">ComentarioRoles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/contenidos/models_cont.html#ComentarioRoles"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#contenidos.models_cont.ComentarioRoles" title="Link to this definition">¶</a></dt>
+<dd><p>Modelo que representa un comentario asociado a un contenido específico.</p>
+<dl class="simple">
+<dt>Atributos:</dt><dd><p>contenido (ForeignKey): Referencia al contenido relacionado con este comentario.
+usuario (str): Nombre del usuario que realizó el comentario.
+email (EmailField): Dirección de correo del usuario.
+comentario (TextField): Texto del comentario.
+fecha (DateTimeField): Fecha en que fue creado el comentario.
+active (bool): Indica si el comentario está activo y es visible.</p>
+</dd>
+<dt>Meta:</dt><dd><p>ordering (list): Ordena los comentarios por fecha, mostrando los más recientes primero.</p>
+</dd>
+<dt>Métodos:</dt><dd><p>__str__: Devuelve una representación en cadena del comentario, incluyendo el texto del comentario y el usuario que lo realizó.</p>
+</dd>
+</dl>
+<dl class="py exception">
+<dt class="sig sig-object py" id="contenidos.models_cont.ComentarioRoles.DoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#contenidos.models_cont.ComentarioRoles.DoesNotExist" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="contenidos.models_cont.ComentarioRoles.MultipleObjectsReturned">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#contenidos.models_cont.ComentarioRoles.MultipleObjectsReturned" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="contenidos.models_cont.ComentarioRoles.active">
+<span class="sig-name descname"><span class="pre">active</span></span><a class="headerlink" href="#contenidos.models_cont.ComentarioRoles.active" title="Link to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="contenidos.models_cont.ComentarioRoles.comentario">
+<span class="sig-name descname"><span class="pre">comentario</span></span><a class="headerlink" href="#contenidos.models_cont.ComentarioRoles.comentario" title="Link to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="contenidos.models_cont.ComentarioRoles.contenido">
+<span class="sig-name descname"><span class="pre">contenido</span></span><a class="headerlink" href="#contenidos.models_cont.ComentarioRoles.contenido" title="Link to this definition">¶</a></dt>
+<dd><p>Accessor to the related object on the forward side of a many-to-one or
+one-to-one (via ForwardOneToOneDescriptor subclass) relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Child.parent</span></code> is a <code class="docutils literal notranslate"><span class="pre">ForwardManyToOneDescriptor</span></code> instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="contenidos.models_cont.ComentarioRoles.contenido_id">
+<span class="sig-name descname"><span class="pre">contenido_id</span></span><a class="headerlink" href="#contenidos.models_cont.ComentarioRoles.contenido_id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="contenidos.models_cont.ComentarioRoles.fecha">
+<span class="sig-name descname"><span class="pre">fecha</span></span><a class="headerlink" href="#contenidos.models_cont.ComentarioRoles.fecha" title="Link to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="contenidos.models_cont.ComentarioRoles.get_next_by_fecha">
+<span class="sig-name descname"><span class="pre">get_next_by_fecha</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field=&lt;django.db.models.fields.DateTimeField:</span> <span class="pre">fecha&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_next=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#contenidos.models_cont.ComentarioRoles.get_next_by_fecha" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="contenidos.models_cont.ComentarioRoles.get_previous_by_fecha">
+<span class="sig-name descname"><span class="pre">get_previous_by_fecha</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field=&lt;django.db.models.fields.DateTimeField:</span> <span class="pre">fecha&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_next=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#contenidos.models_cont.ComentarioRoles.get_previous_by_fecha" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="contenidos.models_cont.ComentarioRoles.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#contenidos.models_cont.ComentarioRoles.id" title="Link to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="contenidos.models_cont.ComentarioRoles.objects">
+<span class="sig-name descname"><span class="pre">objects</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;django.db.models.manager.Manager</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#contenidos.models_cont.ComentarioRoles.objects" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="contenidos.models_cont.ComentarioRoles.usuario">
+<span class="sig-name descname"><span class="pre">usuario</span></span><a class="headerlink" href="#contenidos.models_cont.ComentarioRoles.usuario" title="Link to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="contenidos.models_cont.Contenido">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">contenidos.models_cont.</span></span><span class="sig-name descname"><span class="pre">Contenido</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/contenidos/models_cont.html#Contenido"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#contenidos.models_cont.Contenido" title="Link to this definition">¶</a></dt>
 <dd><p>Representa el contenido que puede ser de tipo Blog o Multimedia.</p>
@@ -195,6 +296,21 @@ one-to-one (via ForwardOneToOneDescriptor subclass) relation.</p>
 <dt class="sig sig-object py" id="contenidos.models_cont.Contenido.categoria_id">
 <span class="sig-name descname"><span class="pre">categoria_id</span></span><a class="headerlink" href="#contenidos.models_cont.Contenido.categoria_id" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="contenidos.models_cont.Contenido.comment_Roles">
+<span class="sig-name descname"><span class="pre">comment_Roles</span></span><a class="headerlink" href="#contenidos.models_cont.Contenido.comment_Roles" title="Link to this definition">¶</a></dt>
+<dd><p>Accessor to the related objects manager on the reverse side of a
+many-to-one relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Parent.children</span></code> is a <code class="docutils literal notranslate"><span class="pre">ReverseManyToOneDescriptor</span></code> instance.</p>
+<p>Most of the implementation is delegated to a dynamically defined manager
+class built by <code class="docutils literal notranslate"><span class="pre">create_forward_many_to_many_manager()</span></code> defined below.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="contenidos.models_cont.Contenido.comments">
@@ -440,6 +556,21 @@ object the first time, the query is executed.</p>
 <li><a class="reference internal" href="#contenidos.models_cont.Comentario.usuario"><code class="docutils literal notranslate"><span class="pre">Comentario.usuario</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#contenidos.models_cont.ComentarioRoles"><code class="docutils literal notranslate"><span class="pre">ComentarioRoles</span></code></a><ul>
+<li><a class="reference internal" href="#contenidos.models_cont.ComentarioRoles.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">ComentarioRoles.DoesNotExist</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.models_cont.ComentarioRoles.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">ComentarioRoles.MultipleObjectsReturned</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.models_cont.ComentarioRoles.active"><code class="docutils literal notranslate"><span class="pre">ComentarioRoles.active</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.models_cont.ComentarioRoles.comentario"><code class="docutils literal notranslate"><span class="pre">ComentarioRoles.comentario</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.models_cont.ComentarioRoles.contenido"><code class="docutils literal notranslate"><span class="pre">ComentarioRoles.contenido</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.models_cont.ComentarioRoles.contenido_id"><code class="docutils literal notranslate"><span class="pre">ComentarioRoles.contenido_id</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.models_cont.ComentarioRoles.fecha"><code class="docutils literal notranslate"><span class="pre">ComentarioRoles.fecha</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.models_cont.ComentarioRoles.get_next_by_fecha"><code class="docutils literal notranslate"><span class="pre">ComentarioRoles.get_next_by_fecha()</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.models_cont.ComentarioRoles.get_previous_by_fecha"><code class="docutils literal notranslate"><span class="pre">ComentarioRoles.get_previous_by_fecha()</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.models_cont.ComentarioRoles.id"><code class="docutils literal notranslate"><span class="pre">ComentarioRoles.id</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.models_cont.ComentarioRoles.objects"><code class="docutils literal notranslate"><span class="pre">ComentarioRoles.objects</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.models_cont.ComentarioRoles.usuario"><code class="docutils literal notranslate"><span class="pre">ComentarioRoles.usuario</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#contenidos.models_cont.Contenido"><code class="docutils literal notranslate"><span class="pre">Contenido</span></code></a><ul>
 <li><a class="reference internal" href="#contenidos.models_cont.Contenido.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">Contenido.DoesNotExist</span></code></a></li>
 <li><a class="reference internal" href="#contenidos.models_cont.Contenido.ESTADO_CONTENIDO"><code class="docutils literal notranslate"><span class="pre">Contenido.ESTADO_CONTENIDO</span></code></a></li>
@@ -448,6 +579,7 @@ object the first time, the query is executed.</p>
 <li><a class="reference internal" href="#contenidos.models_cont.Contenido.autor_id"><code class="docutils literal notranslate"><span class="pre">Contenido.autor_id</span></code></a></li>
 <li><a class="reference internal" href="#contenidos.models_cont.Contenido.categoria"><code class="docutils literal notranslate"><span class="pre">Contenido.categoria</span></code></a></li>
 <li><a class="reference internal" href="#contenidos.models_cont.Contenido.categoria_id"><code class="docutils literal notranslate"><span class="pre">Contenido.categoria_id</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.models_cont.Contenido.comment_Roles"><code class="docutils literal notranslate"><span class="pre">Contenido.comment_Roles</span></code></a></li>
 <li><a class="reference internal" href="#contenidos.models_cont.Contenido.comments"><code class="docutils literal notranslate"><span class="pre">Contenido.comments</span></code></a></li>
 <li><a class="reference internal" href="#contenidos.models_cont.Contenido.editor_id"><code class="docutils literal notranslate"><span class="pre">Contenido.editor_id</span></code></a></li>
 <li><a class="reference internal" href="#contenidos.models_cont.Contenido.estado"><code class="docutils literal notranslate"><span class="pre">Contenido.estado</span></code></a></li>
@@ -494,6 +626,11 @@ object the first time, the query is executed.</p>
     <p class="topless"><a href="views_cont.html"
                           title="capítulo anterior">Views_Cont</a></p>
   </div>
+  <div>
+    <h4>Próximo tema</h4>
+    <p class="topless"><a href="notificacion.html"
+                          title="próximo capítulo">notificacion</a></p>
+  </div>
   <div role="note" aria-label="source link">
     <h3>Esta página</h3>
     <ul class="this-page-menu">
@@ -524,6 +661,9 @@ object the first time, the query is executed.</p>
         <li class="right" >
           <a href="../../py-modindex.html" title="Índice de Módulos Python"
              >módulos</a> |</li>
+        <li class="right" >
+          <a href="notificacion.html" title="notificacion"
+             >siguiente</a> |</li>
         <li class="right" >
           <a href="views_cont.html" title="Views_Cont"
              >anterior</a> |</li>
