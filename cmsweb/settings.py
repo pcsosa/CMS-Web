@@ -27,6 +27,7 @@ KEYCLOAK_CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET")
 KEYCLOAK_RS256_PUBLIC_KEY = os.getenv("KEYCLOAK_RS256_PUBLIC_KEY")
 DJ_PORT = os.getenv("DJ_PORT")
 DJ_URL = os.getenv("DJ_URL")
+TESTING = os.getenv("TESTING")
 
 # Mostrar todas las variables de entorno (para depuración)
 # expected_keys = [
@@ -75,7 +76,7 @@ INSTALLED_APPS = [
     "appcms",
     "contenidos",
     "subcategorias",
-] #
+]  #
 
 # -------------------------------------------------
 # ----------------- MIDDLEWARES -------------------
@@ -164,12 +165,12 @@ AUTHENTICATION_BACKENDS = [
 DATABASES = {"default": dj_database_url.parse(DATABASE_URL)}
 
 # SQLite en memoria (para pruebas)
-#DATABASES = {
- #  'default': {
- #      'ENGINE': 'django.db.backends.sqlite3',
+# DATABASES = {
+#  'default': {
+#      'ENGINE': 'django.db.backends.sqlite3',
 #       'NAME': ':memory:',
 #   }
-#}
+# }
 
 # SQLite archivo local
 # DATABASES = {
@@ -197,7 +198,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # -------------------------------------------------
 
 LANGUAGE_CODE = "es"
-TIME_ZONE = 'America/Asuncion'  # O la zona horaria correcta para tu ubicación
+TIME_ZONE = "America/Asuncion"  # O la zona horaria correcta para tu ubicación
 USE_TZ = True  # Asegúrate de que esté habilitado el uso de zonas horarias
 USE_I18N = True
 

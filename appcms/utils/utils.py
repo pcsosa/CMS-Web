@@ -12,6 +12,9 @@ from appcms.services.keycloak_service import KeycloakService
 
 # Obtener información del usuario a partir del user id
 def obtenerUserInfoById(user_id):
+    if settings.TESTING == "True":
+        return {"id": 1, "username": "autor1"}
+
     kc = KeycloakService()
     user = kc.admin.get_user(user_id)
     return user
@@ -112,7 +115,7 @@ def obtenerUserId(token):
         return None
     payload = decode_token(token)
     return payload.get("sub")
-    #return payload["sub"]
+    # return payload["sub"]
 
 
 def decode_token(token, audience="cmsweb", verify_exp=True):
@@ -125,7 +128,7 @@ def decode_token(token, audience="cmsweb", verify_exp=True):
         algorithms=["RS256"],
         options={"verify_exp": verify_exp, "verify_aud": False},
     )
-    print("Audiencia encontrada en el token:", payload.get('aud'))
+    print("Audiencia encontrada en el token:", payload.get("aud"))
 
     # Ahora valida la audiencia correcta
     return jwt.decode(
@@ -136,7 +139,7 @@ def decode_token(token, audience="cmsweb", verify_exp=True):
         options={"verify_exp": verify_exp},
     )
 
-    
+
 def expiroToken(token):
     if not token:
         return None
