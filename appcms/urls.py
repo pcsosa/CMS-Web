@@ -54,6 +54,11 @@ urlpatterns = [
         views_cont.guardar_comentario,
         name="guardar_comentario",
     ),
+    path(
+        "articulos/guardarComenRol/<int:pk>",
+        views_cont.guardar_comentario_Roles,
+        name="guardar_comentario_rol",
+    ),
 ]
 
 if settings.DEBUG:

@@ -157,3 +157,36 @@ class Comentario(models.Model):
 
     def __str__(self):
         return "Comentario {} por {}".format(self.comentario, self.usuario)
+
+class ComentarioRoles(models.Model):
+    """
+    Modelo que representa un comentario asociado a un contenido específico.
+
+    Atributos:
+        contenido (ForeignKey): Referencia al contenido relacionado con este comentario.
+        usuario (str): Nombre del usuario que realizó el comentario.
+        email (EmailField): Dirección de correo del usuario.
+        comentario (TextField): Texto del comentario.
+        fecha (DateTimeField): Fecha en que fue creado el comentario.
+        active (bool): Indica si el comentario está activo y es visible.
+
+    Meta:
+        ordering (list): Ordena los comentarios por fecha, mostrando los más recientes primero.
+
+    Métodos:
+        __str__: Devuelve una representación en cadena del comentario, incluyendo el texto del comentario y el usuario que lo realizó.
+    """
+
+    contenido = models.ForeignKey(
+        Contenido, on_delete=models.CASCADE, related_name="comment_Roles"
+    )
+    usuario = models.CharField(max_length=255)
+    comentario = models.TextField()
+    fecha = models.DateTimeField(auto_now_add=True)
+    active = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ["-fecha"]
+
+    def __str__(self):
+        return "Comentario {} por {}".format(self.comentario, self.usuario)
