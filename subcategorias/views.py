@@ -6,7 +6,11 @@ from .models import Subcategoria
 from django.contrib import messages
 from django.views.decorators.http import require_POST
 from contenidos.models_cont import Contenido
+<<<<<<< HEAD
 from subcategorias.notificacion import *
+=======
+
+>>>>>>> johis_dev
 def administrar_subcategorias(request):
     """
     Administra subcategorías, mostrando un formulario para crear nuevas subcategorías
