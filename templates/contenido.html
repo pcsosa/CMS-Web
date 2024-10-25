@@ -69,6 +69,19 @@
         {% if contenido.imagen %}<img src="{{ contenido.imagen.url }}" alt="{{ contenido.titulo }}">{% endif %}
         <p style="color: #6c757d;">By {{ contenido.autor_id }}</p>
       </div>
+      {% if contenido.estado != 'Publicado' %}
+        <div class="comentar-body">
+          {% for comentario_rol in comentarios_roles %}
+            <div class="comment"
+                  style="border-bottom: 1px solid #e0e0e0;
+                        padding: 10px 0">
+              <strong style="color: #2c3e50;">{{ comentario_rol.usuario }}</strong>:
+              <span style="color: #34495e;">{{ comentario_rol.comentario }}</span>
+              <br>
+              <small style="color: #7f8c8d;">{{ comentario_rol.fecha|date:"d/m/Y H:i" }}</small>
+          {% endfor %}
+        </div>
+      {% endif %}
       {% if contenido.estado == 'Publicado' %}
         <div class="comments">
           <h3 style="border-bottom: 2px solid #38444d;
@@ -124,8 +137,12 @@
           </svg>
         </div>
         <h3>Comentarios para el autor</h3>
-        <textarea placeholder="Escribe tus comentarios..."></textarea>
-        <button onclick="guardarComentario()">Enviar Comentario</button>
+        <form method="POST"
+              action="{% url 'guardar_comentario_rol' contenido.id %}">
+              {% csrf_token %}
+          <textarea  name= "comentario_rol" placeholder="Escribe tus comentarios..."></textarea>
+          <button type="submit">Enviar Comentario</button>
+        </form>
       </div>
     </div>
     <script>
@@ -152,7 +169,7 @@
             var comentario = document.querySelector('#comentariosPanel textarea').value;
             const url = "{% url 'cambiar_estado' contenido.pk contenido.estado 'Borrador' %}";
             if (comentario) {
-                alert("Comentario guardado: " + comentario);
+                alert("Comentario enviado: " + comentario);
                 // Lógica adicional para enviar el comentario al servidor
                 window.location.href = url;
             } else {

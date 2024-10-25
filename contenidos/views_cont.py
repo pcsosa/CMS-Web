@@ -15,13 +15,13 @@ from appcms.utils.utils import (
     obtenerUsersConRol,
     tienePermiso,
 )
-from contenidos.models_cont import Categoria, Comentario, Contenido, ContenidoForm
+from contenidos.models_cont import Categoria, Comentario, Contenido, ComentarioRoles
 from subcategorias.models import Subcategoria
 from contenidos.notificacion import *
 
 
 def crear_contenido(request):
-    """
+    """comneta
     Crea un nuevo contenido en el sistema a partir de los datos enviados a través del formulario.
 
     :param request: Objeto HttpRequest que contiene los datos de la solicitud.
@@ -431,18 +431,22 @@ def visualizar_contenido(request, pk):
     try:
         contenido = Contenido.objects.get(pk=pk)
         comentarios = Comentario.objects.filter(contenido=pk)
-
+        comentarios_roles = ComentarioRoles.objects.filter(contenido=pk)
         # Reemplazar el ID del usuario por su nombre de usuario en contenido
         contenido.autor_id = obtenerUserInfoById(contenido.autor_id).get("username")
 
         # Reemplazar el ID del usuario por su nombre de usuario en comentarios
         for comentario in comentarios:
             comentario.usuario = obtenerUserInfoById(comentario.usuario).get("username")
+        
+        # Reemplazar el ID del usuario por su nombre de usuario en comentarios
+        for comentario_ in comentarios_roles:
+            comentario_.usuario = obtenerUserInfoById(comentario_.usuario).get("username")
 
         return render(
             request,
             "contenido.html",
-            {"contenido": contenido, "comentarios": comentarios},
+            {"contenido": contenido, "comentarios": comentarios,"comentarios_roles":comentarios_roles},
         )
     except Contenido.DoesNotExist:
         return JsonResponse({"error": "Contenido no encontrado"}, status=404)
@@ -563,6 +567,43 @@ def guardar_comentario(request, pk):
                 active=True,
             )
             nuevo_comentario.save()
+        else:
+            error_message = "El comentario no puede estar vacío."
+
+    return redirect("visualizar_contenido", pk)
+
+def guardar_comentario_Roles(request, pk):
+    """
+    Guarda un comentario en un objeto de tipo Contenido.
+
+    :param request: El objeto de solicitud HTTP.
+    :type request: HttpRequest
+    :param pk: Clave primaria del contenido al que se le va a añadir un comentario.
+    :type pk: int
+    :return: Redirige a la página de visualización del contenido.
+    :rtype: HttpResponse
+
+    Si el método HTTP es POST, la función busca un comentario en los datos de
+    la solicitud, lo limpia de etiquetas HTML, y lo guarda asociado al
+    contenido correspondiente. En caso de no proporcionar un comentario válido,
+    se gestiona un mensaje de error.
+    """
+    contenido_ = get_object_or_404(Contenido, pk=pk)
+
+    if request.method == "POST":
+        comentario_ = request.POST.get("comentario_rol")
+        if comentario_:
+            comentario_ = comentario_.replace("<p>", "").replace("</p>", "")
+            nuevo_comentario = ComentarioRoles(
+                contenido=contenido_,
+                comentario=comentario_,
+                usuario=obtenerUserId(
+                    obtenerToken(request)
+                ),  # Guardar el id del usuario logeado
+                active=True,
+            )
+            nuevo_comentario.save()
+            cambiar_estado(request,pk,"Revisión","Borrador")
         else:
             error_message = "El comentario no puede estar vacío."
 
