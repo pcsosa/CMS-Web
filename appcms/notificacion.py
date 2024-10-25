@@ -22,18 +22,21 @@ def notificar_nueva_categoria(sender, instance, created, **kwargs):
     :param instance: La instancia del modelo `Categoria` que ha sido creada.
     :type instance: Categoria
     :param created: Un valor booleano que indica si la instancia fue creada (True) o 
-                    actualizada (False).
+       actualizada (False).
     :type created: bool
     :param kwargs: Argumentos adicionales que pueden ser proporcionados por el signal.
+    :type kwargs: dict
     
     **Comportamiento:**
+    
     - Si `created` es True (la categoría fue creada), se construye un asunto y un mensaje 
       que contiene el nombre de la nueva categoría.
     - Se obtiene una lista de destinatarios compuesta por los correos electrónicos de 
       los usuarios con roles de "Autor", "Editor" y "Publicador". Estos roles son 
       obtenidos mediante la función `obtenerUsersConRol`.
     - La función `enviar_notificacion` se utiliza para enviar el correo a los destinatarios 
-      recopilados."""
+      recopilados.
+    """
     if created:
         # Un nuevo comentario ha sido creado
         asunto = f'Nueva categoria en {instance.nombre}'

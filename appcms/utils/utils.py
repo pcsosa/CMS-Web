@@ -318,20 +318,21 @@ def quitar_acentos(texto):
     return texto_sin_acentos
 
 def enviar_notificacion(asunto, mensaje, destinatarios):
-    """Envía una notificación por correo electrónico.
+    """
+    Envía una notificación por correo electrónico.
 
     Esta función genera un mensaje de correo electrónico en formato HTML y
     lo envía a una lista de destinatarios. Utiliza una plantilla HTML para
     el contenido del mensaje.
 
-    Args:
-        asunto (str): El asunto del correo electrónico.
-        mensaje (str): El mensaje que se incluirá en el cuerpo del correo.
-        destinatarios (list): Una lista de direcciones de correo electrónico
-                              de los destinatarios.
-
-    Returns:
-        None: Esta función no devuelve ningún valor.
+    :param asunto: El asunto del correo electrónico.
+    :type asunto: str
+    :param mensaje: El mensaje que se incluirá en el cuerpo del correo.
+    :type mensaje: str
+    :param destinatarios: Una lista de direcciones de correo electrónico de los destinatarios.
+    :type destinatarios: list
+    :returns: Esta función no devuelve ningún valor.
+    :rtype: None
     """
     html_mensaje = render_to_string('notificacion.html', {
         'mensaje': mensaje,
