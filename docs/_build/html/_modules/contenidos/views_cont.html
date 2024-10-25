@@ -37,12 +37,20 @@
           <div class="body" role="main">
             
   <h1>Código fuente para contenidos.views_cont</h1><div class="highlight"><pre>
+<<<<<<< HEAD
 <span></span>
 <span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">messages</span>
 <span class="kn">from</span> <span class="nn">django.core.paginator</span> <span class="kn">import</span> <span class="n">Paginator</span>
 <span class="kn">from</span> <span class="nn">django.core.serializers</span> <span class="kn">import</span> <span class="n">serialize</span>
 <span class="kn">from</span> <span class="nn">django.db.models</span> <span class="kn">import</span> <span class="n">Q</span>  <span class="c1"># Para realizar búsquedas</span>
 <span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">JsonResponse</span>
+=======
+<span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">messages</span>
+<span class="kn">from</span> <span class="nn">django.core.paginator</span> <span class="kn">import</span> <span class="n">Paginator</span>
+<span class="kn">from</span> <span class="nn">django.core.serializers</span> <span class="kn">import</span> <span class="n">serialize</span>
+<span class="kn">from</span> <span class="nn">django.db.models</span> <span class="kn">import</span> <span class="n">Q</span>  <span class="c1"># Para realizar búsquedas</span>
+<span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponseForbidden</span><span class="p">,</span> <span class="n">JsonResponse</span>
+>>>>>>> johis_dev
 <span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">get_object_or_404</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">render</span>
 <span class="kn">from</span> <span class="nn">django.views.decorators.csrf</span> <span class="kn">import</span> <span class="n">csrf_exempt</span>
 
@@ -52,17 +60,27 @@
     <span class="n">obtenerUserId</span><span class="p">,</span>
     <span class="n">obtenerUserInfoById</span><span class="p">,</span>
     <span class="n">obtenerUsersConRol</span><span class="p">,</span>
+<<<<<<< HEAD
     <span class="n">tienePermiso</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">contenidos.models_cont</span> <span class="kn">import</span> <span class="n">Categoria</span><span class="p">,</span> <span class="n">Comentario</span><span class="p">,</span> <span class="n">Contenido</span><span class="p">,</span> <span class="n">ComentarioRoles</span>
 <span class="kn">from</span> <span class="nn">subcategorias.models</span> <span class="kn">import</span> <span class="n">Subcategoria</span>
 <span class="kn">from</span> <span class="nn">contenidos.notificacion</span> <span class="kn">import</span> <span class="o">*</span>
+=======
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">contenidos.models_cont</span> <span class="kn">import</span> <span class="n">Categoria</span><span class="p">,</span> <span class="n">Comentario</span><span class="p">,</span> <span class="n">Contenido</span><span class="p">,</span> <span class="n">ContenidoForm</span>
+<span class="kn">from</span> <span class="nn">subcategorias.models</span> <span class="kn">import</span> <span class="n">Subcategoria</span>
+>>>>>>> johis_dev
 
 
 <div class="viewcode-block" id="crear_contenido">
 <a class="viewcode-back" href="../../modulesf/contenidos/views_cont.html#contenidos.views_cont.crear_contenido">[documentos]</a>
 <span class="k">def</span> <span class="nf">crear_contenido</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<<<<<<< HEAD
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;comneta</span>
+=======
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+>>>>>>> johis_dev
 <span class="sd">    Crea un nuevo contenido en el sistema a partir de los datos enviados a través del formulario.</span>
 
 <span class="sd">    :param request: Objeto HttpRequest que contiene los datos de la solicitud.</span>
@@ -242,6 +260,35 @@
     <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;gestion_contenido.html&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;contenidos&quot;</span><span class="p">:</span> <span class="n">contenidos</span><span class="p">})</span></div>
 
 
+<<<<<<< HEAD
+=======
+
+<span class="k">def</span> <span class="nf">editar_contenido</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Muestra la página para editar un contenido específico.</span>
+
+<span class="sd">    :param request: Objeto HttpRequest que contiene los datos de la solicitud.</span>
+<span class="sd">    :return: Respuesta renderizada con la plantilla &#39;editar_contenido.html&#39;.</span>
+<span class="sd">    :rtype: HttpResponse</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Falta codigo para editar contenido</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;editar_contenido.html&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">eliminar_contenido</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Muestra la página para eliminar un contenido específico.</span>
+
+<span class="sd">    :param request: Objeto HttpRequest que contiene los datos de la solicitud.</span>
+<span class="sd">    :return: Respuesta renderizada con la plantilla &#39;eliminar_contenido.html&#39;.</span>
+<span class="sd">    :rtype: HttpResponse</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Falta codigo para eliminar contenido</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;eliminar_contenido.html&quot;</span><span class="p">)</span>
+
+
+>>>>>>> johis_dev
 <div class="viewcode-block" id="upload_image">
 <a class="viewcode-back" href="../../modulesf/contenidos/views_cont.html#contenidos.views_cont.upload_image">[documentos]</a>
 <span class="nd">@csrf_exempt</span>
@@ -283,7 +330,10 @@
     <span class="k">try</span><span class="p">:</span>
         <span class="n">contenido</span> <span class="o">=</span> <span class="n">Contenido</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
         <span class="n">contenido</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+<<<<<<< HEAD
         <span class="n">notificar_borrar_contenido</span><span class="p">(</span><span class="n">contenido</span><span class="p">)</span>
+=======
+>>>>>>> johis_dev
         <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;gestion_contenido&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">Contenido</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;Contenido no encontrado&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="mi">404</span><span class="p">)</span></div>
@@ -372,7 +422,11 @@
 
         <span class="c1"># Guardar los cambios en el contenido</span>
         <span class="n">contenido</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+<<<<<<< HEAD
         <span class="n">notificar_edicion_contenido</span><span class="p">(</span><span class="n">contenido</span><span class="p">)</span>
+=======
+
+>>>>>>> johis_dev
         <span class="c1"># Redireccionar a la lista de contenidos después de guardar</span>
         <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;gestion_contenido&quot;</span><span class="p">)</span>
 
@@ -387,6 +441,7 @@
     <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;editar_contenido.html&quot;</span><span class="p">,</span> <span class="n">contexto</span><span class="p">)</span></div>
 
 
+<<<<<<< HEAD
 <div class="viewcode-block" id="filtrar">
 <a class="viewcode-back" href="../../modulesf/contenidos/views_cont.html#contenidos.views_cont.filtrar">[documentos]</a>
 <span class="k">def</span> <span class="nf">filtrar</span><span class="p">(</span><span class="n">lista</span><span class="p">,</span><span class="n">rol</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
@@ -424,6 +479,8 @@
     <span class="k">return</span> <span class="n">nuevo</span>          </div>
 
     
+=======
+>>>>>>> johis_dev
 
 <div class="viewcode-block" id="tablero_kanban">
 <a class="viewcode-back" href="../../modulesf/contenidos/views_cont.html#contenidos.views_cont.tablero_kanban">[documentos]</a>
@@ -460,6 +517,7 @@
     <span class="n">a_publicar</span> <span class="o">=</span> <span class="n">Contenido</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">estado</span><span class="o">=</span><span class="s2">&quot;A Publicar&quot;</span><span class="p">)</span>
     <span class="n">publicado</span> <span class="o">=</span> <span class="n">Contenido</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">estado</span><span class="o">=</span><span class="s2">&quot;Publicado&quot;</span><span class="p">)</span>
     <span class="n">inactivo</span> <span class="o">=</span> <span class="n">Contenido</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">estado</span><span class="o">=</span><span class="s2">&quot;Inactivo&quot;</span><span class="p">)</span>
+<<<<<<< HEAD
     
     <span class="n">token</span> <span class="o">=</span> <span class="n">obtenerToken</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
     <span class="n">user_id</span> <span class="o">=</span> <span class="n">obtenerUserId</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
@@ -488,6 +546,9 @@
     <span class="n">inactivo</span> <span class="o">=</span><span class="n">filtrar</span><span class="p">(</span><span class="n">inactivo</span><span class="p">,</span><span class="n">rol</span><span class="p">,</span><span class="n">user_id</span><span class="p">)</span>
 
         
+=======
+
+>>>>>>> johis_dev
     <span class="n">contexto</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;borrador&quot;</span><span class="p">:</span> <span class="n">borrador</span><span class="p">,</span>
         <span class="s2">&quot;en_revision&quot;</span><span class="p">:</span> <span class="n">en_revision</span><span class="p">,</span>
@@ -515,22 +576,33 @@
     <span class="k">try</span><span class="p">:</span>
         <span class="n">contenido</span> <span class="o">=</span> <span class="n">Contenido</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
         <span class="n">comentarios</span> <span class="o">=</span> <span class="n">Comentario</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">contenido</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
+<<<<<<< HEAD
         <span class="n">comentarios_roles</span> <span class="o">=</span> <span class="n">ComentarioRoles</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">contenido</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
+=======
+
+>>>>>>> johis_dev
         <span class="c1"># Reemplazar el ID del usuario por su nombre de usuario en contenido</span>
         <span class="n">contenido</span><span class="o">.</span><span class="n">autor_id</span> <span class="o">=</span> <span class="n">obtenerUserInfoById</span><span class="p">(</span><span class="n">contenido</span><span class="o">.</span><span class="n">autor_id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;username&quot;</span><span class="p">)</span>
 
         <span class="c1"># Reemplazar el ID del usuario por su nombre de usuario en comentarios</span>
         <span class="k">for</span> <span class="n">comentario</span> <span class="ow">in</span> <span class="n">comentarios</span><span class="p">:</span>
             <span class="n">comentario</span><span class="o">.</span><span class="n">usuario</span> <span class="o">=</span> <span class="n">obtenerUserInfoById</span><span class="p">(</span><span class="n">comentario</span><span class="o">.</span><span class="n">usuario</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;username&quot;</span><span class="p">)</span>
+<<<<<<< HEAD
         
         <span class="c1"># Reemplazar el ID del usuario por su nombre de usuario en comentarios</span>
         <span class="k">for</span> <span class="n">comentario_</span> <span class="ow">in</span> <span class="n">comentarios_roles</span><span class="p">:</span>
             <span class="n">comentario_</span><span class="o">.</span><span class="n">usuario</span> <span class="o">=</span> <span class="n">obtenerUserInfoById</span><span class="p">(</span><span class="n">comentario_</span><span class="o">.</span><span class="n">usuario</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;username&quot;</span><span class="p">)</span>
+=======
+>>>>>>> johis_dev
 
         <span class="k">return</span> <span class="n">render</span><span class="p">(</span>
             <span class="n">request</span><span class="p">,</span>
             <span class="s2">&quot;contenido.html&quot;</span><span class="p">,</span>
+<<<<<<< HEAD
             <span class="p">{</span><span class="s2">&quot;contenido&quot;</span><span class="p">:</span> <span class="n">contenido</span><span class="p">,</span> <span class="s2">&quot;comentarios&quot;</span><span class="p">:</span> <span class="n">comentarios</span><span class="p">,</span><span class="s2">&quot;comentarios_roles&quot;</span><span class="p">:</span><span class="n">comentarios_roles</span><span class="p">},</span>
+=======
+            <span class="p">{</span><span class="s2">&quot;contenido&quot;</span><span class="p">:</span> <span class="n">contenido</span><span class="p">,</span> <span class="s2">&quot;comentarios&quot;</span><span class="p">:</span> <span class="n">comentarios</span><span class="p">},</span>
+>>>>>>> johis_dev
         <span class="p">)</span>
     <span class="k">except</span> <span class="n">Contenido</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;Contenido no encontrado&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="mi">404</span><span class="p">)</span></div>
@@ -574,6 +646,7 @@
         <span class="s2">&quot;Publicado&quot;</span><span class="p">,</span>
         <span class="s2">&quot;Inactivo&quot;</span><span class="p">,</span>
     <span class="p">)</span>
+<<<<<<< HEAD
     
     <span class="n">scopes</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;enviar-borrador-revision&quot;</span><span class="p">,</span><span class="s2">&quot;enviar-revision-Apublicar&quot;</span><span class="p">,</span><span class="s2">&quot;enviar-Apublicar-Publicado&quot;</span><span class="p">]</span>
     <span class="n">scopes</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;enviar-revision-borrador&quot;</span><span class="p">,</span><span class="s2">&quot;enviar-Apublicar-revision&quot;</span><span class="p">,</span><span class="s2">&quot;enviar-Publicado-Apublicar&quot;</span><span class="p">]</span>
@@ -586,6 +659,8 @@
              <span class="p">(</span><span class="s2">&quot;A Publicar&quot;</span><span class="p">,</span><span class="s2">&quot;Revisión&quot;</span><span class="p">):</span><span class="s2">&quot;enviar-Apublicar-revision&quot;</span><span class="p">,</span>
              <span class="p">(</span><span class="s2">&quot;Publicado&quot;</span><span class="p">,</span><span class="s2">&quot;A Publicar&quot;</span><span class="p">):</span><span class="s2">&quot;enviar-Publicado-Apublicar&quot;</span><span class="p">,</span>
              <span class="p">}</span>
+=======
+>>>>>>> johis_dev
 
     <span class="c1"># Verifica que los estados actual y siguiente existan en la lista de estados</span>
     <span class="k">if</span> <span class="n">estado_actual</span> <span class="ow">in</span> <span class="n">estados_disponibles</span> <span class="ow">and</span> <span class="n">estado_siguiente</span> <span class="ow">in</span> <span class="n">estados_disponibles</span><span class="p">:</span>
@@ -593,6 +668,7 @@
         <span class="n">siguiente</span> <span class="o">=</span> <span class="n">estados_disponibles</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">estado_siguiente</span><span class="p">)</span>
 
         <span class="c1"># Si el estado siguiente no es &#39;Inactivo&#39; y el estado actual no es &#39;Publicado&#39;</span>
+<<<<<<< HEAD
         <span class="k">if</span> <span class="n">estado_siguiente</span> <span class="o">!=</span> <span class="s2">&quot;Inactivo&quot;</span> <span class="ow">and</span> <span class="n">estado_actual</span><span class="o">!=</span><span class="s2">&quot;Inactivo&quot;</span><span class="p">:</span>
             <span class="c1"># Verifica que los estados estén uno al lado del otro</span>
             <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">actual</span> <span class="o">-</span> <span class="n">siguiente</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">estado_actual</span> <span class="o">==</span> <span class="s2">&quot;Inactivo&quot;</span><span class="p">:</span>
@@ -612,6 +688,22 @@
             <span class="c1"># messages.success(request, &quot;El contenido ha sido inactivado.&quot;)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">messages</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;Error. Estados proporcionados invalidos&quot;</span><span class="p">)</span>
+=======
+        <span class="k">if</span> <span class="n">estado_siguiente</span> <span class="o">!=</span> <span class="s2">&quot;Inactivo&quot;</span><span class="p">:</span>
+            <span class="c1"># Verifica que los estados estén uno al lado del otro</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">actual</span> <span class="o">-</span> <span class="n">siguiente</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">estado_actual</span> <span class="o">==</span> <span class="s2">&quot;Inactivo&quot;</span><span class="p">:</span>
+                <span class="n">contenido</span><span class="o">.</span><span class="n">estado</span> <span class="o">=</span> <span class="n">estado_siguiente</span>
+                <span class="n">contenido</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+                <span class="c1"># messages.success(request, &quot;El estado ha sido cambiado exitosamente.&quot;)</span>
+            <span class="c1"># else:</span>
+            <span class="c1"># messages.error(request, &quot;No se pudo cambiar de estado.&quot;)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">contenido</span><span class="o">.</span><span class="n">estado</span> <span class="o">=</span> <span class="n">estado_siguiente</span>
+            <span class="n">contenido</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="c1"># messages.success(request, &quot;El contenido ha sido inactivado.&quot;)</span>
+    <span class="c1"># else:</span>
+    <span class="c1"># messages.error(request, &quot;Estados inválidos proporcionados.&quot;)</span>
+>>>>>>> johis_dev
 
     <span class="c1"># Manejar la redirección si HTTP_REFERER no está presente</span>
     <span class="n">referer</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">META</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;HTTP_REFERER&quot;</span><span class="p">)</span>
@@ -662,6 +754,7 @@
 
     <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;visualizar_contenido&quot;</span><span class="p">,</span> <span class="n">pk</span><span class="p">)</span></div>
 
+<<<<<<< HEAD
 
 <div class="viewcode-block" id="guardar_comentario_Roles">
 <a class="viewcode-back" href="../../modulesf/contenidos/views_cont.html#contenidos.views_cont.guardar_comentario_Roles">[documentos]</a>
@@ -702,6 +795,8 @@
 
     <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;visualizar_contenido&quot;</span><span class="p">,</span> <span class="n">pk</span><span class="p">)</span></div>
 
+=======
+>>>>>>> johis_dev
 </pre></div>
 
             <div class="clearer"></div>

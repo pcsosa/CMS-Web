@@ -47,14 +47,19 @@
 <span class="kn">from</span> <span class="nn">django.core.cache</span> <span class="kn">import</span> <span class="n">cache</span>
 
 <span class="kn">from</span> <span class="nn">appcms.services.keycloak_service</span> <span class="kn">import</span> <span class="n">KeycloakService</span>
+<<<<<<< HEAD
 <span class="kn">from</span> <span class="nn">django.core.mail</span> <span class="kn">import</span> <span class="n">send_mail</span>
 <span class="kn">from</span> <span class="nn">django.template.loader</span> <span class="kn">import</span> <span class="n">render_to_string</span>
 <span class="kn">from</span> <span class="nn">django.utils.html</span> <span class="kn">import</span> <span class="n">strip_tags</span>
+=======
+
+>>>>>>> johis_dev
 
 <span class="c1"># Obtener información del usuario a partir del user id</span>
 <div class="viewcode-block" id="obtenerUserInfoById">
 <a class="viewcode-back" href="../../../modulesf/appcms/utils.html#appcms.utils.utils.obtenerUserInfoById">[documentos]</a>
 <span class="k">def</span> <span class="nf">obtenerUserInfoById</span><span class="p">(</span><span class="n">user_id</span><span class="p">):</span>
+<<<<<<< HEAD
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Obtener información del usuario a partir del user id.</span>
 
 <span class="sd">    Esta función utiliza el servicio de Keycloak para obtener la información</span>
@@ -66,6 +71,8 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        dict: Un diccionario con la información del usuario.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+=======
+>>>>>>> johis_dev
     <span class="n">kc</span> <span class="o">=</span> <span class="n">KeycloakService</span><span class="p">()</span>
     <span class="n">user</span> <span class="o">=</span> <span class="n">kc</span><span class="o">.</span><span class="n">admin</span><span class="o">.</span><span class="n">get_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">user</span></div>
@@ -75,6 +82,7 @@
 <div class="viewcode-block" id="obtenerUserInfo">
 <a class="viewcode-back" href="../../../modulesf/appcms/utils.html#appcms.utils.utils.obtenerUserInfo">[documentos]</a>
 <span class="k">def</span> <span class="nf">obtenerUserInfo</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+<<<<<<< HEAD
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Obtiene la información del usuario a partir del token.</span>
 
 <span class="sd">    Esta función decodifica el token y extrae la información del usuario,</span>
@@ -86,6 +94,8 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        dict: Un diccionario con la información del usuario, o None si no hay token.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+=======
+>>>>>>> johis_dev
     <span class="k">if</span> <span class="ow">not</span> <span class="n">token</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
 
@@ -106,6 +116,7 @@
 <div class="viewcode-block" id="obtenerToken">
 <a class="viewcode-back" href="../../../modulesf/appcms/utils.html#appcms.utils.utils.obtenerToken">[documentos]</a>
 <span class="k">def</span> <span class="nf">obtenerToken</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<<<<<<< HEAD
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Obtiene el token de acceso del usuario.</span>
 
 <span class="sd">    Esta función intenta obtener el token de la caché o de la sesión del usuario.</span>
@@ -117,6 +128,8 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        str: El token de acceso del usuario, o None si no se encuentra.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+=======
+>>>>>>> johis_dev
     <span class="n">token</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;access_token&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">token</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Token obtenido de la sesión&quot;</span><span class="p">)</span>
@@ -129,6 +142,7 @@
 <div class="viewcode-block" id="tienePermiso">
 <a class="viewcode-back" href="../../../modulesf/appcms/utils.html#appcms.utils.utils.tienePermiso">[documentos]</a>
 <span class="k">def</span> <span class="nf">tienePermiso</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">resource</span><span class="p">,</span> <span class="n">scopes_to_check</span><span class="p">):</span>
+<<<<<<< HEAD
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Verifica si el usuario tiene permiso para acceder a un recurso específico.</span>
 
 <span class="sd">    Esta función decodifica el token y verifica si el usuario tiene los permisos</span>
@@ -142,6 +156,8 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        dict: Un diccionario que indica si el usuario tiene permiso para cada scope.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+=======
+>>>>>>> johis_dev
     <span class="k">if</span> <span class="ow">not</span> <span class="n">token</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span><span class="n">scope</span><span class="p">:</span> <span class="kc">False</span> <span class="k">for</span> <span class="n">scope</span> <span class="ow">in</span> <span class="n">scopes_to_check</span><span class="p">}</span>
 
@@ -168,6 +184,7 @@
 <div class="viewcode-block" id="obtenerRPT">
 <a class="viewcode-back" href="../../../modulesf/appcms/utils.html#appcms.utils.utils.obtenerRPT">[documentos]</a>
 <span class="k">def</span> <span class="nf">obtenerRPT</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+<<<<<<< HEAD
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Obtiene el RPT (Requesting Party Token) a partir del token de acceso.</span>
 
 <span class="sd">    Esta función realiza una solicitud para obtener un RPT utilizando el token de acceso</span>
@@ -179,6 +196,8 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        dict: Un diccionario con el RPT, o un mensaje de error si no se pudo obtener.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+=======
+>>>>>>> johis_dev
     <span class="k">if</span> <span class="ow">not</span> <span class="n">token</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
 
@@ -213,6 +232,7 @@
 <div class="viewcode-block" id="obtenerUsersConRol">
 <a class="viewcode-back" href="../../../modulesf/appcms/utils.html#appcms.utils.utils.obtenerUsersConRol">[documentos]</a>
 <span class="k">def</span> <span class="nf">obtenerUsersConRol</span><span class="p">(</span><span class="n">rol</span><span class="p">):</span>
+<<<<<<< HEAD
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Obtiene los usuarios que tienen un rol específico.</span>
 
 <span class="sd">    Esta función utiliza el servicio de Keycloak para obtener los usuarios</span>
@@ -224,6 +244,8 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        list: Una lista de diccionarios con los IDs y nombres de usuario de los usuarios.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+=======
+>>>>>>> johis_dev
     <span class="n">kc</span> <span class="o">=</span> <span class="n">KeycloakService</span><span class="p">()</span>
     <span class="n">users</span> <span class="o">=</span> <span class="n">kc</span><span class="o">.</span><span class="n">admin</span><span class="o">.</span><span class="n">get_realm_role_members</span><span class="p">(</span><span class="n">rol</span><span class="p">)</span>
 
@@ -237,6 +259,7 @@
 <div class="viewcode-block" id="obtenerUserId">
 <a class="viewcode-back" href="../../../modulesf/appcms/utils.html#appcms.utils.utils.obtenerUserId">[documentos]</a>
 <span class="k">def</span> <span class="nf">obtenerUserId</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+<<<<<<< HEAD
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Obtiene el ID del usuario a partir del token.</span>
 
 <span class="sd">    Esta función decodifica el token y extrae el ID del usuario.</span>
@@ -247,6 +270,8 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        str: El ID del usuario, o None si no hay token.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+=======
+>>>>>>> johis_dev
     <span class="k">if</span> <span class="ow">not</span> <span class="n">token</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
     <span class="n">payload</span> <span class="o">=</span> <span class="n">decode_token</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
@@ -257,6 +282,7 @@
 <div class="viewcode-block" id="decode_token">
 <a class="viewcode-back" href="../../../modulesf/appcms/utils.html#appcms.utils.utils.decode_token">[documentos]</a>
 <span class="k">def</span> <span class="nf">decode_token</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">audience</span><span class="o">=</span><span class="s2">&quot;cmsweb&quot;</span><span class="p">,</span> <span class="n">verify_exp</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<<<<<<< HEAD
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Decodifica un token JWT.</span>
 
 <span class="sd">    Esta función utiliza la clave pública de Keycloak para decodificar el token</span>
@@ -270,6 +296,8 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        dict: El payload decodificado del token.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+=======
+>>>>>>> johis_dev
     <span class="n">public_key</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">KEYCLOAK_RS256_PUBLIC_KEY</span>
     <span class="n">public_key</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">n&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">public_key</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">jwt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span>
@@ -285,6 +313,7 @@
 <div class="viewcode-block" id="expiroToken">
 <a class="viewcode-back" href="../../../modulesf/appcms/utils.html#appcms.utils.utils.expiroToken">[documentos]</a>
 <span class="k">def</span> <span class="nf">expiroToken</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+<<<<<<< HEAD
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Verifica si el token ha expirado.</span>
 
 <span class="sd">    Esta función decodifica el token y comprueba si la fecha de expiración</span>
@@ -296,6 +325,8 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        bool: True si el token ha expirado, False en caso contrario.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+=======
+>>>>>>> johis_dev
     <span class="k">if</span> <span class="ow">not</span> <span class="n">token</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
     <span class="n">decoded_token</span> <span class="o">=</span> <span class="n">decode_token</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">verify_exp</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -306,6 +337,7 @@
 <div class="viewcode-block" id="comprobarToken">
 <a class="viewcode-back" href="../../../modulesf/appcms/utils.html#appcms.utils.utils.comprobarToken">[documentos]</a>
 <span class="k">def</span> <span class="nf">comprobarToken</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+<<<<<<< HEAD
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Verifica y renueva el token si ha expirado.</span>
 
 <span class="sd">    Esta función comprueba si el token ha expirado y, si es así, intenta</span>
@@ -318,6 +350,8 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        str: El nuevo token de acceso si se renueva, o el token original si no ha expirado.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+=======
+>>>>>>> johis_dev
     <span class="k">if</span> <span class="ow">not</span> <span class="n">token</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
 
@@ -344,6 +378,7 @@
 <div class="viewcode-block" id="obtenerRolesUser">
 <a class="viewcode-back" href="../../../modulesf/appcms/utils.html#appcms.utils.utils.obtenerRolesUser">[documentos]</a>
 <span class="k">def</span> <span class="nf">obtenerRolesUser</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+<<<<<<< HEAD
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Obtiene los roles del usuario a partir del token.</span>
 
 <span class="sd">    Esta función decodifica el token y extrae los roles del usuario,</span>
@@ -355,6 +390,8 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        list: Una lista de roles del usuario.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+=======
+>>>>>>> johis_dev
     <span class="n">decoded_token</span> <span class="o">=</span> <span class="n">decode_token</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
     <span class="n">roles</span> <span class="o">=</span> <span class="n">decoded_token</span><span class="p">[</span><span class="s2">&quot;realm_access&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;roles&quot;</span><span class="p">,</span> <span class="p">[])</span>
 
@@ -391,6 +428,7 @@
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">texto_sin_acentos</span></div>
 
+<<<<<<< HEAD
 
 <div class="viewcode-block" id="enviar_notificacion">
 <a class="viewcode-back" href="../../../modulesf/appcms/utils.html#appcms.utils.utils.enviar_notificacion">[documentos]</a>
@@ -424,6 +462,8 @@
         <span class="n">html_message</span><span class="o">=</span><span class="n">html_mensaje</span><span class="p">,</span>
     <span class="p">)</span></div>
 
+=======
+>>>>>>> johis_dev
 </pre></div>
 
             <div class="clearer"></div>

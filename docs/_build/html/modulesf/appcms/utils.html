@@ -50,6 +50,7 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="appcms.utils.utils.comprobarToken">
 <span class="sig-prename descclassname"><span class="pre">appcms.utils.utils.</span></span><span class="sig-name descname"><span class="pre">comprobarToken</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/appcms/utils/utils.html#comprobarToken"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#appcms.utils.utils.comprobarToken" title="Link to this definition">¶</a></dt>
+<<<<<<< HEAD
 <dd><p>Verifica y renueva el token si ha expirado.</p>
 <p>Esta función comprueba si el token ha expirado y, si es así, intenta
 renovarlo utilizando el refresh token.</p>
@@ -61,10 +62,14 @@ token (str): El token de acceso del usuario.</p>
 </dd>
 </dl>
 </dd></dl>
+=======
+<dd></dd></dl>
+>>>>>>> johis_dev
 
 <dl class="py function">
 <dt class="sig sig-object py" id="appcms.utils.utils.decode_token">
 <span class="sig-prename descclassname"><span class="pre">appcms.utils.utils.</span></span><span class="sig-name descname"><span class="pre">decode_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">audience</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cmsweb'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify_exp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/appcms/utils/utils.html#decode_token"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#appcms.utils.utils.decode_token" title="Link to this definition">¶</a></dt>
+<<<<<<< HEAD
 <dd><p>Decodifica un token JWT.</p>
 <p>Esta función utiliza la clave pública de Keycloak para decodificar el token
 y verificar su validez.</p>
@@ -101,10 +106,14 @@ el contenido del mensaje.</p>
 </dd>
 </dl>
 </dd></dl>
+=======
+<dd></dd></dl>
+>>>>>>> johis_dev
 
 <dl class="py function">
 <dt class="sig sig-object py" id="appcms.utils.utils.expiroToken">
 <span class="sig-prename descclassname"><span class="pre">appcms.utils.utils.</span></span><span class="sig-name descname"><span class="pre">expiroToken</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/appcms/utils/utils.html#expiroToken"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#appcms.utils.utils.expiroToken" title="Link to this definition">¶</a></dt>
+<<<<<<< HEAD
 <dd><p>Verifica si el token ha expirado.</p>
 <p>Esta función decodifica el token y comprueba si la fecha de expiración
 es anterior al tiempo actual.</p>
@@ -115,10 +124,14 @@ es anterior al tiempo actual.</p>
 </dd>
 </dl>
 </dd></dl>
+=======
+<dd></dd></dl>
+>>>>>>> johis_dev
 
 <dl class="py function">
 <dt class="sig sig-object py" id="appcms.utils.utils.obtenerRPT">
 <span class="sig-prename descclassname"><span class="pre">appcms.utils.utils.</span></span><span class="sig-name descname"><span class="pre">obtenerRPT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/appcms/utils/utils.html#obtenerRPT"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#appcms.utils.utils.obtenerRPT" title="Link to this definition">¶</a></dt>
+<<<<<<< HEAD
 <dd><p>Obtiene el RPT (Requesting Party Token) a partir del token de acceso.</p>
 <p>Esta función realiza una solicitud para obtener un RPT utilizando el token de acceso
 del usuario. Si la solicitud es exitosa, devuelve el RPT.</p>
@@ -129,10 +142,14 @@ del usuario. Si la solicitud es exitosa, devuelve el RPT.</p>
 </dd>
 </dl>
 </dd></dl>
+=======
+<dd></dd></dl>
+>>>>>>> johis_dev
 
 <dl class="py function">
 <dt class="sig sig-object py" id="appcms.utils.utils.obtenerRolesUser">
 <span class="sig-prename descclassname"><span class="pre">appcms.utils.utils.</span></span><span class="sig-name descname"><span class="pre">obtenerRolesUser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/appcms/utils/utils.html#obtenerRolesUser"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#appcms.utils.utils.obtenerRolesUser" title="Link to this definition">¶</a></dt>
+<<<<<<< HEAD
 <dd><p>Obtiene los roles del usuario a partir del token.</p>
 <p>Esta función decodifica el token y extrae los roles del usuario,
 excluyendo ciertos roles predeterminados.</p>
@@ -143,10 +160,14 @@ excluyendo ciertos roles predeterminados.</p>
 </dd>
 </dl>
 </dd></dl>
+=======
+<dd></dd></dl>
+>>>>>>> johis_dev
 
 <dl class="py function">
 <dt class="sig sig-object py" id="appcms.utils.utils.obtenerToken">
 <span class="sig-prename descclassname"><span class="pre">appcms.utils.utils.</span></span><span class="sig-name descname"><span class="pre">obtenerToken</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/appcms/utils/utils.html#obtenerToken"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#appcms.utils.utils.obtenerToken" title="Link to this definition">¶</a></dt>
+<<<<<<< HEAD
 <dd><p>Obtiene el token de acceso del usuario.</p>
 <p>Esta función intenta obtener el token de la caché o de la sesión del usuario.
 Si no se encuentra, se imprime un mensaje y se devuelve el token.</p>
@@ -157,10 +178,14 @@ Si no se encuentra, se imprime un mensaje y se devuelve el token.</p>
 </dd>
 </dl>
 </dd></dl>
+=======
+<dd></dd></dl>
+>>>>>>> johis_dev
 
 <dl class="py function">
 <dt class="sig sig-object py" id="appcms.utils.utils.obtenerUserId">
 <span class="sig-prename descclassname"><span class="pre">appcms.utils.utils.</span></span><span class="sig-name descname"><span class="pre">obtenerUserId</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/appcms/utils/utils.html#obtenerUserId"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#appcms.utils.utils.obtenerUserId" title="Link to this definition">¶</a></dt>
+<<<<<<< HEAD
 <dd><p>Obtiene el ID del usuario a partir del token.</p>
 <p>Esta función decodifica el token y extrae el ID del usuario.</p>
 <dl class="simple">
@@ -170,10 +195,14 @@ Si no se encuentra, se imprime un mensaje y se devuelve el token.</p>
 </dd>
 </dl>
 </dd></dl>
+=======
+<dd></dd></dl>
+>>>>>>> johis_dev
 
 <dl class="py function">
 <dt class="sig sig-object py" id="appcms.utils.utils.obtenerUserInfo">
 <span class="sig-prename descclassname"><span class="pre">appcms.utils.utils.</span></span><span class="sig-name descname"><span class="pre">obtenerUserInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/appcms/utils/utils.html#obtenerUserInfo"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#appcms.utils.utils.obtenerUserInfo" title="Link to this definition">¶</a></dt>
+<<<<<<< HEAD
 <dd><p>Obtiene la información del usuario a partir del token.</p>
 <p>Esta función decodifica el token y extrae la información del usuario,
 incluyendo el correo electrónico, nombre y nombre de usuario preferido.</p>
@@ -184,10 +213,14 @@ incluyendo el correo electrónico, nombre y nombre de usuario preferido.</p>
 </dd>
 </dl>
 </dd></dl>
+=======
+<dd></dd></dl>
+>>>>>>> johis_dev
 
 <dl class="py function">
 <dt class="sig sig-object py" id="appcms.utils.utils.obtenerUserInfoById">
 <span class="sig-prename descclassname"><span class="pre">appcms.utils.utils.</span></span><span class="sig-name descname"><span class="pre">obtenerUserInfoById</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/appcms/utils/utils.html#obtenerUserInfoById"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#appcms.utils.utils.obtenerUserInfoById" title="Link to this definition">¶</a></dt>
+<<<<<<< HEAD
 <dd><p>Obtener información del usuario a partir del user id.</p>
 <p>Esta función utiliza el servicio de Keycloak para obtener la información
 del usuario correspondiente al ID proporcionado.</p>
@@ -198,10 +231,14 @@ del usuario correspondiente al ID proporcionado.</p>
 </dd>
 </dl>
 </dd></dl>
+=======
+<dd></dd></dl>
+>>>>>>> johis_dev
 
 <dl class="py function">
 <dt class="sig sig-object py" id="appcms.utils.utils.obtenerUsersConRol">
 <span class="sig-prename descclassname"><span class="pre">appcms.utils.utils.</span></span><span class="sig-name descname"><span class="pre">obtenerUsersConRol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rol</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/appcms/utils/utils.html#obtenerUsersConRol"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#appcms.utils.utils.obtenerUsersConRol" title="Link to this definition">¶</a></dt>
+<<<<<<< HEAD
 <dd><p>Obtiene los usuarios que tienen un rol específico.</p>
 <p>Esta función utiliza el servicio de Keycloak para obtener los usuarios
 que tienen el rol especificado.</p>
@@ -212,6 +249,9 @@ que tienen el rol especificado.</p>
 </dd>
 </dl>
 </dd></dl>
+=======
+<dd></dd></dl>
+>>>>>>> johis_dev
 
 <dl class="py function">
 <dt class="sig sig-object py" id="appcms.utils.utils.quitar_acentos">
@@ -234,6 +274,7 @@ que tienen el rol especificado.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="appcms.utils.utils.tienePermiso">
 <span class="sig-prename descclassname"><span class="pre">appcms.utils.utils.</span></span><span class="sig-name descname"><span class="pre">tienePermiso</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scopes_to_check</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/appcms/utils/utils.html#tienePermiso"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#appcms.utils.utils.tienePermiso" title="Link to this definition">¶</a></dt>
+<<<<<<< HEAD
 <dd><p>Verifica si el usuario tiene permiso para acceder a un recurso específico.</p>
 <p>Esta función decodifica el token y verifica si el usuario tiene los permisos
 necesarios para acceder al recurso solicitado, en función de los scopes proporcionados.</p>
@@ -246,6 +287,9 @@ scopes_to_check (list): Una lista de scopes que se deben verificar.</p>
 </dd>
 </dl>
 </dd></dl>
+=======
+<dd></dd></dl>
+>>>>>>> johis_dev
 
 </section>
 
@@ -262,7 +306,10 @@ scopes_to_check (list): Una lista de scopes que se deben verificar.</p>
 <li><a class="reference internal" href="#">Utils</a><ul>
 <li><a class="reference internal" href="#appcms.utils.utils.comprobarToken"><code class="docutils literal notranslate"><span class="pre">comprobarToken()</span></code></a></li>
 <li><a class="reference internal" href="#appcms.utils.utils.decode_token"><code class="docutils literal notranslate"><span class="pre">decode_token()</span></code></a></li>
+<<<<<<< HEAD
 <li><a class="reference internal" href="#appcms.utils.utils.enviar_notificacion"><code class="docutils literal notranslate"><span class="pre">enviar_notificacion()</span></code></a></li>
+=======
+>>>>>>> johis_dev
 <li><a class="reference internal" href="#appcms.utils.utils.expiroToken"><code class="docutils literal notranslate"><span class="pre">expiroToken()</span></code></a></li>
 <li><a class="reference internal" href="#appcms.utils.utils.obtenerRPT"><code class="docutils literal notranslate"><span class="pre">obtenerRPT()</span></code></a></li>
 <li><a class="reference internal" href="#appcms.utils.utils.obtenerRolesUser"><code class="docutils literal notranslate"><span class="pre">obtenerRolesUser()</span></code></a></li>
