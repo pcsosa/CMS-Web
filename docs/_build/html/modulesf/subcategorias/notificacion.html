@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+
+<html lang="es" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Notificacion &#8212; documentación de cmsweb - 0.1</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=def86cc0" />
+    
+    <script src="../../_static/documentation_options.js?v=9c9b61ad"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/translations.js?v=d190bf04"></script>
+    
+    <link rel="index" title="Índice" href="../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../search.html" />
+    <link rel="next" title="Contenido" href="../contenidos/index.html" />
+    <link rel="prev" title="Forms" href="forms.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="Índice General"
+             accesskey="I">índice</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Índice de Módulos Python"
+             >módulos</a> |</li>
+        <li class="right" >
+          <a href="../contenidos/index.html" title="Contenido"
+             accesskey="N">siguiente</a> |</li>
+        <li class="right" >
+          <a href="forms.html" title="Forms"
+             accesskey="P">anterior</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">documentación de cmsweb - 0.1</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">subcategorias</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Notificacion</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-subcategorias.notificacion">
+<span id="notificacion"></span><h1>Notificacion<a class="headerlink" href="#module-subcategorias.notificacion" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="subcategorias.notificacion.notificar_borrar_subcategoria">
+<span class="sig-prename descclassname"><span class="pre">subcategorias.notificacion.</span></span><span class="sig-name descname"><span class="pre">notificar_borrar_subcategoria</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subcategoria</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/subcategorias/notificacion.html#notificar_borrar_subcategoria"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#subcategorias.notificacion.notificar_borrar_subcategoria" title="Link to this definition">¶</a></dt>
+<dd><p>Envía una notificación por correo electrónico cuando se elimina una subcategoría.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>subcategoria</strong> (<a class="reference internal" href="models.html#subcategorias.models.Subcategoria" title="subcategorias.models.Subcategoria"><em>Subcategoria</em></a>) – La instancia de la subcategoría que ha sido eliminada.</p>
+</dd>
+<dt class="field-even">Description<span class="colon">:</span></dt>
+<dd class="field-even"><p>Esta función envía una notificación a los usuarios con roles específicos cuando se elimina una subcategoría.
+El asunto del correo está formado por el texto “Edición de subcategoría” seguido del nombre de la subcategoría eliminada.
+El mensaje informa a los destinatarios que la subcategoría ha sido eliminada.</p>
+</dd>
+<dt class="field-odd">Process<span class="colon">:</span></dt>
+<dd class="field-odd"><ol class="arabic simple">
+<li><p>Crea el asunto del correo utilizando el nombre de la subcategoría eliminada.</p></li>
+<li><p>Genera el mensaje del correo indicando que la subcategoría ha sido eliminada.</p></li>
+<li><p>Obtiene los usuarios con los roles de Autor, Editor y Publicador.</p></li>
+<li><p>Extrae los correos electrónicos de esos usuarios.</p></li>
+<li><p>Envía la notificación a todos los destinatarios utilizando la función <cite>enviar_notificacion</cite>.</p></li>
+</ol>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="subcategorias.notificacion.notificar_editar_subcategoria">
+<span class="sig-prename descclassname"><span class="pre">subcategorias.notificacion.</span></span><span class="sig-name descname"><span class="pre">notificar_editar_subcategoria</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subcategoria</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/subcategorias/notificacion.html#notificar_editar_subcategoria"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#subcategorias.notificacion.notificar_editar_subcategoria" title="Link to this definition">¶</a></dt>
+<dd><p>Envía una notificación por correo electrónico cuando se edita una subcategoría.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>subcategoria</strong> (<a class="reference internal" href="models.html#subcategorias.models.Subcategoria" title="subcategorias.models.Subcategoria"><em>Subcategoria</em></a>) – La instancia de la subcategoría que ha sido editada.</p>
+</dd>
+<dt class="field-even">Description<span class="colon">:</span></dt>
+<dd class="field-even"><p>Esta función envía una notificación a los usuarios con roles específicos cuando se edita una subcategoría.
+El asunto del correo está formado por el texto “Edición de subcategoría” seguido del nombre de la subcategoría editada.
+El mensaje informa a los destinatarios que la subcategoría ha sido editada.</p>
+</dd>
+<dt class="field-odd">Process<span class="colon">:</span></dt>
+<dd class="field-odd"><ol class="arabic simple">
+<li><p>Crea el asunto del correo utilizando el nombre de la subcategoría editada.</p></li>
+<li><p>Genera el mensaje del correo indicando que la subcategoría ha sido editada.</p></li>
+<li><p>Obtiene los usuarios con los roles de Autor, Editor y Publicador.</p></li>
+<li><p>Extrae los correos electrónicos de esos usuarios.</p></li>
+<li><p>Envía la notificación a todos los destinatarios utilizando la función <cite>enviar_notificacion</cite>.</p></li>
+</ol>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="subcategorias.notificacion.notificar_nueva_subcategoria">
+<span class="sig-prename descclassname"><span class="pre">subcategorias.notificacion.</span></span><span class="sig-name descname"><span class="pre">notificar_nueva_subcategoria</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sender</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">created</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/subcategorias/notificacion.html#notificar_nueva_subcategoria"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#subcategorias.notificacion.notificar_nueva_subcategoria" title="Link to this definition">¶</a></dt>
+<dd><p>Envía una notificación por correo electrónico cuando se crea una nueva subcategoría.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sender</strong> (<em>type</em>) – El modelo que envía la señal.</p></li>
+<li><p><strong>instance</strong> (<a class="reference internal" href="models.html#subcategorias.models.Subcategoria" title="subcategorias.models.Subcategoria"><em>Subcategoria</em></a>) – La instancia de la subcategoría que ha sido creada.</p></li>
+<li><p><strong>created</strong> (<em>bool</em>) – Un booleano que indica si se ha creado una nueva subcategoría.</p></li>
+<li><p><strong>kwargs</strong> – Parámetros adicionales que pueden ser utilizados en la señal.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Description<span class="colon">:</span></dt>
+<dd class="field-even"><p>Esta función se activa cuando se crea una nueva subcategoría y envía una notificación a los usuarios con roles específicos.
+El asunto del correo está formado por el texto “Nueva Subcategoría en” y el mensaje informa a los destinatarios que se ha agregado una nueva subcategoría con el nombre correspondiente.</p>
+</dd>
+<dt class="field-odd">Process<span class="colon">:</span></dt>
+<dd class="field-odd"><ol class="arabic simple">
+<li><p>Verifica si la subcategoría ha sido creada.</p></li>
+<li><p>Obtiene los usuarios con los roles de Autor, Editor y Publicador.</p></li>
+<li><p>Extrae los correos electrónicos de esos usuarios.</p></li>
+<li><p>Envía la notificación a todos los destinatarios utilizando la función <cite>enviar_notificacion</cite>.</p></li>
+</ol>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../../index.html">Tabla de contenido</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Notificacion</a><ul>
+<li><a class="reference internal" href="#subcategorias.notificacion.notificar_borrar_subcategoria"><code class="docutils literal notranslate"><span class="pre">notificar_borrar_subcategoria()</span></code></a></li>
+<li><a class="reference internal" href="#subcategorias.notificacion.notificar_editar_subcategoria"><code class="docutils literal notranslate"><span class="pre">notificar_editar_subcategoria()</span></code></a></li>
+<li><a class="reference internal" href="#subcategorias.notificacion.notificar_nueva_subcategoria"><code class="docutils literal notranslate"><span class="pre">notificar_nueva_subcategoria()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Tema anterior</h4>
+    <p class="topless"><a href="forms.html"
+                          title="capítulo anterior">Forms</a></p>
+  </div>
+  <div>
+    <h4>Próximo tema</h4>
+    <p class="topless"><a href="../contenidos/index.html"
+                          title="próximo capítulo">Contenido</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>Esta página</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/modulesf/subcategorias/notificacion.rst.txt"
+            rel="nofollow">Mostrar el código</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Búsqueda rápida</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Ir a" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="Índice General"
+             >índice</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Índice de Módulos Python"
+             >módulos</a> |</li>
+        <li class="right" >
+          <a href="../contenidos/index.html" title="Contenido"
+             >siguiente</a> |</li>
+        <li class="right" >
+          <a href="forms.html" title="Forms"
+             >anterior</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">documentación de cmsweb - 0.1</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >subcategorias</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Notificacion</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, equipo01.
+      Creado usando <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+
+<html lang="es" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>subcategorias.notificacion &#8212; documentación de cmsweb - 0.1</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=def86cc0" />
+    
+    <script src="../../_static/documentation_options.js?v=9c9b61ad"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/translations.js?v=d190bf04"></script>
+    
+    <link rel="index" title="Índice" href="../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="Índice General"
+             accesskey="I">índice</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Índice de Módulos Python"
+             >módulos</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">documentación de cmsweb - 0.1</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Código de módulo</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">subcategorias.notificacion</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Código fuente para subcategorias.notificacion</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">subcategorias.models</span> <span class="kn">import</span> <span class="n">Subcategoria</span>
+<span class="kn">from</span> <span class="nn">django.db.models.signals</span> <span class="kn">import</span> <span class="n">post_save</span>
+<span class="kn">from</span> <span class="nn">appcms.utils.utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">obtenerUserInfoById</span><span class="p">,</span>
+    <span class="n">obtenerUsersConRol</span><span class="p">,</span>
+    <span class="n">enviar_notificacion</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">django.dispatch</span> <span class="kn">import</span> <span class="n">receiver</span>
+
+<span class="c1">#Notificacion para subcategorias</span>
+<div class="viewcode-block" id="notificar_nueva_subcategoria">
+<a class="viewcode-back" href="../../modulesf/subcategorias/notificacion.html#subcategorias.notificacion.notificar_nueva_subcategoria">[documentos]</a>
+<span class="nd">@receiver</span><span class="p">(</span><span class="n">post_save</span><span class="p">,</span> <span class="n">sender</span><span class="o">=</span><span class="n">Subcategoria</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">notificar_nueva_subcategoria</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">created</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    notificar_nueva_subcategoria</span>
+
+<span class="sd">    Envía una notificación por correo electrónico cuando se crea una nueva subcategoría.</span>
+
+<span class="sd">    :param sender: El modelo que envía la señal.</span>
+<span class="sd">    :type sender: type</span>
+
+<span class="sd">    :param instance: La instancia de la subcategoría que ha sido creada.</span>
+<span class="sd">    :type instance: Subcategoria</span>
+
+<span class="sd">    :param created: Un booleano que indica si se ha creado una nueva subcategoría.</span>
+<span class="sd">    :type created: bool</span>
+
+<span class="sd">    :param kwargs: Parámetros adicionales que pueden ser utilizados en la señal.</span>
+
+<span class="sd">    :description: </span>
+<span class="sd">        Esta función se activa cuando se crea una nueva subcategoría y envía una notificación a los usuarios con roles específicos.</span>
+<span class="sd">        El asunto del correo está formado por el texto &#39;Nueva Subcategoría en&#39; y el mensaje informa a los destinatarios que se ha agregado una nueva subcategoría con el nombre correspondiente.</span>
+
+<span class="sd">    :process:</span>
+<span class="sd">        1. Verifica si la subcategoría ha sido creada.</span>
+<span class="sd">        2. Obtiene los usuarios con los roles de Autor, Editor y Publicador.</span>
+<span class="sd">        3. Extrae los correos electrónicos de esos usuarios.</span>
+<span class="sd">        4. Envía la notificación a todos los destinatarios utilizando la función `enviar_notificacion`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">created</span><span class="p">:</span>
+        <span class="c1"># Un nuevo comentario ha sido creado</span>
+        <span class="n">asunto</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Nueva Subcategoria en&#39;</span>
+        <span class="n">mensaje</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Una nueva subcategoria ha sido agregada &quot;</span><span class="si">{</span><span class="n">instance</span><span class="o">.</span><span class="n">nombre</span><span class="si">}</span><span class="s1">&quot;.&#39;</span>
+        <span class="n">autores</span> <span class="o">=</span> <span class="n">obtenerUsersConRol</span><span class="p">(</span><span class="s1">&#39;Autor&#39;</span><span class="p">)</span>
+        <span class="n">editores</span> <span class="o">=</span> <span class="n">obtenerUsersConRol</span><span class="p">(</span><span class="s1">&#39;Editor&#39;</span><span class="p">)</span>
+        <span class="n">publicadores</span> <span class="o">=</span> <span class="n">obtenerUsersConRol</span><span class="p">(</span><span class="s1">&#39;Publicador&#39;</span><span class="p">)</span>
+        <span class="n">destinatarios</span> <span class="o">=</span> <span class="p">[</span><span class="n">obtenerUserInfoById</span><span class="p">(</span><span class="n">usuario</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">usuario</span> <span class="ow">in</span> <span class="n">autores</span> <span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">obtenerUserInfoById</span><span class="p">(</span><span class="n">usuario</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">usuario</span> <span class="ow">in</span> <span class="n">editores</span> <span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">obtenerUserInfoById</span><span class="p">(</span><span class="n">usuario</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">usuario</span> <span class="ow">in</span> <span class="n">publicadores</span> <span class="p">]</span>
+        <span class="n">enviar_notificacion</span><span class="p">(</span><span class="n">asunto</span><span class="p">,</span> <span class="n">mensaje</span><span class="p">,</span> <span class="n">destinatarios</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="notificar_editar_subcategoria">
+<a class="viewcode-back" href="../../modulesf/subcategorias/notificacion.html#subcategorias.notificacion.notificar_editar_subcategoria">[documentos]</a>
+<span class="k">def</span> <span class="nf">notificar_editar_subcategoria</span><span class="p">(</span><span class="n">subcategoria</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    notificar_editar_subcategoria</span>
+
+<span class="sd">    Envía una notificación por correo electrónico cuando se edita una subcategoría.</span>
+
+<span class="sd">    :param subcategoria: La instancia de la subcategoría que ha sido editada.</span>
+<span class="sd">    :type subcategoria: Subcategoria</span>
+
+<span class="sd">    :description: </span>
+<span class="sd">        Esta función envía una notificación a los usuarios con roles específicos cuando se edita una subcategoría.</span>
+<span class="sd">        El asunto del correo está formado por el texto &#39;Edición de subcategoría&#39; seguido del nombre de la subcategoría editada.</span>
+<span class="sd">        El mensaje informa a los destinatarios que la subcategoría ha sido editada.</span>
+
+<span class="sd">    :process:</span>
+<span class="sd">        1. Crea el asunto del correo utilizando el nombre de la subcategoría editada.</span>
+<span class="sd">        2. Genera el mensaje del correo indicando que la subcategoría ha sido editada.</span>
+<span class="sd">        3. Obtiene los usuarios con los roles de Autor, Editor y Publicador.</span>
+<span class="sd">        4. Extrae los correos electrónicos de esos usuarios.</span>
+<span class="sd">        5. Envía la notificación a todos los destinatarios utilizando la función `enviar_notificacion`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">asunto</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Edicion de subcategoria </span><span class="si">{</span><span class="n">subcategoria</span><span class="o">.</span><span class="n">nombre</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">mensaje</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;La subcategoria &quot;</span><span class="si">{</span><span class="n">subcategoria</span><span class="o">.</span><span class="n">titulo</span><span class="si">}</span><span class="s1">&quot; ha sido editada.&#39;</span>
+    <span class="n">autores</span> <span class="o">=</span> <span class="n">obtenerUsersConRol</span><span class="p">(</span><span class="s1">&#39;Autor&#39;</span><span class="p">)</span>
+    <span class="n">editores</span> <span class="o">=</span> <span class="n">obtenerUsersConRol</span><span class="p">(</span><span class="s1">&#39;Editor&#39;</span><span class="p">)</span>
+    <span class="n">publicadores</span> <span class="o">=</span> <span class="n">obtenerUsersConRol</span><span class="p">(</span><span class="s1">&#39;Publicador&#39;</span><span class="p">)</span>
+    <span class="n">destinatarios</span> <span class="o">=</span> <span class="p">[</span><span class="n">obtenerUserInfoById</span><span class="p">(</span><span class="n">usuario</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">usuario</span> <span class="ow">in</span> <span class="n">autores</span> <span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">obtenerUserInfoById</span><span class="p">(</span><span class="n">usuario</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">usuario</span> <span class="ow">in</span> <span class="n">editores</span> <span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">obtenerUserInfoById</span><span class="p">(</span><span class="n">usuario</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">usuario</span> <span class="ow">in</span> <span class="n">publicadores</span> <span class="p">]</span>
+    <span class="n">enviar_notificacion</span><span class="p">(</span><span class="n">asunto</span><span class="p">,</span> <span class="n">mensaje</span><span class="p">,</span> <span class="n">destinatarios</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="notificar_borrar_subcategoria">
+<a class="viewcode-back" href="../../modulesf/subcategorias/notificacion.html#subcategorias.notificacion.notificar_borrar_subcategoria">[documentos]</a>
+<span class="k">def</span> <span class="nf">notificar_borrar_subcategoria</span><span class="p">(</span><span class="n">subcategoria</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    notificar_borrar_subcategoria</span>
+
+<span class="sd">    Envía una notificación por correo electrónico cuando se elimina una subcategoría.</span>
+
+<span class="sd">    :param subcategoria: La instancia de la subcategoría que ha sido eliminada.</span>
+<span class="sd">    :type subcategoria: Subcategoria</span>
+
+<span class="sd">    :description: </span>
+<span class="sd">        Esta función envía una notificación a los usuarios con roles específicos cuando se elimina una subcategoría.</span>
+<span class="sd">        El asunto del correo está formado por el texto &#39;Edición de subcategoría&#39; seguido del nombre de la subcategoría eliminada.</span>
+<span class="sd">        El mensaje informa a los destinatarios que la subcategoría ha sido eliminada.</span>
+
+<span class="sd">    :process:</span>
+<span class="sd">        1. Crea el asunto del correo utilizando el nombre de la subcategoría eliminada.</span>
+<span class="sd">        2. Genera el mensaje del correo indicando que la subcategoría ha sido eliminada.</span>
+<span class="sd">        3. Obtiene los usuarios con los roles de Autor, Editor y Publicador.</span>
+<span class="sd">        4. Extrae los correos electrónicos de esos usuarios.</span>
+<span class="sd">        5. Envía la notificación a todos los destinatarios utilizando la función `enviar_notificacion`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">asunto</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Edicion de subcategoria </span><span class="si">{</span><span class="n">subcategoria</span><span class="o">.</span><span class="n">nombre</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">mensaje</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;La subcategoria &quot;</span><span class="si">{</span><span class="n">subcategoria</span><span class="o">.</span><span class="n">nombre</span><span class="si">}</span><span class="s1">&quot; ha sido editada.&#39;</span>
+    <span class="n">autores</span> <span class="o">=</span> <span class="n">obtenerUsersConRol</span><span class="p">(</span><span class="s1">&#39;Autor&#39;</span><span class="p">)</span>
+    <span class="n">editores</span> <span class="o">=</span> <span class="n">obtenerUsersConRol</span><span class="p">(</span><span class="s1">&#39;Editor&#39;</span><span class="p">)</span>
+    <span class="n">publicadores</span> <span class="o">=</span> <span class="n">obtenerUsersConRol</span><span class="p">(</span><span class="s1">&#39;Publicador&#39;</span><span class="p">)</span>
+    <span class="n">destinatarios</span> <span class="o">=</span> <span class="p">[</span><span class="n">obtenerUserInfoById</span><span class="p">(</span><span class="n">usuario</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">usuario</span> <span class="ow">in</span> <span class="n">autores</span> <span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">obtenerUserInfoById</span><span class="p">(</span><span class="n">usuario</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">usuario</span> <span class="ow">in</span> <span class="n">editores</span> <span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">obtenerUserInfoById</span><span class="p">(</span><span class="n">usuario</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">usuario</span> <span class="ow">in</span> <span class="n">publicadores</span> <span class="p">]</span>
+    <span class="n">enviar_notificacion</span><span class="p">(</span><span class="n">asunto</span><span class="p">,</span> <span class="n">mensaje</span><span class="p">,</span> <span class="n">destinatarios</span><span class="p">)</span></div>
+
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Búsqueda rápida</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Ir a" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="Índice General"
+             >índice</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Índice de Módulos Python"
+             >módulos</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">documentación de cmsweb - 0.1</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Código de módulo</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">subcategorias.notificacion</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, equipo01.
+      Creado usando <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    </div>
+  </body>
+</html>

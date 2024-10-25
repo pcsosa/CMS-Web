@@ -12,3 +12,4 @@ appcms
    services.rst
    utils.rst
    decorators.rst
+   notificacion.rst
