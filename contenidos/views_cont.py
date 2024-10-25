@@ -331,6 +331,25 @@ def editar_contenido(request, pk):
     return render(request, "editar_contenido.html", contexto)
 
 def filtrar(lista,rol, id):
+    """
+    Filtra una lista de contenidos según el rol del usuario y su identificador.
+
+    :param lista: Lista de objetos de contenido a filtrar.
+    :type lista: list
+    :param rol: Rol del usuario, que determina el criterio de filtrado. Puede ser uno de los siguientes: "Autor", "Editor", "Publicador" o "Administrador".
+    :type rol: str
+    :param id: Identificador del usuario que se usará para el filtrado en caso de roles específicos.
+    :type id: int
+    :return: Lista de objetos de contenido filtrados según el rol y el identificador del usuario.
+    :rtype: list
+
+    **Roles:**
+    
+    - *Autor*: Incluye solo contenidos cuyo `autor_id` coincida con el `id` proporcionado.
+    - *Editor*: Incluye solo contenidos cuyo `editor_id` coincida con el `id` proporcionado.
+    - *Publicador* y *Administrador*: Incluyen todos los contenidos de la lista sin filtrado adicional.
+
+    """
     nuevo =[]
     if rol == "Autor":
         for contenido in lista:
@@ -574,7 +593,7 @@ def guardar_comentario(request, pk):
 
 def guardar_comentario_Roles(request, pk):
     """
-    Guarda un comentario en un objeto de tipo Contenido.
+    Guarda un comentario desde revision, en un objeto de tipo Contenido.
 
     :param request: El objeto de solicitud HTTP.
     :type request: HttpRequest
