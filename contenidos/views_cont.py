@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from django.core.serializers import serialize
 from django.db.models import Q  # Para realizar búsquedas
-from django.http import HttpResponseForbidden, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import csrf_exempt
 
@@ -475,6 +475,10 @@ def visualizar_contenido(request, pk):
     """
     try:
         contenido = Contenido.objects.get(pk=pk)
+        #guarla el numero de visualizaciones
+        contenido.visualizaciones += 1
+        contenido.save()
+
         comentarios = Comentario.objects.filter(contenido=pk)
         comentarios_roles = ComentarioRoles.objects.filter(contenido=pk)
         # Reemplazar el ID del usuario por su nombre de usuario en contenido
@@ -659,3 +663,12 @@ def guardar_comentario_Roles(request, pk):
             error_message = "El comentario no puede estar vacío."
 
     return redirect("visualizar_contenido", pk)
+
+def nromegusta (request, pk):
+    contenido = get_object_or_404(Contenido, id=pk)
+
+    # Incrementar el contador de "me gusta"
+    contenido.megusta += 1
+    contenido.save()
+    
+    return JsonResponse({'me_gusta': contenido.megusta})
