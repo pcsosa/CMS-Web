@@ -7,8 +7,11 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Sum
-
-
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from django.http import HttpResponse
+import matplotlib.pyplot as plt
+from io import BytesIO
 from appcms.models import Categoria
 from appcms.utils.utils import (
     obtenerToken,
@@ -677,10 +680,53 @@ def nromegusta (request, pk):
 
 def reporte(request):
 
-    contenidos = Contenido.objects.all()
+    contenidos = Contenido.objects.order_by('-megusta')[:5]
     summary = {
         'total_visitas': Contenido.objects.aggregate(total_visitas=Sum('visualizaciones'))['total_visitas'] or 0,
         'total_megusta': Contenido.objects.aggregate(total_megusta=Sum('megusta'))['total_megusta'] or 0,
         'total_contenido': Contenido.objects.count() or 0
     }
     return render(request, 'reporte.html', {'contenidos': contenidos, 'summary': summary})
+
+ # Para impresion en pdf 
+
+def generar_reporte_pdf(request):
+    # Calcular el resumen
+    summary = {
+        'total_visitas': Contenido.objects.aggregate(total_visitas=Sum('visualizaciones'))['total_visitas'],
+        'total_megusta': Contenido.objects.aggregate(total_megusta=Sum('megusta'))['total_megusta'],
+        'total_contenido': Contenido.objects.count()
+    }
+
+    # Crear la respuesta con tipo de contenido PDF
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="reporte_contenido.pdf"'
+    pdf = canvas.Canvas(response)
+
+    # Escribir el contenido en el PDF
+    pdf.drawString(100, 750, "Reporte de Contenidos")
+    pdf.drawString(100, 730, "Resumen General")
+    pdf.drawString(100, 710, f"Total de Visitas: {summary['total_visitas']}")
+    pdf.drawString(100, 690, f"Total de Me Gusta: {summary['total_megusta']}")
+    pdf.drawString(100, 670, f"Total de Contenidos: {summary['total_contenido']}")
+
+    plt.figure(figsize=(8, 4))
+    titulos = [contenido.titulo for contenido in contenidos]
+    megustas = [contenido.megusta for contenido in contenidos]
+    
+    plt.bar(titulos, megustas, color='lightblue')
+    plt.title('Top 5 Contenidos con Más Me Gusta')
+    plt.xlabel('Contenido')
+    plt.ylabel('Me Gusta')
+
+    # Guardar el gráfico en un objeto BytesIO
+    buffer = BytesIO()
+    plt.savefig(buffer, format='pdf')
+    plt.close()
+    buffer.seek(0)
+
+    # Terminar el documento
+    pdf.showPage()
+    pdf.save()
+
+    return response
