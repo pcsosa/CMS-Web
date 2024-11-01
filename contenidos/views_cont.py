@@ -14,6 +14,8 @@ import matplotlib.pyplot as plt
 from io import BytesIO
 import tempfile  
 import os
+from django.utils import timezone
+from datetime import timedelta
 from appcms.models import Categoria
 from appcms.utils.utils import (
     obtenerToken,
@@ -486,6 +488,8 @@ def visualizar_contenido(request, pk):
         contenido.visualizaciones += 1
         contenido.save()
 
+        Visualizacion.objects.create(contenido=contenido, fecha=timezone.now())
+
         comentarios = Comentario.objects.filter(contenido=pk)
         comentarios_roles = ComentarioRoles.objects.filter(contenido=pk)
         # Reemplazar el ID del usuario por su nombre de usuario en contenido
@@ -746,3 +750,11 @@ def generar_reporte_pdf(request):
     os.remove(temp_file_path)
 
     return response
+
+
+
+def contar_visualizaciones(articulo_id, inicio, fin):
+    return Visualizacion.objects.filter(
+        articulo_id=articulo_id,
+        fecha__range=(inicio, fin)
+    ).count()

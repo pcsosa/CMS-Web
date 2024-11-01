@@ -68,7 +68,7 @@ class Contenido(models.Model):
     fecha_modificacion = models.DateTimeField(
         auto_now=True
     )  # Se actualiza en cada modificación
-    
+
     megusta = models.PositiveIntegerField(default=0)  # Número de "me gusta"
     visualizaciones = models.PositiveIntegerField(default=0)  # Número de visualizaciones
     
@@ -194,3 +194,7 @@ class ComentarioRoles(models.Model):
 
     def __str__(self):
         return "Comentario {} por {}".format(self.comentario, self.usuario)
+
+class Visualizacion(models.Model):
+    contenido = models.ForeignKey(Contenido, on_delete=models.CASCADE)
+    fecha = models.DateTimeField(auto_now_add=True)
