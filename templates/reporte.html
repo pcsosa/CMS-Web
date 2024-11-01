@@ -8,6 +8,7 @@ Reporte de Contenido
 {% block head %}
   {{ block.super }}
   <link rel="stylesheet" type="text/css" href="{% static 'css/kanban.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% endblock head %}
 {% block content %}
@@ -21,6 +22,7 @@ Reporte de Contenido
     {% endfor %}
   {% endif %}
   <h1 class='text-center'>Reporte de Contenidos</h1>
+  
   <h4>Resumen General</h4>
   <ul>
       <li>Total de Visitas: {{ summary.total_visitas }}</li>
@@ -28,7 +30,11 @@ Reporte de Contenido
       <li>Total de Contenidos: {{ summary.total_contenido }}</li>
   </ul>
   <h4>Detalles por Contenido</h4>
-  <a href="{% url 'generar_reporte_pdf' %}" class="btn btn-primary">Descargar PDF</a>
+  <div style="text-align: right;">
+    <a href="{% url 'generar_reporte_pdf' %}" class="btn btn-primary" >
+        <i class="fas fa-download"></i> 
+    </a>
+    </div>
 
   <table border="1">
       <table class="table table-bordered">

@@ -12,6 +12,8 @@ from reportlab.pdfgen import canvas
 from django.http import HttpResponse
 import matplotlib.pyplot as plt
 from io import BytesIO
+import tempfile  
+import os
 from appcms.models import Categoria
 from appcms.utils.utils import (
     obtenerToken,
@@ -690,6 +692,7 @@ def reporte(request):
 
  # Para impresion en pdf 
 
+
 def generar_reporte_pdf(request):
     # Calcular el resumen
     summary = {
@@ -710,23 +713,36 @@ def generar_reporte_pdf(request):
     pdf.drawString(100, 690, f"Total de Me Gusta: {summary['total_megusta']}")
     pdf.drawString(100, 670, f"Total de Contenidos: {summary['total_contenido']}")
 
-    plt.figure(figsize=(8, 4))
-    titulos = [contenido.titulo for contenido in contenidos]
-    megustas = [contenido.megusta for contenido in contenidos]
+    # Obtener los contenidos
+    contenidos = Contenido.objects.all()  # Asegúrate de obtener todos los contenidos
+
+    # Obtener los top 5 contenidos
+    top_contenidos = contenidos.order_by('-megusta')[:5]  # Filtrar los 5 contenidos con más "me gusta"
+
+    # Crear el gráfico
+    titulos = [contenido.titulo for contenido in top_contenidos]
+    megustas = [contenido.megusta for contenido in top_contenidos]
     
+    plt.figure(figsize=(8, 4))
     plt.bar(titulos, megustas, color='lightblue')
     plt.title('Top 5 Contenidos con Más Me Gusta')
     plt.xlabel('Contenido')
     plt.ylabel('Me Gusta')
 
-    # Guardar el gráfico en un objeto BytesIO
-    buffer = BytesIO()
-    plt.savefig(buffer, format='pdf')
-    plt.close()
-    buffer.seek(0)
+     # Guardar el gráfico en un archivo temporal
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as temp_file:
+        plt.savefig(temp_file.name)  # Guardar como PNG en el archivo temporal
+        plt.close()
+        temp_file_path = temp_file.name  # Guardar la ruta del archivo temporal
+
+    # Agregar el gráfico al PDF
+    pdf.drawImage(temp_file_path, 100, 400, width=400, height=200)  # Ajusta la posición y el tamaño según sea necesario
 
     # Terminar el documento
     pdf.showPage()
     pdf.save()
+
+    # Eliminar el archivo temporal
+    os.remove(temp_file_path)
 
     return response
