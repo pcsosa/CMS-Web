@@ -8,6 +8,7 @@ Reporte de Contenido
 {% block head %}
   {{ block.super }}
   <link rel="stylesheet" type="text/css" href="{% static 'css/kanban.css' %}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% endblock head %}
 {% block content %}
   {% if messages %}
@@ -27,6 +28,8 @@ Reporte de Contenido
       <li>Total de Contenidos: {{ summary.total_contenido }}</li>
   </ul>
   <h4>Detalles por Contenido</h4>
+  <a href="{% url 'generar_reporte_pdf' %}" class="btn btn-primary">Descargar PDF</a>
+
   <table border="1">
       <table class="table table-bordered">
         <thead>
@@ -45,8 +48,37 @@ Reporte de Contenido
             </tr>
             {% endfor %}
         </tbody>
-  </table>  
-   
+  </table> 
+  <div class="container">
+    <h4>Gráfico de Me Gusta (Top 5)</h4>
+    <div class="chart-container"  style="width: 80%; margin: auto;">
+        <canvas id="meGustaChart" width="300" height="150"></canvas>
+    </div>
+</div>
+<script>
+    const ctx = document.getElementById('meGustaChart').getContext('2d');
+    const meGustaChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: [{% for contenido in contenidos %}'{{ contenido.titulo }}'{% if not forloop.last %}, {% endif %}{% endfor %}], // Nombres de los contenidos
+            datasets: [{
+                label: 'Me Gusta',
+                data: [{% for contenido in contenidos %}{{ contenido.megusta }}{% if not forloop.last %}, {% endif %}{% endfor %}], // Valores de "me gusta"
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
   
 {% endblock content %}
 
