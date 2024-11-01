@@ -61,6 +61,12 @@
             Tablero kanban
           </a>
         {% endif %}
+        {% if permisoKan.listar %}
+          <a href={% url 'reporte' %} class="dashboard-nav-item">
+            <i class="fa-solid fa-clipboard"></i>
+            Reportes
+          </a>
+        {% endif %}
         <!-- <a href="#" class="dashboard-nav-item">
             <i class="fas fa-cogs"></i>
             Configuración

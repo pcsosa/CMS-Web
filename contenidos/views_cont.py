@@ -6,6 +6,8 @@ from django.db.models import Q  # Para realizar búsquedas
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Sum
+
 
 from appcms.models import Categoria
 from appcms.utils.utils import (
@@ -670,5 +672,15 @@ def nromegusta (request, pk):
     # Incrementar el contador de "me gusta"
     contenido.megusta += 1
     contenido.save()
-    
+
     return JsonResponse({'me_gusta': contenido.megusta})
+
+def reporte(request):
+
+    contenidos = Contenido.objects.all()
+    summary = {
+        'total_visitas': Contenido.objects.aggregate(total_visitas=Sum('visualizaciones'))['total_visitas'] or 0,
+        'total_megusta': Contenido.objects.aggregate(total_megusta=Sum('megusta'))['total_megusta'] or 0,
+        'total_contenido': Contenido.objects.count() or 0
+    }
+    return render(request, 'reporte.html', {'contenidos': contenidos, 'summary': summary})

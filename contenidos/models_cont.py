@@ -68,6 +68,7 @@ class Contenido(models.Model):
     fecha_modificacion = models.DateTimeField(
         auto_now=True
     )  # Se actualiza en cada modificación
+    
     megusta = models.PositiveIntegerField(default=0)  # Número de "me gusta"
     visualizaciones = models.PositiveIntegerField(default=0)  # Número de visualizaciones
     
