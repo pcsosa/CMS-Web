@@ -36,55 +36,55 @@ Reporte de Contenido
     </a>
     </div>
 
-  <table border="1">
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Me gusta</th>
-            <th>Visitas</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for contenido in contenidos %}
-            <tr>
-              <td>{{ contenido.titulo }}</td>
-              <td>{{ contenido.megusta }}</td>
-              <td>{{ contenido.visualizaciones }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Me gusta</th>
+        <th>Visitas</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for contenido in contenidos %}
+        <tr>
+          <td>{{ contenido.titulo }}</td>
+          <td>{{ contenido.megusta }}</td>
+          <td>{{ contenido.visualizaciones }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
   </table> 
-  <div class="container">
-    <h4>Gráfico de Me Gusta (Top 5)</h4>
-    <div class="chart-container"  style="width: 80%; margin: auto;">
-        <canvas id="meGustaChart" width="300" height="150"></canvas>
-    </div>
-</div>
-<script>
-    const ctx = document.getElementById('meGustaChart').getContext('2d');
-    const meGustaChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: [{% for contenido in contenidos %}'{{ contenido.titulo }}'{% if not forloop.last %}, {% endif %}{% endfor %}], // Nombres de los contenidos
-            datasets: [{
-                label: 'Me Gusta',
-                data: [{% for contenido in contenidos %}{{ contenido.megusta }}{% if not forloop.last %}, {% endif %}{% endfor %}], // Valores de "me gusta"
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-</script>
 
-  
+  <div class="container">
+      <h4>Gráfico de Me Gusta (Top 5)</h4>
+      <div class="chart-container" style="width: 80%; margin: auto;">
+          <canvas id="meGustaChart" width="300" height="150"></canvas>
+      </div>
+  </div>
+
+  <script>
+      const ctx = document.getElementById('meGustaChart').getContext('2d');
+      const meGustaChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+              labels: [{% for contenido in contenidos %}'{{ contenido.titulo }}'{% if not forloop.last %}, {% endif %}{% endfor %}], // Nombres de los contenidos
+              datasets: [{
+                  label: 'Me Gusta',
+                  data: [{% for contenido in contenidos %}{{ contenido.megusta }}{% if not forloop.last %}, {% endif %}{% endfor %}], // Valores de "me gusta"
+                  backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                  borderColor: 'rgba(75, 192, 192, 1)',
+                  borderWidth: 1
+              }]
+          },
+          options: {
+              scales: {
+                  y: {
+                      beginAtZero: true
+                  }
+              }
+          }
+      });
+  </script>
 {% endblock content %}
+
 

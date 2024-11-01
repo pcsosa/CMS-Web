@@ -758,3 +758,34 @@ def contar_visualizaciones(articulo_id, inicio, fin):
         articulo_id=articulo_id,
         fecha__range=(inicio, fin)
     ).count()
+
+def graficar_visualizaciones(request):
+    fin = timezone.now()
+    inicio = fin - timedelta(days=30)  # Valor por defecto de 30 días atrás
+
+    if request.method == 'POST':
+        # Obtener las fechas del formulario
+        inicio = request.POST.get('fecha_inicio')
+        fin = request.POST.get('fecha_fin')
+
+        # Convertir las fechas a objetos datetime
+        inicio = timezone.datetime.strptime(inicio, '%Y-%m-%d')
+        fin = timezone.datetime.strptime(fin, '%Y-%m-%d')
+
+    # Contar visualizaciones por artículo en el rango de fechas
+    contenidos = Contenido.objects.all()
+    datos_visualizaciones = {
+        contenido.titulo: Visualizacion.objects.filter(contenido=contenido, fecha__range=(inicio, fin)).count()
+        for contenido in contenidos
+    }
+
+    # Preparar datos para el gráfico
+    titulos = list(datos_visualizaciones.keys())
+    conteos = list(datos_visualizaciones.values())
+
+    return render(request, 'graficar_visualizaciones.html', {
+        'titulos': titulos,
+        'conteos': conteos,
+        'fecha_inicio': inicio.date(),git
+        'fecha_fin': fin.date(),
+    })
