@@ -60,6 +60,7 @@ urlpatterns = [
         name="guardar_comentario_rol",
     ),
     path("articulos/<int:pk>/me-gusta",views_cont.nromegusta,name ="me-gusta"),
+    path("panel/reporte",views_cont.reporte,name="reporte"),
 ]
 
 if settings.DEBUG:

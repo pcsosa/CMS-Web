@@ -1,0 +1,52 @@
+{% extends "panel.html" %}
+{% load permisos %}
+{% load static %}
+{% load custom_filters %}
+{% block title %}
+Reporte de Contenido
+{% endblock title %}
+{% block head %}
+  {{ block.super }}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/kanban.css' %}">
+{% endblock head %}
+{% block content %}
+  {% if messages %}
+    {% for message in messages %}
+      {% if message.tags == 'error' %}
+          <div class="message-error">
+              {{ message }}
+          </div>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  <h1 class='text-center'>Reporte de Contenidos</h1>
+  <h4>Resumen General</h4>
+  <ul>
+      <li>Total de Visitas: {{ summary.total_visitas }}</li>
+      <li>Total de Me Gusta: {{ summary.total_megusta }}</li>
+      <li>Total de Contenidos: {{ summary.total_contenido }}</li>
+  </ul>
+  <h4>Detalles por Contenido</h4>
+  <table border="1">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Me gusta</th>
+            <th>Visitas</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for contenido in contenidos %}
+            <tr>
+              <td>{{ contenido.titulo }}</td>
+              <td>{{ contenido.megusta }}</td>
+              <td>{{ contenido.visualizaciones }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+  </table>  
+   
+  
+{% endblock content %}
+
