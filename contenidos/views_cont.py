@@ -786,6 +786,6 @@ def graficar_visualizaciones(request):
     return render(request, 'graficar_visualizaciones.html', {
         'titulos': titulos,
         'conteos': conteos,
-        'fecha_inicio': inicio.date(),git
+        'fecha_inicio': inicio.date(),
         'fecha_fin': fin.date(),
     })
