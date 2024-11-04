@@ -17,6 +17,9 @@ import os
 from django.utils import timezone
 from datetime import timedelta
 from appcms.models import Categoria
+from django.utils.dateparse import parse_date
+from django.utils.timezone import make_aware
+from datetime import datetime, time
 from appcms.utils.utils import (
     obtenerToken,
     obtenerUserId,
@@ -685,14 +688,49 @@ def nromegusta (request, pk):
     return JsonResponse({'me_gusta': contenido.megusta})
 
 def reporte(request):
+    # Obtener los parámetros de filtrado de la solicitud GET
+    fecha_inicio = request.GET.get('fecha_inicio')
+    fecha_fin = request.GET.get('fecha_fin')
+    estado = request.GET.get('estado')
 
-    contenidos = Contenido.objects.order_by('-megusta')[:5]
+    # Filtrar los contenidos según los parámetros
+    #contenidos = Contenido.objects.order_by('-megusta')[:5]
+    contenidos = Contenido.objects.all()
+
+    if fecha_inicio:
+        fecha_inicio = parse_date(fecha_inicio)
+        # Ajustar la fecha de fin para incluir todo el día
+        fecha_inicio = make_aware(datetime.combine(fecha_inicio, time.min))
+        contenidos = contenidos.filter(fecha_creacion__gte=fecha_inicio)
+    if fecha_fin:
+        fecha_fin = parse_date(fecha_fin)
+        # Ajustar la fecha de fin para incluir todo el día
+        fecha_fin = make_aware(datetime.combine(fecha_fin, time.max))
+        contenidos = contenidos.filter(fecha_creacion__lte=fecha_fin)
+    if estado:
+        contenidos = contenidos.filter(estado=estado)
+    
+    # Calcular el resumen general
     summary = {
-        'total_visitas': Contenido.objects.aggregate(total_visitas=Sum('visualizaciones'))['total_visitas'] or 0,
-        'total_megusta': Contenido.objects.aggregate(total_megusta=Sum('megusta'))['total_megusta'] or 0,
-        'total_contenido': Contenido.objects.count() or 0
+        'total_visitas': contenidos.aggregate(total_visitas=Sum('visualizaciones'))['total_visitas'] or 0,
+        'total_megusta': contenidos.aggregate(total_megusta=Sum('megusta'))['total_megusta'] or 0,
+        'total_contenido': contenidos.count() or 0
     }
-    return render(request, 'reporte.html', {'contenidos': contenidos, 'summary': summary})
+
+    # Obtener los top 5 contenidos con más "me gusta"
+    top_contenidos = contenidos.order_by('-megusta')[:5]
+
+    return render(request, 'reporte.html', {
+        'contenidos': contenidos,
+        'top_contenidos': top_contenidos,
+        'summary': summary,
+    })
+
+    #return render(request, 'reporte.html', {
+        #'contenidos': contenidos.order_by('-megusta')[:5],
+        #'summary': summary,
+    #})
+    #return render(request, 'reporte.html', {'contenidos': contenidos, 'summary': summary})
 
  # Para impresion en pdf 
 
