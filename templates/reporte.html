@@ -67,7 +67,7 @@ Reporte de Contenido
       const meGustaChart = new Chart(ctx, {
           type: 'bar',
           data: {
-              labels: [{% for contenido in contenidos %}'{{ contenido.titulo }}'{% if not forloop.last %}, {% endif %}{% endfor %}], // Nombres de los contenidos
+              labels: [{% for contenido in contenidos  %}'{{ contenido.titulo }}'{% if not forloop.last %}, {% endif %}{% endfor %}], // Nombres de los contenidos
               datasets: [{
                   label: 'Me Gusta',
                   data: [{% for contenido in contenidos %}{{ contenido.megusta }}{% if not forloop.last %}, {% endif %}{% endfor %}], // Valores de "me gusta"
