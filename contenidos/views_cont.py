@@ -731,13 +731,15 @@ def reporte(request):
     articulos_redactados = contenidos.count()
 
     # Calcular el promedio de tiempo de revisión de artículos
-    tiempo_revision = Contenido.objects.filter(
-        estado='Revisión',
-        fecha_creacion__gte=fecha_inicio,
-        fecha_creacion__lte=fecha_fin
-    ).annotate(
-        tiempo_revision=ExpressionWrapper(F('fecha_modificacion') - F('fecha_creacion'), output_field=DurationField())
-    ).aggregate(promedio_tiempo_revision=Avg('tiempo_revision'))['promedio_tiempo_revision']
+    tiempo_revision = None
+    if fecha_inicio and fecha_fin:
+        tiempo_revision = Contenido.objects.filter(
+            estado='Revisión',
+            fecha_creacion__gte=fecha_inicio,
+            fecha_creacion__lte=fecha_fin
+        ).annotate(
+            tiempo_revision=ExpressionWrapper(F('fecha_modificacion') - F('fecha_creacion'), output_field=DurationField())
+        ).aggregate(promedio_tiempo_revision=Avg('tiempo_revision'))['promedio_tiempo_revision']
 
     # Obtener los top 5 contenidos con más "me gusta"
     top_contenidos = contenidos.order_by('-megusta')[:5]
