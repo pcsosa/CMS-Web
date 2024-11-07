@@ -6,7 +6,7 @@ from django.db.models import Q  # Para realizar búsquedas
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import csrf_exempt
-from django.db.models import Sum
+from django.db.models import Sum, Count, Avg, F, ExpressionWrapper, DurationField
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from django.http import HttpResponse
@@ -27,7 +27,7 @@ from appcms.utils.utils import (
     obtenerUsersConRol,
     tienePermiso,
 )
-from contenidos.models_cont import Categoria, Comentario, Contenido, ComentarioRoles
+from contenidos.models_cont import Categoria, Comentario, Contenido, ComentarioRoles, Visualizacion
 from subcategorias.models import Subcategoria
 from contenidos.notificacion import *
 
@@ -693,6 +693,10 @@ def reporte(request):
     fecha_fin = request.GET.get('fecha_fin')
     estado = request.GET.get('estado')
 
+    categoria_id = request.GET.get('categoria')
+    subcategoria_id = request.GET.get('subcategoria')
+
+
     # Filtrar los contenidos según los parámetros
     #contenidos = Contenido.objects.order_by('-megusta')[:5]
     contenidos = Contenido.objects.all()
@@ -710,6 +714,12 @@ def reporte(request):
     if estado:
         contenidos = contenidos.filter(estado=estado)
     
+    if categoria_id:
+        contenidos = contenidos.filter(categoria_id=categoria_id)
+
+    if subcategoria_id:
+        contenidos = contenidos.filter(subcategoria_id=subcategoria_id)
+
     # Calcular el resumen general
     summary = {
         'total_visitas': contenidos.aggregate(total_visitas=Sum('visualizaciones'))['total_visitas'] or 0,
@@ -717,13 +727,44 @@ def reporte(request):
         'total_contenido': contenidos.count() or 0
     }
 
+    # Calcular la cantidad de artículos redactados en el periodo de tiempo
+    articulos_redactados = contenidos.count()
+
+    # Calcular el promedio de tiempo de revisión de artículos
+    tiempo_revision = Contenido.objects.filter(
+        estado='Revisión',
+        fecha_creacion__gte=fecha_inicio,
+        fecha_creacion__lte=fecha_fin
+    ).annotate(
+        tiempo_revision=ExpressionWrapper(F('fecha_modificacion') - F('fecha_creacion'), output_field=DurationField())
+    ).aggregate(promedio_tiempo_revision=Avg('tiempo_revision'))['promedio_tiempo_revision']
+
     # Obtener los top 5 contenidos con más "me gusta"
     top_contenidos = contenidos.order_by('-megusta')[:5]
+
+    # Obtener los top 5 contenidos más leídos en el periodo de tiempo
+    if fecha_inicio and fecha_fin:
+        top_leidos = Contenido.objects.filter(
+            visualizacion__fecha__range=(fecha_inicio, fecha_fin)
+        ).annotate(
+            total_visitas=Sum('visualizacion__id')
+        ).order_by('-total_visitas')[:5]
+    else:
+        top_leidos = []
+
+    # Obtener todas las categorías y subcategorías para los filtros
+    categorias = Categoria.objects.all()
+    subcategorias = Subcategoria.objects.all()
 
     return render(request, 'reporte.html', {
         'contenidos': contenidos,
         'top_contenidos': top_contenidos,
+        'top_leidos': top_leidos,
         'summary': summary,
+        'articulos_redactados': articulos_redactados,
+        'tiempo_revision': tiempo_revision,
+        'categorias': categorias,
+        'subcategorias': subcategorias,
     })
 
     #return render(request, 'reporte.html', {
