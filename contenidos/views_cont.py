@@ -853,9 +853,7 @@ def reporte(request):
     # Obtener los top 5 contenidos más leídos en el periodo de tiempo
     if fecha_inicio and fecha_fin:
         top_leidos = (
-            Contenido.objects.filter(
-                visualizacion__fecha__range=(fecha_inicio, fecha_fin)
-            )
+            contenidos.filter(visualizacion__fecha__range=(fecha_inicio, fecha_fin))
             .annotate(total_visitas=Count("visualizacion__id"))
             .order_by("-total_visitas")[:5]
         )
