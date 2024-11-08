@@ -856,7 +856,7 @@ def reporte(request):
             Contenido.objects.filter(
                 visualizacion__fecha__range=(fecha_inicio, fecha_fin)
             )
-            .annotate(total_visitas=Sum("visualizacion__id"))
+            .annotate(total_visitas=Count("visualizacion__id"))
             .order_by("-total_visitas")[:5]
         )
     else:
