@@ -7,6 +7,7 @@
     <title>subcategorias.notificacion &#8212; documentación de cmsweb - 0.1</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=def86cc0" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=86dffce3" />
     
     <script src="../../_static/documentation_options.js?v=9c9b61ad"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
@@ -112,7 +113,7 @@
 <span class="sd">        5. Envía la notificación a todos los destinatarios utilizando la función `enviar_notificacion`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">asunto</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Edicion de subcategoria </span><span class="si">{</span><span class="n">subcategoria</span><span class="o">.</span><span class="n">nombre</span><span class="si">}</span><span class="s1">&#39;</span>
-    <span class="n">mensaje</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;La subcategoria &quot;</span><span class="si">{</span><span class="n">subcategoria</span><span class="o">.</span><span class="n">titulo</span><span class="si">}</span><span class="s1">&quot; ha sido editada.&#39;</span>
+    <span class="n">mensaje</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;La subcategoria &quot;</span><span class="si">{</span><span class="n">subcategoria</span><span class="o">.</span><span class="n">nombre</span><span class="si">}</span><span class="s1">&quot; ha sido editada.&#39;</span>
     <span class="n">autores</span> <span class="o">=</span> <span class="n">obtenerUsersConRol</span><span class="p">(</span><span class="s1">&#39;Autor&#39;</span><span class="p">)</span>
     <span class="n">editores</span> <span class="o">=</span> <span class="n">obtenerUsersConRol</span><span class="p">(</span><span class="s1">&#39;Editor&#39;</span><span class="p">)</span>
     <span class="n">publicadores</span> <span class="o">=</span> <span class="n">obtenerUsersConRol</span><span class="p">(</span><span class="s1">&#39;Publicador&#39;</span><span class="p">)</span>

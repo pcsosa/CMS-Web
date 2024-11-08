@@ -770,6 +770,19 @@ def guardar_comentario_Roles(request, pk):
 
 
 def nromegusta(request, pk):
+    """
+    Aumenta el número de "me gusta" dado a un contenido específico.
+
+    Esta vista recibe una solicitud HTTP y la clave primaria de un contenido para incrementar 
+    su contador de "me gusta". 
+
+    :param request: El objeto de solicitud HTTP que contiene los datos de la petición.
+    :type request: HttpRequest
+    :param pk: La clave primaria del contenido al cual se le va a incrementar el contador de "me gusta".
+    :type pk: int
+    :return: Un objeto JsonResponse con el nuevo valor del contador de "me gusta".
+    :rtype: JsonResponse
+    """
     contenido = get_object_or_404(Contenido, id=pk)
 
     # Incrementar el contador de "me gusta"
@@ -780,6 +793,15 @@ def nromegusta(request, pk):
 
 
 def reporte(request):
+    """
+    Genera un reporte filtrado de contenidos basados en parámetros como fecha, estado, 
+    categoría, y subcategoría. También calcula estadísticas como el total de visitas y "me gusta".
+
+    :param request: El objeto de solicitud HTTP que contiene los parámetros de la petición.
+    :type request: HttpRequest
+    :return: Renderiza la plantilla 'reporte.html' con los contenidos filtrados y el resumen calculado.
+    :rtype: HttpResponse
+    """
     # Obtener los parámetros de filtrado de la solicitud GET
     fecha_inicio = request.GET.get("fecha_inicio")
     fecha_fin = request.GET.get("fecha_fin")
@@ -891,14 +913,16 @@ def reporte(request):
 
 def generar_reporte_pdf(request):
     """
-    Genera un reporte de contenidos filtrados por parámetros de la solicitud.
+    Genera un reporte en formato PDF con un resumen de los contenidos, 
+    incluyendo el total de visitas, "me gusta" y un gráfico de los top 5 contenidos 
+    con más "me gusta".
 
-    Args:
-        request (HttpRequest): La solicitud HTTP que contiene los parámetros de filtrado.
+    :param request: El objeto de solicitud HTTP para la petición de generar el reporte en PDF.
+    :type request: HttpRequest
+    :return: Un archivo PDF con el reporte generado.
+    :rtype: HttpResponse
+    """
 
-    Returns:
-        HttpResponse: Renderiza la plantilla 'reporte.html' con los contenidos filtrados y estadísticas."""
-    # Calcular el resumen
     summary = {
         "total_visitas": Contenido.objects.aggregate(
             total_visitas=Sum("visualizaciones")
@@ -962,15 +986,16 @@ def generar_reporte_pdf(request):
 
 def contar_visualizaciones(articulo_id, inicio, fin):
     """
-    Cuenta las visualizaciones de un artículo en un rango de fechas.
+    Cuenta el número de visualizaciones de un artículo en un rango de fechas determinado.
 
-    Args:
-        articulo_id (int): ID del artículo.
-        inicio (datetime): Fecha de inicio del rango.
-        fin (datetime): Fecha de fin del rango.
-
-    Returns:
-        int: Número de visualizaciones del artículo en el rango especificado.
+    :param articulo_id: El ID del artículo para el cual se van a contar las visualizaciones.
+    :type articulo_id: int
+    :param inicio: La fecha de inicio del rango en el que se contarán las visualizaciones.
+    :type inicio: datetime
+    :param fin: La fecha de fin del rango en el que se contarán las visualizaciones.
+    :type fin: datetime
+    :return: El número de visualizaciones del artículo en el rango de fechas especificado.
+    :rtype: int
     """
     return Visualizacion.objects.filter(
         articulo_id=articulo_id, fecha__range=(inicio, fin)
@@ -979,13 +1004,16 @@ def contar_visualizaciones(articulo_id, inicio, fin):
 
 def graficar_visualizaciones(request):
     """
-    Genera un gráfico de visualizaciones de contenidos en un rango de fechas.
+    Genera un gráfico de visualizaciones por artículo dentro de un rango de fechas determinado.
 
-    Args:
-        request (HttpRequest): La solicitud HTTP que puede contener fechas para el gráfico.
+    Esta función obtiene las fechas de inicio y fin del formulario enviado por el usuario
+    (o usa un valor predeterminado de los últimos 30 días) y cuenta las visualizaciones de cada
+    artículo en ese rango de fechas. Luego prepara los datos para mostrarlos en un gráfico.
 
-    Returns:
-        HttpResponse: Renderiza la plantilla 'graficar_visualizaciones.html' con los datos del gráfico.
+    :param request: El objeto de solicitud HTTP que contiene los parámetros de fecha y las peticiones de datos.
+    :type request: HttpRequest
+    :return: Una respuesta que renderiza una plantilla con los datos de visualizaciones y el gráfico.
+    :rtype: HttpResponse
     """
     fin = timezone.now()
     inicio = fin - timedelta(days=30)  # Valor por defecto de 30 días atrás

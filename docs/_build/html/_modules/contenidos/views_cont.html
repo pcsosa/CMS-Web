@@ -7,6 +7,7 @@
     <title>contenidos.views_cont &#8212; documentación de cmsweb - 0.1</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=def86cc0" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=86dffce3" />
     
     <script src="../../_static/documentation_options.js?v=9c9b61ad"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
@@ -37,22 +38,26 @@
           <div class="body" role="main">
             
   <h1>Código fuente para contenidos.views_cont</h1><div class="highlight"><pre>
-<<<<<<< HEAD
-<span></span>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">django.conf</span> <span class="kn">import</span> <span class="n">settings</span>
 <span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">messages</span>
 <span class="kn">from</span> <span class="nn">django.core.paginator</span> <span class="kn">import</span> <span class="n">Paginator</span>
 <span class="kn">from</span> <span class="nn">django.core.serializers</span> <span class="kn">import</span> <span class="n">serialize</span>
 <span class="kn">from</span> <span class="nn">django.db.models</span> <span class="kn">import</span> <span class="n">Q</span>  <span class="c1"># Para realizar búsquedas</span>
-<span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">JsonResponse</span>
-=======
-<span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">messages</span>
-<span class="kn">from</span> <span class="nn">django.core.paginator</span> <span class="kn">import</span> <span class="n">Paginator</span>
-<span class="kn">from</span> <span class="nn">django.core.serializers</span> <span class="kn">import</span> <span class="n">serialize</span>
-<span class="kn">from</span> <span class="nn">django.db.models</span> <span class="kn">import</span> <span class="n">Q</span>  <span class="c1"># Para realizar búsquedas</span>
-<span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponseForbidden</span><span class="p">,</span> <span class="n">JsonResponse</span>
->>>>>>> johis_dev
+<span class="kn">from</span> <span class="nn">django.db.models</span> <span class="kn">import</span> <span class="n">Avg</span><span class="p">,</span> <span class="n">Count</span><span class="p">,</span> <span class="n">DurationField</span><span class="p">,</span> <span class="n">ExpressionWrapper</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">Sum</span>
+<span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span><span class="p">,</span> <span class="n">JsonResponse</span>
 <span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">get_object_or_404</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">render</span>
+<span class="kn">from</span> <span class="nn">django.utils</span> <span class="kn">import</span> <span class="n">timezone</span>
+<span class="kn">from</span> <span class="nn">django.utils.dateparse</span> <span class="kn">import</span> <span class="n">parse_date</span>
+<span class="kn">from</span> <span class="nn">django.utils.timezone</span> <span class="kn">import</span> <span class="n">make_aware</span>
 <span class="kn">from</span> <span class="nn">django.views.decorators.csrf</span> <span class="kn">import</span> <span class="n">csrf_exempt</span>
+<span class="kn">from</span> <span class="nn">reportlab.lib.pagesizes</span> <span class="kn">import</span> <span class="n">letter</span>
+<span class="kn">from</span> <span class="nn">reportlab.pdfgen</span> <span class="kn">import</span> <span class="n">canvas</span>
 
 <span class="kn">from</span> <span class="nn">appcms.models</span> <span class="kn">import</span> <span class="n">Categoria</span>
 <span class="kn">from</span> <span class="nn">appcms.utils.utils</span> <span class="kn">import</span> <span class="p">(</span>
@@ -60,27 +65,23 @@
     <span class="n">obtenerUserId</span><span class="p">,</span>
     <span class="n">obtenerUserInfoById</span><span class="p">,</span>
     <span class="n">obtenerUsersConRol</span><span class="p">,</span>
-<<<<<<< HEAD
     <span class="n">tienePermiso</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">contenidos.models_cont</span> <span class="kn">import</span> <span class="n">Categoria</span><span class="p">,</span> <span class="n">Comentario</span><span class="p">,</span> <span class="n">Contenido</span><span class="p">,</span> <span class="n">ComentarioRoles</span>
-<span class="kn">from</span> <span class="nn">subcategorias.models</span> <span class="kn">import</span> <span class="n">Subcategoria</span>
-<span class="kn">from</span> <span class="nn">contenidos.notificacion</span> <span class="kn">import</span> <span class="o">*</span>
-=======
+<span class="kn">from</span> <span class="nn">contenidos.models_cont</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Categoria</span><span class="p">,</span>
+    <span class="n">Comentario</span><span class="p">,</span>
+    <span class="n">ComentarioRoles</span><span class="p">,</span>
+    <span class="n">Contenido</span><span class="p">,</span>
+    <span class="n">Visualizacion</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">contenidos.models_cont</span> <span class="kn">import</span> <span class="n">Categoria</span><span class="p">,</span> <span class="n">Comentario</span><span class="p">,</span> <span class="n">Contenido</span><span class="p">,</span> <span class="n">ContenidoForm</span>
+<span class="kn">from</span> <span class="nn">contenidos.notificacion</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">subcategorias.models</span> <span class="kn">import</span> <span class="n">Subcategoria</span>
->>>>>>> johis_dev
 
 
 <div class="viewcode-block" id="crear_contenido">
 <a class="viewcode-back" href="../../modulesf/contenidos/views_cont.html#contenidos.views_cont.crear_contenido">[documentos]</a>
 <span class="k">def</span> <span class="nf">crear_contenido</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
-<<<<<<< HEAD
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;comneta</span>
-=======
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
->>>>>>> johis_dev
 <span class="sd">    Crea un nuevo contenido en el sistema a partir de los datos enviados a través del formulario.</span>
 
 <span class="sd">    :param request: Objeto HttpRequest que contiene los datos de la solicitud.</span>
@@ -260,8 +261,6 @@
     <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;gestion_contenido.html&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;contenidos&quot;</span><span class="p">:</span> <span class="n">contenidos</span><span class="p">})</span></div>
 
 
-<<<<<<< HEAD
-=======
 
 <span class="k">def</span> <span class="nf">editar_contenido</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -288,7 +287,6 @@
     <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;eliminar_contenido.html&quot;</span><span class="p">)</span>
 
 
->>>>>>> johis_dev
 <div class="viewcode-block" id="upload_image">
 <a class="viewcode-back" href="../../modulesf/contenidos/views_cont.html#contenidos.views_cont.upload_image">[documentos]</a>
 <span class="nd">@csrf_exempt</span>
@@ -330,10 +328,7 @@
     <span class="k">try</span><span class="p">:</span>
         <span class="n">contenido</span> <span class="o">=</span> <span class="n">Contenido</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
         <span class="n">contenido</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
-<<<<<<< HEAD
         <span class="n">notificar_borrar_contenido</span><span class="p">(</span><span class="n">contenido</span><span class="p">)</span>
-=======
->>>>>>> johis_dev
         <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;gestion_contenido&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">Contenido</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;Contenido no encontrado&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="mi">404</span><span class="p">)</span></div>
@@ -422,11 +417,7 @@
 
         <span class="c1"># Guardar los cambios en el contenido</span>
         <span class="n">contenido</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-<<<<<<< HEAD
         <span class="n">notificar_edicion_contenido</span><span class="p">(</span><span class="n">contenido</span><span class="p">)</span>
-=======
-
->>>>>>> johis_dev
         <span class="c1"># Redireccionar a la lista de contenidos después de guardar</span>
         <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;gestion_contenido&quot;</span><span class="p">)</span>
 
@@ -441,10 +432,8 @@
     <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;editar_contenido.html&quot;</span><span class="p">,</span> <span class="n">contexto</span><span class="p">)</span></div>
 
 
-<<<<<<< HEAD
-<div class="viewcode-block" id="filtrar">
-<a class="viewcode-back" href="../../modulesf/contenidos/views_cont.html#contenidos.views_cont.filtrar">[documentos]</a>
-<span class="k">def</span> <span class="nf">filtrar</span><span class="p">(</span><span class="n">lista</span><span class="p">,</span><span class="n">rol</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+
+<span class="k">def</span> <span class="nf">filtrar</span><span class="p">(</span><span class="n">lista</span><span class="p">,</span> <span class="n">rol</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Filtra una lista de contenidos según el rol del usuario y su identificador.</span>
 
@@ -458,29 +447,64 @@
 <span class="sd">    :rtype: list</span>
 
 <span class="sd">    **Roles:**</span>
-<span class="sd">    </span>
+
 <span class="sd">    - *Autor*: Incluye solo contenidos cuyo `autor_id` coincida con el `id` proporcionado.</span>
 <span class="sd">    - *Editor*: Incluye solo contenidos cuyo `editor_id` coincida con el `id` proporcionado.</span>
 <span class="sd">    - *Publicador* y *Administrador*: Incluyen todos los contenidos de la lista sin filtrado adicional.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">nuevo</span> <span class="o">=</span><span class="p">[]</span>
+    <span class="n">nuevo</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">if</span> <span class="n">rol</span> <span class="o">==</span> <span class="s2">&quot;Autor&quot;</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">contenido</span> <span class="ow">in</span> <span class="n">lista</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">contenido</span><span class="o">.</span><span class="n">autor_id</span> <span class="o">==</span> <span class="nb">id</span> <span class="p">:</span>
+            <span class="k">if</span> <span class="n">contenido</span><span class="o">.</span><span class="n">autor_id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">:</span>
                 <span class="n">nuevo</span> <span class="o">+=</span> <span class="p">[</span><span class="n">contenido</span><span class="p">]</span>
     <span class="k">elif</span> <span class="n">rol</span> <span class="o">==</span> <span class="s2">&quot;Editor&quot;</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">contenido</span> <span class="ow">in</span> <span class="n">lista</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">contenido</span><span class="o">.</span><span class="n">editor_id</span> <span class="o">==</span> <span class="nb">id</span> <span class="p">:</span>
+            <span class="k">if</span> <span class="n">contenido</span><span class="o">.</span><span class="n">editor_id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">:</span>
                 <span class="n">nuevo</span> <span class="o">+=</span> <span class="p">[</span><span class="n">contenido</span><span class="p">]</span>
-    <span class="k">elif</span> <span class="n">rol</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;Publicador&quot;</span><span class="p">,</span><span class="s2">&quot;Administrador&quot;</span><span class="p">):</span>
+    <span class="k">elif</span> <span class="n">rol</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;Publicador&quot;</span><span class="p">,</span> <span class="s2">&quot;Administrador&quot;</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">contenido</span> <span class="ow">in</span> <span class="n">lista</span><span class="p">:</span>
             <span class="n">nuevo</span> <span class="o">+=</span> <span class="p">[</span><span class="n">contenido</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">nuevo</span>          </div>
+    <span class="k">return</span> <span class="n">nuevo</span>
 
-    
-=======
->>>>>>> johis_dev
+
+<div class="viewcode-block" id="filtrar">
+<a class="viewcode-back" href="../../modulesf/contenidos/views_cont.html#contenidos.views_cont.filtrar">[documentos]</a>
+<span class="k">def</span> <span class="nf">filtrar</span><span class="p">(</span><span class="n">lista</span><span class="p">,</span> <span class="n">rol</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Filtra una lista de contenidos según el rol del usuario y su identificador.</span>
+
+<span class="sd">    :param lista: Lista de objetos de contenido a filtrar.</span>
+<span class="sd">    :type lista: list</span>
+<span class="sd">    :param rol: Rol del usuario, que determina el criterio de filtrado. Puede ser uno de los siguientes: &quot;Autor&quot;, &quot;Editor&quot;, &quot;Publicador&quot; o &quot;Administrador&quot;.</span>
+<span class="sd">    :type rol: str</span>
+<span class="sd">    :param id: Identificador del usuario que se usará para el filtrado en caso de roles específicos.</span>
+<span class="sd">    :type id: int</span>
+<span class="sd">    :return: Lista de objetos de contenido filtrados según el rol y el identificador del usuario.</span>
+<span class="sd">    :rtype: list</span>
+
+<span class="sd">    **Roles:**</span>
+
+<span class="sd">    - *Autor*: Incluye solo contenidos cuyo `autor_id` coincida con el `id` proporcionado.</span>
+<span class="sd">    - *Editor*: Incluye solo contenidos cuyo `editor_id` coincida con el `id` proporcionado.</span>
+<span class="sd">    - *Publicador* y *Administrador*: Incluyen todos los contenidos de la lista sin filtrado adicional.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nuevo</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">rol</span> <span class="o">==</span> <span class="s2">&quot;Autor&quot;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">contenido</span> <span class="ow">in</span> <span class="n">lista</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">contenido</span><span class="o">.</span><span class="n">autor_id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">:</span>
+                <span class="n">nuevo</span> <span class="o">+=</span> <span class="p">[</span><span class="n">contenido</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">rol</span> <span class="o">==</span> <span class="s2">&quot;Editor&quot;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">contenido</span> <span class="ow">in</span> <span class="n">lista</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">contenido</span><span class="o">.</span><span class="n">editor_id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">:</span>
+                <span class="n">nuevo</span> <span class="o">+=</span> <span class="p">[</span><span class="n">contenido</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">rol</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;Publicador&quot;</span><span class="p">,</span> <span class="s2">&quot;Administrador&quot;</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">contenido</span> <span class="ow">in</span> <span class="n">lista</span><span class="p">:</span>
+            <span class="n">nuevo</span> <span class="o">+=</span> <span class="p">[</span><span class="n">contenido</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">nuevo</span></div>
+
+
 
 <div class="viewcode-block" id="tablero_kanban">
 <a class="viewcode-back" href="../../modulesf/contenidos/views_cont.html#contenidos.views_cont.tablero_kanban">[documentos]</a>
@@ -517,38 +541,33 @@
     <span class="n">a_publicar</span> <span class="o">=</span> <span class="n">Contenido</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">estado</span><span class="o">=</span><span class="s2">&quot;A Publicar&quot;</span><span class="p">)</span>
     <span class="n">publicado</span> <span class="o">=</span> <span class="n">Contenido</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">estado</span><span class="o">=</span><span class="s2">&quot;Publicado&quot;</span><span class="p">)</span>
     <span class="n">inactivo</span> <span class="o">=</span> <span class="n">Contenido</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">estado</span><span class="o">=</span><span class="s2">&quot;Inactivo&quot;</span><span class="p">)</span>
-<<<<<<< HEAD
-    
+
     <span class="n">token</span> <span class="o">=</span> <span class="n">obtenerToken</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
     <span class="n">user_id</span> <span class="o">=</span> <span class="n">obtenerUserId</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
-    
+
     <span class="n">users_autores</span> <span class="o">=</span> <span class="n">obtenerUsersConRol</span><span class="p">(</span><span class="s2">&quot;Autor&quot;</span><span class="p">)</span>
     <span class="n">users_editores</span> <span class="o">=</span> <span class="n">obtenerUsersConRol</span><span class="p">(</span><span class="s2">&quot;Editor&quot;</span><span class="p">)</span>
     <span class="n">users_publicadores</span> <span class="o">=</span> <span class="n">obtenerUsersConRol</span><span class="p">(</span><span class="s2">&quot;Publicador&quot;</span><span class="p">)</span>
     <span class="n">users_administradores</span> <span class="o">=</span> <span class="n">obtenerUsersConRol</span><span class="p">(</span><span class="s2">&quot;Administrador&quot;</span><span class="p">)</span>
     <span class="n">rol</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
     <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">users_autores</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">user</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">user_id</span> <span class="p">:</span>
-            <span class="n">rol</span><span class="o">=</span><span class="s2">&quot;Autor&quot;</span>
+        <span class="k">if</span> <span class="n">user</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">user_id</span><span class="p">:</span>
+            <span class="n">rol</span> <span class="o">=</span> <span class="s2">&quot;Autor&quot;</span>
     <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">users_editores</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">user</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">user_id</span> <span class="p">:</span>
-            <span class="n">rol</span><span class="o">=</span><span class="s2">&quot;Editor&quot;</span>
+        <span class="k">if</span> <span class="n">user</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">user_id</span><span class="p">:</span>
+            <span class="n">rol</span> <span class="o">=</span> <span class="s2">&quot;Editor&quot;</span>
     <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">users_publicadores</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">user</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span><span class="o">==</span> <span class="n">user_id</span> <span class="p">:</span>
-            <span class="n">rol</span><span class="o">=</span><span class="s2">&quot;Publicador&quot;</span>
+        <span class="k">if</span> <span class="n">user</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">user_id</span><span class="p">:</span>
+            <span class="n">rol</span> <span class="o">=</span> <span class="s2">&quot;Publicador&quot;</span>
     <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">users_administradores</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">user</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">user_id</span> <span class="p">:</span>
-            <span class="n">rol</span><span class="o">=</span><span class="s2">&quot;Administrador&quot;</span>   
-    <span class="n">borrador</span> <span class="o">=</span> <span class="n">filtrar</span><span class="p">(</span><span class="n">borrador</span><span class="p">,</span><span class="n">rol</span><span class="p">,</span><span class="n">user_id</span><span class="p">)</span>
-    <span class="n">en_revision</span> <span class="o">=</span> <span class="n">filtrar</span><span class="p">(</span><span class="n">en_revision</span><span class="p">,</span><span class="n">rol</span><span class="p">,</span><span class="n">user_id</span><span class="p">)</span>
-    <span class="n">a_publicar</span> <span class="o">=</span> <span class="n">filtrar</span><span class="p">(</span><span class="n">a_publicar</span><span class="p">,</span><span class="n">rol</span><span class="p">,</span><span class="n">user_id</span><span class="p">)</span>
-    <span class="n">publicado</span> <span class="o">=</span> <span class="n">filtrar</span><span class="p">(</span><span class="n">publicado</span><span class="p">,</span><span class="n">rol</span><span class="p">,</span><span class="n">user_id</span><span class="p">)</span>
-    <span class="n">inactivo</span> <span class="o">=</span><span class="n">filtrar</span><span class="p">(</span><span class="n">inactivo</span><span class="p">,</span><span class="n">rol</span><span class="p">,</span><span class="n">user_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">user</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">user_id</span><span class="p">:</span>
+            <span class="n">rol</span> <span class="o">=</span> <span class="s2">&quot;Administrador&quot;</span>
+    <span class="n">borrador</span> <span class="o">=</span> <span class="n">filtrar</span><span class="p">(</span><span class="n">borrador</span><span class="p">,</span> <span class="n">rol</span><span class="p">,</span> <span class="n">user_id</span><span class="p">)</span>
+    <span class="n">en_revision</span> <span class="o">=</span> <span class="n">filtrar</span><span class="p">(</span><span class="n">en_revision</span><span class="p">,</span> <span class="n">rol</span><span class="p">,</span> <span class="n">user_id</span><span class="p">)</span>
+    <span class="n">a_publicar</span> <span class="o">=</span> <span class="n">filtrar</span><span class="p">(</span><span class="n">a_publicar</span><span class="p">,</span> <span class="n">rol</span><span class="p">,</span> <span class="n">user_id</span><span class="p">)</span>
+    <span class="n">publicado</span> <span class="o">=</span> <span class="n">filtrar</span><span class="p">(</span><span class="n">publicado</span><span class="p">,</span> <span class="n">rol</span><span class="p">,</span> <span class="n">user_id</span><span class="p">)</span>
+    <span class="n">inactivo</span> <span class="o">=</span> <span class="n">filtrar</span><span class="p">(</span><span class="n">inactivo</span><span class="p">,</span> <span class="n">rol</span><span class="p">,</span> <span class="n">user_id</span><span class="p">)</span>
 
-        
-=======
-
->>>>>>> johis_dev
     <span class="n">contexto</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;borrador&quot;</span><span class="p">:</span> <span class="n">borrador</span><span class="p">,</span>
         <span class="s2">&quot;en_revision&quot;</span><span class="p">:</span> <span class="n">en_revision</span><span class="p">,</span>
@@ -575,34 +594,41 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">contenido</span> <span class="o">=</span> <span class="n">Contenido</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
-        <span class="n">comentarios</span> <span class="o">=</span> <span class="n">Comentario</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">contenido</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
-<<<<<<< HEAD
-        <span class="n">comentarios_roles</span> <span class="o">=</span> <span class="n">ComentarioRoles</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">contenido</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
-=======
+        <span class="c1"># guarla el numero de visualizaciones</span>
+        <span class="n">contenido</span><span class="o">.</span><span class="n">visualizaciones</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">contenido</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
 
->>>>>>> johis_dev
+        <span class="n">Visualizacion</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">contenido</span><span class="o">=</span><span class="n">contenido</span><span class="p">,</span> <span class="n">fecha</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+
+        <span class="n">comentarios</span> <span class="o">=</span> <span class="n">Comentario</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">contenido</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
+        <span class="n">comentarios_roles</span> <span class="o">=</span> <span class="n">ComentarioRoles</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">contenido</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
         <span class="c1"># Reemplazar el ID del usuario por su nombre de usuario en contenido</span>
         <span class="n">contenido</span><span class="o">.</span><span class="n">autor_id</span> <span class="o">=</span> <span class="n">obtenerUserInfoById</span><span class="p">(</span><span class="n">contenido</span><span class="o">.</span><span class="n">autor_id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;username&quot;</span><span class="p">)</span>
 
         <span class="c1"># Reemplazar el ID del usuario por su nombre de usuario en comentarios</span>
         <span class="k">for</span> <span class="n">comentario</span> <span class="ow">in</span> <span class="n">comentarios</span><span class="p">:</span>
             <span class="n">comentario</span><span class="o">.</span><span class="n">usuario</span> <span class="o">=</span> <span class="n">obtenerUserInfoById</span><span class="p">(</span><span class="n">comentario</span><span class="o">.</span><span class="n">usuario</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;username&quot;</span><span class="p">)</span>
-<<<<<<< HEAD
-        
+
         <span class="c1"># Reemplazar el ID del usuario por su nombre de usuario en comentarios</span>
         <span class="k">for</span> <span class="n">comentario_</span> <span class="ow">in</span> <span class="n">comentarios_roles</span><span class="p">:</span>
-            <span class="n">comentario_</span><span class="o">.</span><span class="n">usuario</span> <span class="o">=</span> <span class="n">obtenerUserInfoById</span><span class="p">(</span><span class="n">comentario_</span><span class="o">.</span><span class="n">usuario</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;username&quot;</span><span class="p">)</span>
-=======
->>>>>>> johis_dev
+            <span class="n">comentario_</span><span class="o">.</span><span class="n">usuario</span> <span class="o">=</span> <span class="n">obtenerUserInfoById</span><span class="p">(</span><span class="n">comentario_</span><span class="o">.</span><span class="n">usuario</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="s2">&quot;username&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Reemplazar el ID del usuario por su nombre de usuario en comentarios</span>
+        <span class="k">for</span> <span class="n">comentario_</span> <span class="ow">in</span> <span class="n">comentarios_roles</span><span class="p">:</span>
+            <span class="n">comentario_</span><span class="o">.</span><span class="n">usuario</span> <span class="o">=</span> <span class="n">obtenerUserInfoById</span><span class="p">(</span><span class="n">comentario_</span><span class="o">.</span><span class="n">usuario</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="s2">&quot;username&quot;</span>
+            <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">render</span><span class="p">(</span>
             <span class="n">request</span><span class="p">,</span>
             <span class="s2">&quot;contenido.html&quot;</span><span class="p">,</span>
-<<<<<<< HEAD
-            <span class="p">{</span><span class="s2">&quot;contenido&quot;</span><span class="p">:</span> <span class="n">contenido</span><span class="p">,</span> <span class="s2">&quot;comentarios&quot;</span><span class="p">:</span> <span class="n">comentarios</span><span class="p">,</span><span class="s2">&quot;comentarios_roles&quot;</span><span class="p">:</span><span class="n">comentarios_roles</span><span class="p">},</span>
-=======
-            <span class="p">{</span><span class="s2">&quot;contenido&quot;</span><span class="p">:</span> <span class="n">contenido</span><span class="p">,</span> <span class="s2">&quot;comentarios&quot;</span><span class="p">:</span> <span class="n">comentarios</span><span class="p">},</span>
->>>>>>> johis_dev
+            <span class="p">{</span>
+                <span class="s2">&quot;contenido&quot;</span><span class="p">:</span> <span class="n">contenido</span><span class="p">,</span>
+                <span class="s2">&quot;comentarios&quot;</span><span class="p">:</span> <span class="n">comentarios</span><span class="p">,</span>
+                <span class="s2">&quot;comentarios_roles&quot;</span><span class="p">:</span> <span class="n">comentarios_roles</span><span class="p">,</span>
+            <span class="p">},</span>
         <span class="p">)</span>
     <span class="k">except</span> <span class="n">Contenido</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;Contenido no encontrado&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="mi">404</span><span class="p">)</span></div>
@@ -646,21 +672,46 @@
         <span class="s2">&quot;Publicado&quot;</span><span class="p">,</span>
         <span class="s2">&quot;Inactivo&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-<<<<<<< HEAD
-    
-    <span class="n">scopes</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;enviar-borrador-revision&quot;</span><span class="p">,</span><span class="s2">&quot;enviar-revision-Apublicar&quot;</span><span class="p">,</span><span class="s2">&quot;enviar-Apublicar-Publicado&quot;</span><span class="p">]</span>
-    <span class="n">scopes</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;enviar-revision-borrador&quot;</span><span class="p">,</span><span class="s2">&quot;enviar-Apublicar-revision&quot;</span><span class="p">,</span><span class="s2">&quot;enviar-Publicado-Apublicar&quot;</span><span class="p">]</span>
+
+    <span class="n">scopes</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;enviar-borrador-revision&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;enviar-revision-Apublicar&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;enviar-Apublicar-Publicado&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="n">scopes</span> <span class="o">+=</span> <span class="p">[</span>
+        <span class="s2">&quot;enviar-revision-borrador&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;enviar-Apublicar-revision&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;enviar-Publicado-Apublicar&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
     <span class="n">token</span> <span class="o">=</span> <span class="n">obtenerToken</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
-    <span class="n">permiso</span><span class="o">=</span><span class="p">{</span> 
-             <span class="p">(</span><span class="s2">&quot;Borrador&quot;</span><span class="p">,</span><span class="s2">&quot;Revisión&quot;</span><span class="p">):</span><span class="s2">&quot;enviar-borrador-revision&quot;</span><span class="p">,</span>
-             <span class="p">(</span><span class="s2">&quot;Revisión&quot;</span><span class="p">,</span><span class="s2">&quot;A Publicar&quot;</span><span class="p">):</span><span class="s2">&quot;enviar-revision-Apublicar&quot;</span><span class="p">,</span>
-             <span class="p">(</span><span class="s2">&quot;A Publicar&quot;</span><span class="p">,</span><span class="s2">&quot;Publicado&quot;</span><span class="p">):</span><span class="s2">&quot;enviar-Apublicar-Publicado&quot;</span><span class="p">,</span>
-             <span class="p">(</span><span class="s2">&quot;Revisión&quot;</span><span class="p">,</span><span class="s2">&quot;Borrador&quot;</span><span class="p">):</span><span class="s2">&quot;enviar-revision-borrador&quot;</span><span class="p">,</span>
-             <span class="p">(</span><span class="s2">&quot;A Publicar&quot;</span><span class="p">,</span><span class="s2">&quot;Revisión&quot;</span><span class="p">):</span><span class="s2">&quot;enviar-Apublicar-revision&quot;</span><span class="p">,</span>
-             <span class="p">(</span><span class="s2">&quot;Publicado&quot;</span><span class="p">,</span><span class="s2">&quot;A Publicar&quot;</span><span class="p">):</span><span class="s2">&quot;enviar-Publicado-Apublicar&quot;</span><span class="p">,</span>
-             <span class="p">}</span>
-=======
->>>>>>> johis_dev
+    <span class="n">permiso</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="p">(</span><span class="s2">&quot;Borrador&quot;</span><span class="p">,</span> <span class="s2">&quot;Revisión&quot;</span><span class="p">):</span> <span class="s2">&quot;enviar-borrador-revision&quot;</span><span class="p">,</span>
+        <span class="p">(</span><span class="s2">&quot;Revisión&quot;</span><span class="p">,</span> <span class="s2">&quot;A Publicar&quot;</span><span class="p">):</span> <span class="s2">&quot;enviar-revision-Apublicar&quot;</span><span class="p">,</span>
+        <span class="p">(</span><span class="s2">&quot;A Publicar&quot;</span><span class="p">,</span> <span class="s2">&quot;Publicado&quot;</span><span class="p">):</span> <span class="s2">&quot;enviar-Apublicar-Publicado&quot;</span><span class="p">,</span>
+        <span class="p">(</span><span class="s2">&quot;Revisión&quot;</span><span class="p">,</span> <span class="s2">&quot;Borrador&quot;</span><span class="p">):</span> <span class="s2">&quot;enviar-revision-borrador&quot;</span><span class="p">,</span>
+        <span class="p">(</span><span class="s2">&quot;A Publicar&quot;</span><span class="p">,</span> <span class="s2">&quot;Revisión&quot;</span><span class="p">):</span> <span class="s2">&quot;enviar-Apublicar-revision&quot;</span><span class="p">,</span>
+        <span class="p">(</span><span class="s2">&quot;Publicado&quot;</span><span class="p">,</span> <span class="s2">&quot;A Publicar&quot;</span><span class="p">):</span> <span class="s2">&quot;enviar-Publicado-Apublicar&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">scopes</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;enviar-borrador-revision&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;enviar-revision-Apublicar&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;enviar-Apublicar-Publicado&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="n">scopes</span> <span class="o">+=</span> <span class="p">[</span>
+        <span class="s2">&quot;enviar-revision-borrador&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;enviar-Apublicar-revision&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;enviar-Publicado-Apublicar&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="n">token</span> <span class="o">=</span> <span class="n">obtenerToken</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="n">permiso</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="p">(</span><span class="s2">&quot;Borrador&quot;</span><span class="p">,</span> <span class="s2">&quot;Revisión&quot;</span><span class="p">):</span> <span class="s2">&quot;enviar-borrador-revision&quot;</span><span class="p">,</span>
+        <span class="p">(</span><span class="s2">&quot;Revisión&quot;</span><span class="p">,</span> <span class="s2">&quot;A Publicar&quot;</span><span class="p">):</span> <span class="s2">&quot;enviar-revision-Apublicar&quot;</span><span class="p">,</span>
+        <span class="p">(</span><span class="s2">&quot;A Publicar&quot;</span><span class="p">,</span> <span class="s2">&quot;Publicado&quot;</span><span class="p">):</span> <span class="s2">&quot;enviar-Apublicar-Publicado&quot;</span><span class="p">,</span>
+        <span class="p">(</span><span class="s2">&quot;Revisión&quot;</span><span class="p">,</span> <span class="s2">&quot;Borrador&quot;</span><span class="p">):</span> <span class="s2">&quot;enviar-revision-borrador&quot;</span><span class="p">,</span>
+        <span class="p">(</span><span class="s2">&quot;A Publicar&quot;</span><span class="p">,</span> <span class="s2">&quot;Revisión&quot;</span><span class="p">):</span> <span class="s2">&quot;enviar-Apublicar-revision&quot;</span><span class="p">,</span>
+        <span class="p">(</span><span class="s2">&quot;Publicado&quot;</span><span class="p">,</span> <span class="s2">&quot;A Publicar&quot;</span><span class="p">):</span> <span class="s2">&quot;enviar-Publicado-Apublicar&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
 
     <span class="c1"># Verifica que los estados actual y siguiente existan en la lista de estados</span>
     <span class="k">if</span> <span class="n">estado_actual</span> <span class="ow">in</span> <span class="n">estados_disponibles</span> <span class="ow">and</span> <span class="n">estado_siguiente</span> <span class="ow">in</span> <span class="n">estados_disponibles</span><span class="p">:</span>
@@ -668,42 +719,33 @@
         <span class="n">siguiente</span> <span class="o">=</span> <span class="n">estados_disponibles</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">estado_siguiente</span><span class="p">)</span>
 
         <span class="c1"># Si el estado siguiente no es &#39;Inactivo&#39; y el estado actual no es &#39;Publicado&#39;</span>
-<<<<<<< HEAD
-        <span class="k">if</span> <span class="n">estado_siguiente</span> <span class="o">!=</span> <span class="s2">&quot;Inactivo&quot;</span> <span class="ow">and</span> <span class="n">estado_actual</span><span class="o">!=</span><span class="s2">&quot;Inactivo&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">estado_siguiente</span> <span class="o">!=</span> <span class="s2">&quot;Inactivo&quot;</span> <span class="ow">and</span> <span class="n">estado_actual</span> <span class="o">!=</span> <span class="s2">&quot;Inactivo&quot;</span><span class="p">:</span>
             <span class="c1"># Verifica que los estados estén uno al lado del otro</span>
             <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">actual</span> <span class="o">-</span> <span class="n">siguiente</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">estado_actual</span> <span class="o">==</span> <span class="s2">&quot;Inactivo&quot;</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">tienePermiso</span><span class="p">(</span><span class="n">token</span><span class="p">,</span><span class="s2">&quot;contenido&quot;</span><span class="p">,</span><span class="n">scopes</span><span class="p">)[</span><span class="n">permiso</span><span class="p">[(</span><span class="n">estado_actual</span><span class="p">,</span><span class="n">estado_siguiente</span><span class="p">)]]:</span>
+                <span class="k">if</span> <span class="n">tienePermiso</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="s2">&quot;contenido&quot;</span><span class="p">,</span> <span class="n">scopes</span><span class="p">)[</span>
+                    <span class="n">permiso</span><span class="p">[(</span><span class="n">estado_actual</span><span class="p">,</span> <span class="n">estado_siguiente</span><span class="p">)]</span>
+                <span class="p">]:</span>
                     <span class="n">contenido</span><span class="o">.</span><span class="n">estado</span> <span class="o">=</span> <span class="n">estado_siguiente</span>
                     <span class="n">contenido</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-                    <span class="n">enviar_notificacion_cambio_estado</span><span class="p">(</span><span class="n">estado_siguiente</span><span class="p">,</span><span class="n">contenido</span><span class="p">)</span>
+                    <span class="n">enviar_notificacion_cambio_estado</span><span class="p">(</span><span class="n">estado_siguiente</span><span class="p">,</span> <span class="n">contenido</span><span class="p">)</span>
                     <span class="c1"># messages.success(request, &quot;El estado ha sido cambiado exitosamente.&quot;)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">messages</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;No posee los permisos necesarios para cambiar a ese estado&quot;</span><span class="p">)</span>
+                    <span class="n">messages</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                        <span class="n">request</span><span class="p">,</span>
+                        <span class="s2">&quot;No posee los permisos necesarios para cambiar a ese estado&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">messages</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;Error. Se debe respetar el flujo de estados de los contenidos&quot;</span><span class="p">)</span>
+                <span class="n">messages</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                    <span class="n">request</span><span class="p">,</span>
+                    <span class="s2">&quot;Error. Se debe respetar el flujo de estados de los contenidos&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">contenido</span><span class="o">.</span><span class="n">estado</span> <span class="o">=</span> <span class="n">estado_siguiente</span>
             <span class="n">contenido</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-            <span class="n">enviar_notificacion_cambio_estado</span><span class="p">(</span><span class="n">estado_siguiente</span><span class="p">,</span><span class="n">contenido</span><span class="p">)</span>
+            <span class="n">enviar_notificacion_cambio_estado</span><span class="p">(</span><span class="n">estado_siguiente</span><span class="p">,</span> <span class="n">contenido</span><span class="p">)</span>
             <span class="c1"># messages.success(request, &quot;El contenido ha sido inactivado.&quot;)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">messages</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;Error. Estados proporcionados invalidos&quot;</span><span class="p">)</span>
-=======
-        <span class="k">if</span> <span class="n">estado_siguiente</span> <span class="o">!=</span> <span class="s2">&quot;Inactivo&quot;</span><span class="p">:</span>
-            <span class="c1"># Verifica que los estados estén uno al lado del otro</span>
-            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">actual</span> <span class="o">-</span> <span class="n">siguiente</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">estado_actual</span> <span class="o">==</span> <span class="s2">&quot;Inactivo&quot;</span><span class="p">:</span>
-                <span class="n">contenido</span><span class="o">.</span><span class="n">estado</span> <span class="o">=</span> <span class="n">estado_siguiente</span>
-                <span class="n">contenido</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-                <span class="c1"># messages.success(request, &quot;El estado ha sido cambiado exitosamente.&quot;)</span>
-            <span class="c1"># else:</span>
-            <span class="c1"># messages.error(request, &quot;No se pudo cambiar de estado.&quot;)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">contenido</span><span class="o">.</span><span class="n">estado</span> <span class="o">=</span> <span class="n">estado_siguiente</span>
-            <span class="n">contenido</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-            <span class="c1"># messages.success(request, &quot;El contenido ha sido inactivado.&quot;)</span>
-    <span class="c1"># else:</span>
-    <span class="c1"># messages.error(request, &quot;Estados inválidos proporcionados.&quot;)</span>
->>>>>>> johis_dev
 
     <span class="c1"># Manejar la redirección si HTTP_REFERER no está presente</span>
     <span class="n">referer</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">META</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;HTTP_REFERER&quot;</span><span class="p">)</span>
@@ -737,15 +779,21 @@
     <span class="n">contenido_</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Contenido</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+
+        <span class="c1"># Si se esta realizando prubeas unitarias, se asigna un usuario por defecto</span>
+        <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">TESTING</span> <span class="o">==</span> <span class="s2">&quot;True&quot;</span><span class="p">:</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="s2">&quot;autor1&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1">#  Guardar el id del usuario logeado</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="n">obtenerUserId</span><span class="p">(</span><span class="n">obtenerToken</span><span class="p">(</span><span class="n">request</span><span class="p">))</span>
+
         <span class="n">comentario_</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;comentario&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">comentario_</span><span class="p">:</span>
             <span class="n">comentario_</span> <span class="o">=</span> <span class="n">comentario_</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&lt;p&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&lt;/p&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
             <span class="n">nuevo_comentario</span> <span class="o">=</span> <span class="n">Comentario</span><span class="p">(</span>
                 <span class="n">contenido</span><span class="o">=</span><span class="n">contenido_</span><span class="p">,</span>
                 <span class="n">comentario</span><span class="o">=</span><span class="n">comentario_</span><span class="p">,</span>
-                <span class="n">usuario</span><span class="o">=</span><span class="n">obtenerUserId</span><span class="p">(</span>
-                    <span class="n">obtenerToken</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
-                <span class="p">),</span>  <span class="c1"># Guardar el id del usuario logeado</span>
+                <span class="n">usuario</span><span class="o">=</span><span class="n">user</span><span class="p">,</span>
                 <span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">nuevo_comentario</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
@@ -754,7 +802,7 @@
 
     <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;visualizar_contenido&quot;</span><span class="p">,</span> <span class="n">pk</span><span class="p">)</span></div>
 
-<<<<<<< HEAD
+
 
 <div class="viewcode-block" id="guardar_comentario_Roles">
 <a class="viewcode-back" href="../../modulesf/contenidos/views_cont.html#contenidos.views_cont.guardar_comentario_Roles">[documentos]</a>
@@ -789,14 +837,310 @@
                 <span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">nuevo_comentario</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-            <span class="n">cambiar_estado</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="n">pk</span><span class="p">,</span><span class="s2">&quot;Revisión&quot;</span><span class="p">,</span><span class="s2">&quot;Borrador&quot;</span><span class="p">)</span>
+            <span class="n">cambiar_estado</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">pk</span><span class="p">,</span> <span class="s2">&quot;Revisión&quot;</span><span class="p">,</span> <span class="s2">&quot;Borrador&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">error_message</span> <span class="o">=</span> <span class="s2">&quot;El comentario no puede estar vacío.&quot;</span>
 
     <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;visualizar_contenido&quot;</span><span class="p">,</span> <span class="n">pk</span><span class="p">)</span></div>
 
-=======
->>>>>>> johis_dev
+
+
+<div class="viewcode-block" id="nromegusta">
+<a class="viewcode-back" href="../../modulesf/contenidos/views_cont.html#contenidos.views_cont.nromegusta">[documentos]</a>
+<span class="k">def</span> <span class="nf">nromegusta</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">pk</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Aumenta el número de &quot;me gusta&quot; dado a un contenido específico.</span>
+
+<span class="sd">    Esta vista recibe una solicitud HTTP y la clave primaria de un contenido para incrementar </span>
+<span class="sd">    su contador de &quot;me gusta&quot;. </span>
+
+<span class="sd">    :param request: El objeto de solicitud HTTP que contiene los datos de la petición.</span>
+<span class="sd">    :type request: HttpRequest</span>
+<span class="sd">    :param pk: La clave primaria del contenido al cual se le va a incrementar el contador de &quot;me gusta&quot;.</span>
+<span class="sd">    :type pk: int</span>
+<span class="sd">    :return: Un objeto JsonResponse con el nuevo valor del contador de &quot;me gusta&quot;.</span>
+<span class="sd">    :rtype: JsonResponse</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">contenido</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Contenido</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
+
+    <span class="c1"># Incrementar el contador de &quot;me gusta&quot;</span>
+    <span class="n">contenido</span><span class="o">.</span><span class="n">megusta</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">contenido</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;me_gusta&quot;</span><span class="p">:</span> <span class="n">contenido</span><span class="o">.</span><span class="n">megusta</span><span class="p">})</span></div>
+
+
+
+<div class="viewcode-block" id="reporte">
+<a class="viewcode-back" href="../../modulesf/contenidos/views_cont.html#contenidos.views_cont.reporte">[documentos]</a>
+<span class="k">def</span> <span class="nf">reporte</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Genera un reporte filtrado de contenidos basados en parámetros como fecha, estado, </span>
+<span class="sd">    categoría, y subcategoría. También calcula estadísticas como el total de visitas y &quot;me gusta&quot;.</span>
+
+<span class="sd">    :param request: El objeto de solicitud HTTP que contiene los parámetros de la petición.</span>
+<span class="sd">    :type request: HttpRequest</span>
+<span class="sd">    :return: Renderiza la plantilla &#39;reporte.html&#39; con los contenidos filtrados y el resumen calculado.</span>
+<span class="sd">    :rtype: HttpResponse</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Obtener los parámetros de filtrado de la solicitud GET</span>
+    <span class="n">fecha_inicio</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fecha_inicio&quot;</span><span class="p">)</span>
+    <span class="n">fecha_fin</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fecha_fin&quot;</span><span class="p">)</span>
+    <span class="n">estado</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;estado&quot;</span><span class="p">)</span>
+
+    <span class="n">categoria_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;categoria&quot;</span><span class="p">)</span>
+    <span class="n">subcategoria_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;subcategoria&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Filtrar los contenidos según los parámetros</span>
+    <span class="c1"># contenidos = Contenido.objects.order_by(&#39;-megusta&#39;)[:5]</span>
+    <span class="n">contenidos</span> <span class="o">=</span> <span class="n">Contenido</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">fecha_inicio</span><span class="p">:</span>
+        <span class="n">fecha_inicio</span> <span class="o">=</span> <span class="n">parse_date</span><span class="p">(</span><span class="n">fecha_inicio</span><span class="p">)</span>
+        <span class="c1"># Ajustar la fecha de fin para incluir todo el día</span>
+        <span class="n">fecha_inicio</span> <span class="o">=</span> <span class="n">make_aware</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="n">fecha_inicio</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">min</span><span class="p">))</span>
+        <span class="n">contenidos</span> <span class="o">=</span> <span class="n">contenidos</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">fecha_creacion__gte</span><span class="o">=</span><span class="n">fecha_inicio</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">fecha_fin</span><span class="p">:</span>
+        <span class="n">fecha_fin</span> <span class="o">=</span> <span class="n">parse_date</span><span class="p">(</span><span class="n">fecha_fin</span><span class="p">)</span>
+        <span class="c1"># Ajustar la fecha de fin para incluir todo el día</span>
+        <span class="n">fecha_fin</span> <span class="o">=</span> <span class="n">make_aware</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="n">fecha_fin</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">max</span><span class="p">))</span>
+        <span class="n">contenidos</span> <span class="o">=</span> <span class="n">contenidos</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">fecha_creacion__lte</span><span class="o">=</span><span class="n">fecha_fin</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">estado</span><span class="p">:</span>
+        <span class="n">contenidos</span> <span class="o">=</span> <span class="n">contenidos</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">estado</span><span class="o">=</span><span class="n">estado</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">categoria_id</span><span class="p">:</span>
+        <span class="n">contenidos</span> <span class="o">=</span> <span class="n">contenidos</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">categoria_id</span><span class="o">=</span><span class="n">categoria_id</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">subcategoria_id</span><span class="p">:</span>
+        <span class="n">contenidos</span> <span class="o">=</span> <span class="n">contenidos</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">subcategoria_id</span><span class="o">=</span><span class="n">subcategoria_id</span><span class="p">)</span>
+
+    <span class="c1"># Calcular el resumen general</span>
+    <span class="n">summary</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;total_visitas&quot;</span><span class="p">:</span> <span class="n">contenidos</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">total_visitas</span><span class="o">=</span><span class="n">Sum</span><span class="p">(</span><span class="s2">&quot;visualizaciones&quot;</span><span class="p">))[</span>
+            <span class="s2">&quot;total_visitas&quot;</span>
+        <span class="p">]</span>
+        <span class="ow">or</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;total_megusta&quot;</span><span class="p">:</span> <span class="n">contenidos</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">total_megusta</span><span class="o">=</span><span class="n">Sum</span><span class="p">(</span><span class="s2">&quot;megusta&quot;</span><span class="p">))[</span>
+            <span class="s2">&quot;total_megusta&quot;</span>
+        <span class="p">]</span>
+        <span class="ow">or</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;total_contenido&quot;</span><span class="p">:</span> <span class="n">contenidos</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Calcular la cantidad de artículos redactados en el periodo de tiempo</span>
+    <span class="n">articulos_redactados</span> <span class="o">=</span> <span class="n">contenidos</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+
+    <span class="c1"># Calcular el promedio de tiempo de revisión de artículos</span>
+    <span class="n">tiempo_revision</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">fecha_inicio</span> <span class="ow">and</span> <span class="n">fecha_fin</span><span class="p">:</span>
+        <span class="n">tiempo_revision</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">Contenido</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">estado</span><span class="o">=</span><span class="s2">&quot;Revisión&quot;</span><span class="p">,</span>
+                <span class="n">fecha_creacion__gte</span><span class="o">=</span><span class="n">fecha_inicio</span><span class="p">,</span>
+                <span class="n">fecha_creacion__lte</span><span class="o">=</span><span class="n">fecha_fin</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+                <span class="n">tiempo_revision</span><span class="o">=</span><span class="n">ExpressionWrapper</span><span class="p">(</span>
+                    <span class="n">F</span><span class="p">(</span><span class="s2">&quot;fecha_modificacion&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="n">F</span><span class="p">(</span><span class="s2">&quot;fecha_creacion&quot;</span><span class="p">),</span>
+                    <span class="n">output_field</span><span class="o">=</span><span class="n">DurationField</span><span class="p">(),</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">promedio_tiempo_revision</span><span class="o">=</span><span class="n">Avg</span><span class="p">(</span><span class="s2">&quot;tiempo_revision&quot;</span><span class="p">))[</span>
+                <span class="s2">&quot;promedio_tiempo_revision&quot;</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Obtener los top 5 contenidos con más &quot;me gusta&quot;</span>
+    <span class="n">top_contenidos</span> <span class="o">=</span> <span class="n">contenidos</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-megusta&quot;</span><span class="p">)[:</span><span class="mi">5</span><span class="p">]</span>
+
+    <span class="c1"># Obtener los top 5 contenidos más leídos en el periodo de tiempo</span>
+    <span class="k">if</span> <span class="n">fecha_inicio</span> <span class="ow">and</span> <span class="n">fecha_fin</span><span class="p">:</span>
+        <span class="n">top_leidos</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">contenidos</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">visualizacion__fecha__range</span><span class="o">=</span><span class="p">(</span><span class="n">fecha_inicio</span><span class="p">,</span> <span class="n">fecha_fin</span><span class="p">))</span>
+            <span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">total_visitas</span><span class="o">=</span><span class="n">Count</span><span class="p">(</span><span class="s2">&quot;visualizacion__id&quot;</span><span class="p">))</span>
+            <span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-total_visitas&quot;</span><span class="p">)[:</span><span class="mi">5</span><span class="p">]</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">top_leidos</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Obtener todas las categorías y subcategorías para los filtros</span>
+    <span class="n">categorias</span> <span class="o">=</span> <span class="n">Categoria</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="n">subcategorias</span> <span class="o">=</span> <span class="n">Subcategoria</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span>
+        <span class="n">request</span><span class="p">,</span>
+        <span class="s2">&quot;reporte.html&quot;</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;contenidos&quot;</span><span class="p">:</span> <span class="n">contenidos</span><span class="p">,</span>
+            <span class="s2">&quot;top_contenidos&quot;</span><span class="p">:</span> <span class="n">top_contenidos</span><span class="p">,</span>
+            <span class="s2">&quot;top_leidos&quot;</span><span class="p">:</span> <span class="n">top_leidos</span><span class="p">,</span>
+            <span class="s2">&quot;summary&quot;</span><span class="p">:</span> <span class="n">summary</span><span class="p">,</span>
+            <span class="s2">&quot;articulos_redactados&quot;</span><span class="p">:</span> <span class="n">articulos_redactados</span><span class="p">,</span>
+            <span class="s2">&quot;tiempo_revision&quot;</span><span class="p">:</span> <span class="n">tiempo_revision</span><span class="p">,</span>
+            <span class="s2">&quot;categorias&quot;</span><span class="p">:</span> <span class="n">categorias</span><span class="p">,</span>
+            <span class="s2">&quot;subcategorias&quot;</span><span class="p">:</span> <span class="n">subcategorias</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">)</span></div>
+
+
+    <span class="c1"># return render(request, &#39;reporte.html&#39;, {</span>
+    <span class="c1">#&#39;contenidos&#39;: contenidos.order_by(&#39;-megusta&#39;)[:5],</span>
+    <span class="c1">#&#39;summary&#39;: summary,</span>
+    <span class="c1"># })</span>
+    <span class="c1"># return render(request, &#39;reporte.html&#39;, {&#39;contenidos&#39;: contenidos, &#39;summary&#39;: summary})</span>
+
+
+<span class="c1"># Para impresion en pdf</span>
+
+
+<div class="viewcode-block" id="generar_reporte_pdf">
+<a class="viewcode-back" href="../../modulesf/contenidos/views_cont.html#contenidos.views_cont.generar_reporte_pdf">[documentos]</a>
+<span class="k">def</span> <span class="nf">generar_reporte_pdf</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Genera un reporte en formato PDF con un resumen de los contenidos, </span>
+<span class="sd">    incluyendo el total de visitas, &quot;me gusta&quot; y un gráfico de los top 5 contenidos </span>
+<span class="sd">    con más &quot;me gusta&quot;.</span>
+
+<span class="sd">    :param request: El objeto de solicitud HTTP para la petición de generar el reporte en PDF.</span>
+<span class="sd">    :type request: HttpRequest</span>
+<span class="sd">    :return: Un archivo PDF con el reporte generado.</span>
+<span class="sd">    :rtype: HttpResponse</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">summary</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;total_visitas&quot;</span><span class="p">:</span> <span class="n">Contenido</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span>
+            <span class="n">total_visitas</span><span class="o">=</span><span class="n">Sum</span><span class="p">(</span><span class="s2">&quot;visualizaciones&quot;</span><span class="p">)</span>
+        <span class="p">)[</span><span class="s2">&quot;total_visitas&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;total_megusta&quot;</span><span class="p">:</span> <span class="n">Contenido</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">total_megusta</span><span class="o">=</span><span class="n">Sum</span><span class="p">(</span><span class="s2">&quot;megusta&quot;</span><span class="p">))[</span>
+            <span class="s2">&quot;total_megusta&quot;</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;total_contenido&quot;</span><span class="p">:</span> <span class="n">Contenido</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Crear la respuesta con tipo de contenido PDF</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="n">content_type</span><span class="o">=</span><span class="s2">&quot;application/pdf&quot;</span><span class="p">)</span>
+    <span class="n">response</span><span class="p">[</span><span class="s2">&quot;Content-Disposition&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;attachment; filename=&quot;reporte_contenido.pdf&quot;&#39;</span>
+    <span class="n">pdf</span> <span class="o">=</span> <span class="n">canvas</span><span class="o">.</span><span class="n">Canvas</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+
+    <span class="c1"># Escribir el contenido en el PDF</span>
+    <span class="n">pdf</span><span class="o">.</span><span class="n">drawString</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">750</span><span class="p">,</span> <span class="s2">&quot;Reporte de Contenidos&quot;</span><span class="p">)</span>
+    <span class="n">pdf</span><span class="o">.</span><span class="n">drawString</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">730</span><span class="p">,</span> <span class="s2">&quot;Resumen General&quot;</span><span class="p">)</span>
+    <span class="n">pdf</span><span class="o">.</span><span class="n">drawString</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">710</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Total de Visitas: </span><span class="si">{</span><span class="n">summary</span><span class="p">[</span><span class="s1">&#39;total_visitas&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">pdf</span><span class="o">.</span><span class="n">drawString</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">690</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Total de Me Gusta: </span><span class="si">{</span><span class="n">summary</span><span class="p">[</span><span class="s1">&#39;total_megusta&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">pdf</span><span class="o">.</span><span class="n">drawString</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">670</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Total de Contenidos: </span><span class="si">{</span><span class="n">summary</span><span class="p">[</span><span class="s1">&#39;total_contenido&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Obtener los contenidos</span>
+    <span class="n">contenidos</span> <span class="o">=</span> <span class="n">Contenido</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>  <span class="c1"># Asegúrate de obtener todos los contenidos</span>
+
+    <span class="c1"># Obtener los top 5 contenidos</span>
+    <span class="n">top_contenidos</span> <span class="o">=</span> <span class="n">contenidos</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-megusta&quot;</span><span class="p">)[</span>
+        <span class="p">:</span><span class="mi">5</span>
+    <span class="p">]</span>  <span class="c1"># Filtrar los 5 contenidos con más &quot;me gusta&quot;</span>
+
+    <span class="c1"># Crear el gráfico</span>
+    <span class="n">titulos</span> <span class="o">=</span> <span class="p">[</span><span class="n">contenido</span><span class="o">.</span><span class="n">titulo</span> <span class="k">for</span> <span class="n">contenido</span> <span class="ow">in</span> <span class="n">top_contenidos</span><span class="p">]</span>
+    <span class="n">megustas</span> <span class="o">=</span> <span class="p">[</span><span class="n">contenido</span><span class="o">.</span><span class="n">megusta</span> <span class="k">for</span> <span class="n">contenido</span> <span class="ow">in</span> <span class="n">top_contenidos</span><span class="p">]</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">titulos</span><span class="p">,</span> <span class="n">megustas</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;lightblue&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Top 5 Contenidos con Más Me Gusta&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Contenido&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Me Gusta&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Guardar el gráfico en un archivo temporal</span>
+    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.png&quot;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">temp_file</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">temp_file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>  <span class="c1"># Guardar como PNG en el archivo temporal</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">temp_file_path</span> <span class="o">=</span> <span class="n">temp_file</span><span class="o">.</span><span class="n">name</span>  <span class="c1"># Guardar la ruta del archivo temporal</span>
+
+    <span class="c1"># Agregar el gráfico al PDF</span>
+    <span class="n">pdf</span><span class="o">.</span><span class="n">drawImage</span><span class="p">(</span>
+        <span class="n">temp_file_path</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">200</span>
+    <span class="p">)</span>  <span class="c1"># Ajusta la posición y el tamaño según sea necesario</span>
+
+    <span class="c1"># Terminar el documento</span>
+    <span class="n">pdf</span><span class="o">.</span><span class="n">showPage</span><span class="p">()</span>
+    <span class="n">pdf</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+    <span class="c1"># Eliminar el archivo temporal</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">temp_file_path</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">response</span></div>
+
+
+
+<div class="viewcode-block" id="contar_visualizaciones">
+<a class="viewcode-back" href="../../modulesf/contenidos/views_cont.html#contenidos.views_cont.contar_visualizaciones">[documentos]</a>
+<span class="k">def</span> <span class="nf">contar_visualizaciones</span><span class="p">(</span><span class="n">articulo_id</span><span class="p">,</span> <span class="n">inicio</span><span class="p">,</span> <span class="n">fin</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Cuenta el número de visualizaciones de un artículo en un rango de fechas determinado.</span>
+
+<span class="sd">    :param articulo_id: El ID del artículo para el cual se van a contar las visualizaciones.</span>
+<span class="sd">    :type articulo_id: int</span>
+<span class="sd">    :param inicio: La fecha de inicio del rango en el que se contarán las visualizaciones.</span>
+<span class="sd">    :type inicio: datetime</span>
+<span class="sd">    :param fin: La fecha de fin del rango en el que se contarán las visualizaciones.</span>
+<span class="sd">    :type fin: datetime</span>
+<span class="sd">    :return: El número de visualizaciones del artículo en el rango de fechas especificado.</span>
+<span class="sd">    :rtype: int</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">Visualizacion</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+        <span class="n">articulo_id</span><span class="o">=</span><span class="n">articulo_id</span><span class="p">,</span> <span class="n">fecha__range</span><span class="o">=</span><span class="p">(</span><span class="n">inicio</span><span class="p">,</span> <span class="n">fin</span><span class="p">)</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="graficar_visualizaciones">
+<a class="viewcode-back" href="../../modulesf/contenidos/views_cont.html#contenidos.views_cont.graficar_visualizaciones">[documentos]</a>
+<span class="k">def</span> <span class="nf">graficar_visualizaciones</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Genera un gráfico de visualizaciones por artículo dentro de un rango de fechas determinado.</span>
+
+<span class="sd">    Esta función obtiene las fechas de inicio y fin del formulario enviado por el usuario</span>
+<span class="sd">    (o usa un valor predeterminado de los últimos 30 días) y cuenta las visualizaciones de cada</span>
+<span class="sd">    artículo en ese rango de fechas. Luego prepara los datos para mostrarlos en un gráfico.</span>
+
+<span class="sd">    :param request: El objeto de solicitud HTTP que contiene los parámetros de fecha y las peticiones de datos.</span>
+<span class="sd">    :type request: HttpRequest</span>
+<span class="sd">    :return: Una respuesta que renderiza una plantilla con los datos de visualizaciones y el gráfico.</span>
+<span class="sd">    :rtype: HttpResponse</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fin</span> <span class="o">=</span> <span class="n">timezone</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="n">inicio</span> <span class="o">=</span> <span class="n">fin</span> <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>  <span class="c1"># Valor por defecto de 30 días atrás</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="c1"># Obtener las fechas del formulario</span>
+        <span class="n">inicio</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fecha_inicio&quot;</span><span class="p">)</span>
+        <span class="n">fin</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fecha_fin&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Convertir las fechas a objetos datetime</span>
+        <span class="n">inicio</span> <span class="o">=</span> <span class="n">timezone</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">inicio</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">fin</span> <span class="o">=</span> <span class="n">timezone</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">fin</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Contar visualizaciones por artículo en el rango de fechas</span>
+    <span class="n">contenidos</span> <span class="o">=</span> <span class="n">Contenido</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="n">datos_visualizaciones</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">contenido</span><span class="o">.</span><span class="n">titulo</span><span class="p">:</span> <span class="n">Visualizacion</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">contenido</span><span class="o">=</span><span class="n">contenido</span><span class="p">,</span> <span class="n">fecha__range</span><span class="o">=</span><span class="p">(</span><span class="n">inicio</span><span class="p">,</span> <span class="n">fin</span><span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">contenido</span> <span class="ow">in</span> <span class="n">contenidos</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Preparar datos para el gráfico</span>
+    <span class="n">titulos</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">datos_visualizaciones</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="n">conteos</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">datos_visualizaciones</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span>
+        <span class="n">request</span><span class="p">,</span>
+        <span class="s2">&quot;graficar_visualizaciones.html&quot;</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;titulos&quot;</span><span class="p">:</span> <span class="n">titulos</span><span class="p">,</span>
+            <span class="s2">&quot;conteos&quot;</span><span class="p">:</span> <span class="n">conteos</span><span class="p">,</span>
+            <span class="s2">&quot;fecha_inicio&quot;</span><span class="p">:</span> <span class="n">inicio</span><span class="o">.</span><span class="n">date</span><span class="p">(),</span>
+            <span class="s2">&quot;fecha_fin&quot;</span><span class="p">:</span> <span class="n">fin</span><span class="o">.</span><span class="n">date</span><span class="p">(),</span>
+        <span class="p">},</span>
+    <span class="p">)</span></div>
+
 </pre></div>
 
             <div class="clearer"></div>

@@ -7,6 +7,7 @@
     <title>contenidos.models_cont &#8212; documentación de cmsweb - 0.1</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=def86cc0" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=86dffce3" />
     
     <script src="../../_static/documentation_options.js?v=9c9b61ad"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
@@ -110,6 +111,10 @@
         <span class="n">auto_now</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">)</span>  <span class="c1"># Se actualiza en cada modificación</span>
 
+    <span class="n">megusta</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># Número de &quot;me gusta&quot;</span>
+    <span class="n">visualizaciones</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># Número de visualizaciones</span>
+    
+
 <div class="viewcode-block" id="Contenido.obtener_imagen">
 <a class="viewcode-back" href="../../modulesf/contenidos/models_cont.html#contenidos.models_cont.Contenido.obtener_imagen">[documentos]</a>
     <span class="k">def</span> <span class="nf">obtener_imagen</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -211,7 +216,6 @@
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;Comentario </span><span class="si">{}</span><span class="s2"> por </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comentario</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">usuario</span><span class="p">)</span></div>
 
-<<<<<<< HEAD
 
 <div class="viewcode-block" id="ComentarioRoles">
 <a class="viewcode-back" href="../../modulesf/contenidos/models_cont.html#contenidos.models_cont.ComentarioRoles">[documentos]</a>
@@ -248,8 +252,13 @@
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;Comentario </span><span class="si">{}</span><span class="s2"> por </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comentario</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">usuario</span><span class="p">)</span></div>
 
-=======
->>>>>>> johis_dev
+
+<div class="viewcode-block" id="Visualizacion">
+<a class="viewcode-back" href="../../modulesf/contenidos/models_cont.html#contenidos.models_cont.Visualizacion">[documentos]</a>
+<span class="k">class</span> <span class="nc">Visualizacion</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">contenido</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Contenido</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">)</span>
+    <span class="n">fecha</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
 </pre></div>
 
             <div class="clearer"></div>

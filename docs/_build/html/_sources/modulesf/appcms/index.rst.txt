@@ -11,9 +11,5 @@ appcms
    apps.rst
    services.rst
    utils.rst
-<<<<<<< HEAD
    decorators.rst
    notificacion.rst
-=======
-   decorators.rst
->>>>>>> johis_dev
