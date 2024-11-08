@@ -890,6 +890,14 @@ def reporte(request):
 
 
 def generar_reporte_pdf(request):
+    """
+    Genera un reporte de contenidos filtrados por parámetros de la solicitud.
+
+    Args:
+        request (HttpRequest): La solicitud HTTP que contiene los parámetros de filtrado.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla 'reporte.html' con los contenidos filtrados y estadísticas."""
     # Calcular el resumen
     summary = {
         "total_visitas": Contenido.objects.aggregate(
@@ -953,12 +961,32 @@ def generar_reporte_pdf(request):
 
 
 def contar_visualizaciones(articulo_id, inicio, fin):
+    """
+    Cuenta las visualizaciones de un artículo en un rango de fechas.
+
+    Args:
+        articulo_id (int): ID del artículo.
+        inicio (datetime): Fecha de inicio del rango.
+        fin (datetime): Fecha de fin del rango.
+
+    Returns:
+        int: Número de visualizaciones del artículo en el rango especificado.
+    """
     return Visualizacion.objects.filter(
         articulo_id=articulo_id, fecha__range=(inicio, fin)
     ).count()
 
 
 def graficar_visualizaciones(request):
+    """
+    Genera un gráfico de visualizaciones de contenidos en un rango de fechas.
+
+    Args:
+        request (HttpRequest): La solicitud HTTP que puede contener fechas para el gráfico.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla 'graficar_visualizaciones.html' con los datos del gráfico.
+    """
     fin = timezone.now()
     inicio = fin - timedelta(days=30)  # Valor por defecto de 30 días atrás
 
