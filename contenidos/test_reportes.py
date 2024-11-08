@@ -144,3 +144,72 @@ class ReportesEstadisticosTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, self.contenido1.titulo)
         self.assertNotContains(response, self.contenido2.titulo)
+
+    def test_reporte_contenido_subcategoria_incorrecta(self):
+        otra_subcategoria = Subcategoria.objects.create(
+            nombre="Otra Subcategoría", categoria=self.categoria
+        )
+        response = self.client.get(
+            reverse("reporte"),
+            {
+                "fecha_inicio": (timezone.now() - timezone.timedelta(days=10)).date(),
+                "fecha_fin": (timezone.now() + timezone.timedelta(days=10)).date(),
+                "estado": "Publicado",
+                "categoria": self.categoria.id_categoria,
+                "subcategoria": otra_subcategoria.id_subcategoria,
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, self.contenido1.titulo)
+        self.assertNotContains(response, self.contenido2.titulo)
+
+    def test_reporte_contenido_estado_incorrecto(self):
+        response = self.client.get(
+            reverse("reporte"),
+            {
+                "fecha_inicio": (timezone.now() - timezone.timedelta(days=10)).date(),
+                "fecha_fin": (timezone.now() + timezone.timedelta(days=10)).date(),
+                "estado": "Borrador",
+                "categoria": self.categoria.id_categoria,
+                "subcategoria": self.subcategoria.id_subcategoria,
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, self.contenido1.titulo)
+        self.assertNotContains(response, self.contenido2.titulo)
+
+    def test_reporte_contenido_sin_filtros(self):
+        response = self.client.get(reverse("reporte"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.contenido1.titulo)
+        self.assertContains(response, self.contenido2.titulo)
+
+    def test_reporte_contenido_fecha_inicio_futura(self):
+        response = self.client.get(
+            reverse("reporte"),
+            {
+                "fecha_inicio": (timezone.now() + timezone.timedelta(days=1)).date(),
+                "fecha_fin": (timezone.now() + timezone.timedelta(days=10)).date(),
+                "estado": "Publicado",
+                "categoria": self.categoria.id_categoria,
+                "subcategoria": self.subcategoria.id_subcategoria,
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, self.contenido1.titulo)
+        self.assertNotContains(response, self.contenido2.titulo)
+
+    def test_reporte_contenido_fecha_fin_pasada(self):
+        response = self.client.get(
+            reverse("reporte"),
+            {
+                "fecha_inicio": (timezone.now() - timezone.timedelta(days=20)).date(),
+                "fecha_fin": (timezone.now() - timezone.timedelta(days=15)).date(),
+                "estado": "Publicado",
+                "categoria": self.categoria.id_categoria,
+                "subcategoria": self.subcategoria.id_subcategoria,
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, self.contenido1.titulo)
+        self.assertNotContains(response, self.contenido2.titulo)
