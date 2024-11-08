@@ -90,20 +90,20 @@ class ReportesEstadisticosTests(TestCase):
         self.assertContains(response, self.contenido2.megusta)
 
     # Da fallo
-    # def test_filtrar_contenidos(self):
-    #     response = self.client.get(
-    #         reverse("reporte"),
-    #         {
-    #             "fecha_inicio": (timezone.now() - timezone.timedelta(days=10)).date(),
-    #             "fecha_fin": (timezone.now() + timezone.timedelta(days=10)).date(),
-    #             "estado": "Publicado",
-    #             "categoria": self.categoria.id_categoria,
-    #             "subcategoria": self.subcategoria.id_subcategoria,
-    #         },
-    #     )
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertContains(response, self.contenido2.titulo)
-    #     self.assertNotContains(response, self.contenido1.titulo)
+    def test_filtrar_contenidos(self):
+        response = self.client.get(
+            reverse("reporte"),
+            {
+                "fecha_inicio": (timezone.now() - timezone.timedelta(days=10)).date(),
+                "fecha_fin": (timezone.now() + timezone.timedelta(days=10)).date(),
+                "estado": "Publicado",
+                "categoria": self.categoria.id_categoria,
+                "subcategoria": self.subcategoria.id_subcategoria,
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.contenido2.titulo)
+        self.assertContains(response, self.contenido1.titulo)
 
     def test_reporte_sin_contenidos(self):
         """
@@ -119,22 +119,28 @@ class ReportesEstadisticosTests(TestCase):
         self.assertContains(response, "Total de Contenidos: 0")
 
     # Da fallo
-    # def test_reporte_contenido_borrador(self):
-    #     self.contenido1.estado = "Borrador"
-    #     self.contenido1.save()
-    #     response = self.client.get(reverse("reporte"))
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertNotContains(response, self.contenido1.titulo)
-    #     self.assertContains(response, self.contenido2.titulo)
+    def test_reporte_contenido_borrador(self):
+        self.contenido1.estado = "Borrador"
+        self.contenido1.save()
+        response = self.client.get(reverse('reporte'),{
+            'fecha_inicio':'',
+            'fecha_fin':'',
+            'estado':'Borrador',
+            'categoria':'',
+            'subcategoria':''
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.contenido1.titulo)
+        self.assertNotContains(response, self.contenido2.titulo)
 
     # Da fallo
-    # def test_reporte_contenido_inactivo(self):
-    #     self.contenido2.estado = "Inactivo"
-    #     self.contenido2.save()
-    #     response = self.client.get(reverse("reporte"))
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertContains(response, self.contenido1.titulo)
-    #     self.assertNotContains(response, self.contenido2.titulo)
+    def test_reporte_contenido_inactivo(self):
+        self.contenido2.estado = "Inactivo"
+        self.contenido2.save()
+        response = self.client.get("http://localhost:8000/panel/reporte?fecha_inicio=&fecha_fin=&estado=Inactivo&categoria=&subcategoria=")
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, self.contenido1.titulo)
+        self.assertContains(response, self.contenido2.titulo)
 
     def test_reporte_contenido_fecha_fuera_rango(self):
         """
