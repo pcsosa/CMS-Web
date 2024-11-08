@@ -9,6 +9,12 @@ from subcategorias.models import Subcategoria
 
 class ReportesEstadisticosTests(TestCase):
     def setUp(self):
+        """
+        Configuración inicial para las pruebas:
+        - Crea categorías y subcategorías.
+        - Crea contenidos con diferentes características.
+        - Crea visualizaciones para los contenidos.
+        """
         # Crear categorías y subcategorías
         self.categoria = Categoria.objects.create(nombre="Categoría 1")
         self.subcategoria = Subcategoria.objects.create(
@@ -48,6 +54,10 @@ class ReportesEstadisticosTests(TestCase):
         )
 
     def test_reporte_contenido(self):
+        """
+        Prueba que el reporte de contenido se genere correctamente.
+        Verifica que la respuesta contenga los elementos esperados del reporte.
+        """
         response = self.client.get(reverse("reporte"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Reporte de Contenidos")
@@ -58,6 +68,10 @@ class ReportesEstadisticosTests(TestCase):
         self.assertContains(response, "Promedio de Tiempo de Revisión")
 
     def test_top_5_mas_leidos(self):
+        """
+        Prueba que el reporte incluya los 5 artículos más leídos.
+        Verifica que los títulos de los contenidos más leídos estén presentes en la respuesta.
+        """
         response = self.client.get(reverse("reporte"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Top 5 Artículos Más Leídos")
@@ -65,6 +79,10 @@ class ReportesEstadisticosTests(TestCase):
         self.assertContains(response, self.contenido1.titulo)
 
     def test_grafico_me_gusta(self):
+        """
+        Prueba que el reporte incluya un gráfico de 'Me Gusta' para los 5 contenidos más populares.
+        Verifica que los valores de 'Me Gusta' de los contenidos estén presentes en la respuesta.
+        """
         response = self.client.get(reverse("reporte"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Gráfico de Me Gusta (Top 5)")
@@ -88,6 +106,10 @@ class ReportesEstadisticosTests(TestCase):
     #     self.assertNotContains(response, self.contenido1.titulo)
 
     def test_reporte_sin_contenidos(self):
+        """
+        Prueba que el reporte se genere correctamente cuando no hay contenidos.
+        Verifica que los totales de visitas, 'Me Gusta' y contenidos sean cero.
+        """
         Contenido.objects.all().delete()
         response = self.client.get(reverse("reporte"))
         self.assertEqual(response.status_code, 200)
@@ -115,6 +137,10 @@ class ReportesEstadisticosTests(TestCase):
     #     self.assertNotContains(response, self.contenido2.titulo)
 
     def test_reporte_contenido_fecha_fuera_rango(self):
+        """
+        Prueba que el reporte no incluya contenidos fuera del rango de fechas especificado.
+        Verifica que los títulos de los contenidos no estén presentes en la respuesta.
+        """
         response = self.client.get(
             reverse("reporte"),
             {
@@ -130,6 +156,10 @@ class ReportesEstadisticosTests(TestCase):
         self.assertNotContains(response, self.contenido2.titulo)
 
     def test_reporte_contenido_categoria_incorrecta(self):
+        """
+        Prueba que el reporte no incluya contenidos de una categoría incorrecta.
+        Verifica que los títulos de los contenidos no estén presentes en la respuesta.
+        """
         otra_categoria = Categoria.objects.create(nombre="Otra Categoría")
         response = self.client.get(
             reverse("reporte"),
@@ -146,6 +176,10 @@ class ReportesEstadisticosTests(TestCase):
         self.assertNotContains(response, self.contenido2.titulo)
 
     def test_reporte_contenido_subcategoria_incorrecta(self):
+        """
+        Prueba que el reporte no incluya contenidos de una subcategoría incorrecta.
+        Verifica que los títulos de los contenidos no estén presentes en la respuesta.
+        """
         otra_subcategoria = Subcategoria.objects.create(
             nombre="Otra Subcategoría", categoria=self.categoria
         )
@@ -164,6 +198,10 @@ class ReportesEstadisticosTests(TestCase):
         self.assertNotContains(response, self.contenido2.titulo)
 
     def test_reporte_contenido_estado_incorrecto(self):
+        """
+        Prueba que el reporte no incluya contenidos con un estado incorrecto.
+        Verifica que los títulos de los contenidos no estén presentes en la respuesta.
+        """
         response = self.client.get(
             reverse("reporte"),
             {
@@ -179,12 +217,20 @@ class ReportesEstadisticosTests(TestCase):
         self.assertNotContains(response, self.contenido2.titulo)
 
     def test_reporte_contenido_sin_filtros(self):
+        """
+        Prueba que el reporte incluya todos los contenidos cuando no se aplican filtros.
+        Verifica que los títulos de todos los contenidos estén presentes en la respuesta.
+        """
         response = self.client.get(reverse("reporte"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.contenido1.titulo)
         self.assertContains(response, self.contenido2.titulo)
 
     def test_reporte_contenido_fecha_inicio_futura(self):
+        """
+        Prueba que el reporte no incluya contenidos cuando la fecha de inicio es futura.
+        Verifica que los títulos de los contenidos no estén presentes en la respuesta.
+        """
         response = self.client.get(
             reverse("reporte"),
             {
@@ -200,6 +246,10 @@ class ReportesEstadisticosTests(TestCase):
         self.assertNotContains(response, self.contenido2.titulo)
 
     def test_reporte_contenido_fecha_fin_pasada(self):
+        """
+        Prueba que el reporte no incluya contenidos cuando la fecha de fin es pasada.
+        Verifica que los títulos de los contenidos no estén presentes en la respuesta.
+        """
         response = self.client.get(
             reverse("reporte"),
             {
