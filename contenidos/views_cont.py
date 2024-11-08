@@ -1,6 +1,6 @@
 import os
 import tempfile
-from datetime import timedelta
+from datetime import datetime, time, timedelta
 from io import BytesIO
 
 import matplotlib.pyplot as plt
@@ -9,10 +9,12 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from django.core.serializers import serialize
 from django.db.models import Q  # Para realizar búsquedas
-from django.db.models import Sum
+from django.db.models import Avg, Count, DurationField, ExpressionWrapper, F, Sum
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.utils.dateparse import parse_date
+from django.utils.timezone import make_aware
 from django.views.decorators.csrf import csrf_exempt
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
@@ -25,7 +27,13 @@ from appcms.utils.utils import (
     obtenerUsersConRol,
     tienePermiso,
 )
-from contenidos.models_cont import Categoria, Comentario, ComentarioRoles, Contenido
+from contenidos.models_cont import (
+    Categoria,
+    Comentario,
+    ComentarioRoles,
+    Contenido,
+    Visualizacion,
+)
 from contenidos.notificacion import *
 from subcategorias.models import Subcategoria
 
@@ -402,6 +410,41 @@ def filtrar(lista, rol, id):
     return nuevo
 
 
+def filtrar(lista, rol, id):
+    """
+    Filtra una lista de contenidos según el rol del usuario y su identificador.
+
+    :param lista: Lista de objetos de contenido a filtrar.
+    :type lista: list
+    :param rol: Rol del usuario, que determina el criterio de filtrado. Puede ser uno de los siguientes: "Autor", "Editor", "Publicador" o "Administrador".
+    :type rol: str
+    :param id: Identificador del usuario que se usará para el filtrado en caso de roles específicos.
+    :type id: int
+    :return: Lista de objetos de contenido filtrados según el rol y el identificador del usuario.
+    :rtype: list
+
+    **Roles:**
+
+    - *Autor*: Incluye solo contenidos cuyo `autor_id` coincida con el `id` proporcionado.
+    - *Editor*: Incluye solo contenidos cuyo `editor_id` coincida con el `id` proporcionado.
+    - *Publicador* y *Administrador*: Incluyen todos los contenidos de la lista sin filtrado adicional.
+
+    """
+    nuevo = []
+    if rol == "Autor":
+        for contenido in lista:
+            if contenido.autor_id == id:
+                nuevo += [contenido]
+    elif rol == "Editor":
+        for contenido in lista:
+            if contenido.editor_id == id:
+                nuevo += [contenido]
+    elif rol in ("Publicador", "Administrador"):
+        for contenido in lista:
+            nuevo += [contenido]
+    return nuevo
+
+
 def tablero_kanban(request):
     """
     Renderiza el tablero kanban mostrando los contenidos filtrados por estado.
@@ -506,6 +549,12 @@ def visualizar_contenido(request, pk):
                 "username"
             )
 
+        # Reemplazar el ID del usuario por su nombre de usuario en comentarios
+        for comentario_ in comentarios_roles:
+            comentario_.usuario = obtenerUserInfoById(comentario_.usuario).get(
+                "username"
+            )
+
         return render(
             request,
             "contenido.html",
@@ -554,6 +603,26 @@ def cambiar_estado(request, pk, estado_actual, estado_siguiente):
         "Publicado",
         "Inactivo",
     )
+
+    scopes = [
+        "enviar-borrador-revision",
+        "enviar-revision-Apublicar",
+        "enviar-Apublicar-Publicado",
+    ]
+    scopes += [
+        "enviar-revision-borrador",
+        "enviar-Apublicar-revision",
+        "enviar-Publicado-Apublicar",
+    ]
+    token = obtenerToken(request)
+    permiso = {
+        ("Borrador", "Revisión"): "enviar-borrador-revision",
+        ("Revisión", "A Publicar"): "enviar-revision-Apublicar",
+        ("A Publicar", "Publicado"): "enviar-Apublicar-Publicado",
+        ("Revisión", "Borrador"): "enviar-revision-borrador",
+        ("A Publicar", "Revisión"): "enviar-Apublicar-revision",
+        ("Publicado", "A Publicar"): "enviar-Publicado-Apublicar",
+    }
 
     scopes = [
         "enviar-borrador-revision",
@@ -711,22 +780,112 @@ def nromegusta(request, pk):
 
 
 def reporte(request):
+    # Obtener los parámetros de filtrado de la solicitud GET
+    fecha_inicio = request.GET.get("fecha_inicio")
+    fecha_fin = request.GET.get("fecha_fin")
+    estado = request.GET.get("estado")
 
-    contenidos = Contenido.objects.order_by("-megusta")[:5]
+    categoria_id = request.GET.get("categoria")
+    subcategoria_id = request.GET.get("subcategoria")
+
+    # Filtrar los contenidos según los parámetros
+    # contenidos = Contenido.objects.order_by('-megusta')[:5]
+    contenidos = Contenido.objects.all()
+
+    if fecha_inicio:
+        fecha_inicio = parse_date(fecha_inicio)
+        # Ajustar la fecha de fin para incluir todo el día
+        fecha_inicio = make_aware(datetime.combine(fecha_inicio, time.min))
+        contenidos = contenidos.filter(fecha_creacion__gte=fecha_inicio)
+    if fecha_fin:
+        fecha_fin = parse_date(fecha_fin)
+        # Ajustar la fecha de fin para incluir todo el día
+        fecha_fin = make_aware(datetime.combine(fecha_fin, time.max))
+        contenidos = contenidos.filter(fecha_creacion__lte=fecha_fin)
+    if estado:
+        contenidos = contenidos.filter(estado=estado)
+
+    if categoria_id:
+        contenidos = contenidos.filter(categoria_id=categoria_id)
+
+    if subcategoria_id:
+        contenidos = contenidos.filter(subcategoria_id=subcategoria_id)
+
+    # Calcular el resumen general
     summary = {
-        "total_visitas": Contenido.objects.aggregate(
-            total_visitas=Sum("visualizaciones")
-        )["total_visitas"]
+        "total_visitas": contenidos.aggregate(total_visitas=Sum("visualizaciones"))[
+            "total_visitas"
+        ]
         or 0,
-        "total_megusta": Contenido.objects.aggregate(total_megusta=Sum("megusta"))[
+        "total_megusta": contenidos.aggregate(total_megusta=Sum("megusta"))[
             "total_megusta"
         ]
         or 0,
-        "total_contenido": Contenido.objects.count() or 0,
+        "total_contenido": contenidos.count() or 0,
     }
+
+    # Calcular la cantidad de artículos redactados en el periodo de tiempo
+    articulos_redactados = contenidos.count()
+
+    # Calcular el promedio de tiempo de revisión de artículos
+    tiempo_revision = None
+    if fecha_inicio and fecha_fin:
+        tiempo_revision = (
+            Contenido.objects.filter(
+                estado="Revisión",
+                fecha_creacion__gte=fecha_inicio,
+                fecha_creacion__lte=fecha_fin,
+            )
+            .annotate(
+                tiempo_revision=ExpressionWrapper(
+                    F("fecha_modificacion") - F("fecha_creacion"),
+                    output_field=DurationField(),
+                )
+            )
+            .aggregate(promedio_tiempo_revision=Avg("tiempo_revision"))[
+                "promedio_tiempo_revision"
+            ]
+        )
+
+    # Obtener los top 5 contenidos con más "me gusta"
+    top_contenidos = contenidos.order_by("-megusta")[:5]
+
+    # Obtener los top 5 contenidos más leídos en el periodo de tiempo
+    if fecha_inicio and fecha_fin:
+        top_leidos = (
+            Contenido.objects.filter(
+                visualizacion__fecha__range=(fecha_inicio, fecha_fin)
+            )
+            .annotate(total_visitas=Sum("visualizacion__id"))
+            .order_by("-total_visitas")[:5]
+        )
+    else:
+        top_leidos = []
+
+    # Obtener todas las categorías y subcategorías para los filtros
+    categorias = Categoria.objects.all()
+    subcategorias = Subcategoria.objects.all()
+
     return render(
-        request, "reporte.html", {"contenidos": contenidos, "summary": summary}
+        request,
+        "reporte.html",
+        {
+            "contenidos": contenidos,
+            "top_contenidos": top_contenidos,
+            "top_leidos": top_leidos,
+            "summary": summary,
+            "articulos_redactados": articulos_redactados,
+            "tiempo_revision": tiempo_revision,
+            "categorias": categorias,
+            "subcategorias": subcategorias,
+        },
     )
+
+    # return render(request, 'reporte.html', {
+    #'contenidos': contenidos.order_by('-megusta')[:5],
+    #'summary': summary,
+    # })
+    # return render(request, 'reporte.html', {'contenidos': contenidos, 'summary': summary})
 
 
 # Para impresion en pdf
