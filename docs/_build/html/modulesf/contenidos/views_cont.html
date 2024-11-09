@@ -8,6 +8,7 @@
     <title>Views_Cont &#8212; documentación de cmsweb - 0.1</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=def86cc0" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=86dffce3" />
     
     <script src="../../_static/documentation_options.js?v=9c9b61ad"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
@@ -81,14 +82,31 @@ cambios entre estados consecutivos, a excepción del estado «Inactivo».</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="contenidos.views_cont.contar_visualizaciones">
+<span class="sig-prename descclassname"><span class="pre">contenidos.views_cont.</span></span><span class="sig-name descname"><span class="pre">contar_visualizaciones</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">articulo_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inicio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fin</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/contenidos/views_cont.html#contar_visualizaciones"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#contenidos.views_cont.contar_visualizaciones" title="Link to this definition">¶</a></dt>
+<dd><p>Cuenta el número de visualizaciones de un artículo en un rango de fechas determinado.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>articulo_id</strong> (<em>int</em>) – El ID del artículo para el cual se van a contar las visualizaciones.</p></li>
+<li><p><strong>inicio</strong> (<em>datetime</em>) – La fecha de inicio del rango en el que se contarán las visualizaciones.</p></li>
+<li><p><strong>fin</strong> (<em>datetime</em>) – La fecha de fin del rango en el que se contarán las visualizaciones.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>El número de visualizaciones del artículo en el rango de fechas especificado.</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="contenidos.views_cont.crear_contenido">
 <span class="sig-prename descclassname"><span class="pre">contenidos.views_cont.</span></span><span class="sig-name descname"><span class="pre">crear_contenido</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/contenidos/views_cont.html#crear_contenido"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#contenidos.views_cont.crear_contenido" title="Link to this definition">¶</a></dt>
-<<<<<<< HEAD
 <dd><p>comneta
 Crea un nuevo contenido en el sistema a partir de los datos enviados a través del formulario.</p>
-=======
-<dd><p>Crea un nuevo contenido en el sistema a partir de los datos enviados a través del formulario.</p>
->>>>>>> johis_dev
 <dl class="field-list simple">
 <dt class="field-odd">Parámetros<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>request</strong> – Objeto HttpRequest que contiene los datos de la solicitud.</p>
@@ -166,7 +184,6 @@ base de datos, se retorna un JSON con un mensaje de error y un estado HTTP 404.<
 </dd></dl>
 
 <dl class="py function">
-<<<<<<< HEAD
 <dt class="sig sig-object py" id="contenidos.views_cont.filtrar">
 <span class="sig-prename descclassname"><span class="pre">contenidos.views_cont.</span></span><span class="sig-name descname"><span class="pre">filtrar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lista</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/contenidos/views_cont.html#filtrar"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#contenidos.views_cont.filtrar" title="Link to this definition">¶</a></dt>
 <dd><p>Filtra una lista de contenidos según el rol del usuario y su identificador.</p>
@@ -194,8 +211,25 @@ base de datos, se retorna un JSON con un mensaje de error y un estado HTTP 404.<
 </dd></dl>
 
 <dl class="py function">
-=======
->>>>>>> johis_dev
+<dt class="sig sig-object py" id="contenidos.views_cont.generar_reporte_pdf">
+<span class="sig-prename descclassname"><span class="pre">contenidos.views_cont.</span></span><span class="sig-name descname"><span class="pre">generar_reporte_pdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/contenidos/views_cont.html#generar_reporte_pdf"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#contenidos.views_cont.generar_reporte_pdf" title="Link to this definition">¶</a></dt>
+<dd><p>Genera un reporte en formato PDF con un resumen de los contenidos, 
+incluyendo el total de visitas, «me gusta» y un gráfico de los top 5 contenidos 
+con más «me gusta».</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>HttpRequest</em>) – El objeto de solicitud HTTP para la petición de generar el reporte en PDF.</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Un archivo PDF con el reporte generado.</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="contenidos.views_cont.gestion_contenido">
 <span class="sig-prename descclassname"><span class="pre">contenidos.views_cont.</span></span><span class="sig-name descname"><span class="pre">gestion_contenido</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/contenidos/views_cont.html#gestion_contenido"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#contenidos.views_cont.gestion_contenido" title="Link to this definition">¶</a></dt>
 <dd><p>Muestra la página de gestión de contenidos, que incluye todos los contenidos disponibles.</p>
@@ -205,6 +239,26 @@ base de datos, se retorna un JSON con un mensaje de error y un estado HTTP 404.<
 </dd>
 <dt class="field-even">Devuelve<span class="colon">:</span></dt>
 <dd class="field-even"><p>Respuesta renderizada con la plantilla “gestion_contenido.html” y el contexto que incluye los contenidos.</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="contenidos.views_cont.graficar_visualizaciones">
+<span class="sig-prename descclassname"><span class="pre">contenidos.views_cont.</span></span><span class="sig-name descname"><span class="pre">graficar_visualizaciones</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/contenidos/views_cont.html#graficar_visualizaciones"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#contenidos.views_cont.graficar_visualizaciones" title="Link to this definition">¶</a></dt>
+<dd><p>Genera un gráfico de visualizaciones por artículo dentro de un rango de fechas determinado.</p>
+<p>Esta función obtiene las fechas de inicio y fin del formulario enviado por el usuario
+(o usa un valor predeterminado de los últimos 30 días) y cuenta las visualizaciones de cada
+artículo en ese rango de fechas. Luego prepara los datos para mostrarlos en un gráfico.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>HttpRequest</em>) – El objeto de solicitud HTTP que contiene los parámetros de fecha y las peticiones de datos.</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Una respuesta que renderiza una plantilla con los datos de visualizaciones y el gráfico.</p>
 </dd>
 <dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
 <dd class="field-odd"><p>HttpResponse</p>
@@ -237,7 +291,6 @@ se gestiona un mensaje de error.</p>
 </dd></dl>
 
 <dl class="py function">
-<<<<<<< HEAD
 <dt class="sig sig-object py" id="contenidos.views_cont.guardar_comentario_Roles">
 <span class="sig-prename descclassname"><span class="pre">contenidos.views_cont.</span></span><span class="sig-name descname"><span class="pre">guardar_comentario_Roles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pk</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/contenidos/views_cont.html#guardar_comentario_Roles"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#contenidos.views_cont.guardar_comentario_Roles" title="Link to this definition">¶</a></dt>
 <dd><p>Guarda un comentario desde revision, en un objeto de tipo Contenido.</p>
@@ -262,8 +315,6 @@ se gestiona un mensaje de error.</p>
 </dd></dl>
 
 <dl class="py function">
-=======
->>>>>>> johis_dev
 <dt class="sig sig-object py" id="contenidos.views_cont.lista_contenidos">
 <span class="sig-prename descclassname"><span class="pre">contenidos.views_cont.</span></span><span class="sig-name descname"><span class="pre">lista_contenidos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/contenidos/views_cont.html#lista_contenidos"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#contenidos.views_cont.lista_contenidos" title="Link to this definition">¶</a></dt>
 <dd><p>Muestra una lista de todos los contenidos en el sistema.</p>
@@ -273,6 +324,46 @@ se gestiona un mensaje de error.</p>
 </dd>
 <dt class="field-even">Devuelve<span class="colon">:</span></dt>
 <dd class="field-even"><p>Respuesta renderizada con la plantilla “lista_contenidos.html” y el contexto que incluye los contenidos.</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="contenidos.views_cont.nromegusta">
+<span class="sig-prename descclassname"><span class="pre">contenidos.views_cont.</span></span><span class="sig-name descname"><span class="pre">nromegusta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pk</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/contenidos/views_cont.html#nromegusta"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#contenidos.views_cont.nromegusta" title="Link to this definition">¶</a></dt>
+<dd><p>Aumenta el número de «me gusta» dado a un contenido específico.</p>
+<p>Esta vista recibe una solicitud HTTP y la clave primaria de un contenido para incrementar 
+su contador de «me gusta».</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>HttpRequest</em>) – El objeto de solicitud HTTP que contiene los datos de la petición.</p></li>
+<li><p><strong>pk</strong> (<em>int</em>) – La clave primaria del contenido al cual se le va a incrementar el contador de «me gusta».</p></li>
+</ul>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Un objeto JsonResponse con el nuevo valor del contador de «me gusta».</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>JsonResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="contenidos.views_cont.reporte">
+<span class="sig-prename descclassname"><span class="pre">contenidos.views_cont.</span></span><span class="sig-name descname"><span class="pre">reporte</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/contenidos/views_cont.html#reporte"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#contenidos.views_cont.reporte" title="Link to this definition">¶</a></dt>
+<dd><p>Genera un reporte filtrado de contenidos basados en parámetros como fecha, estado, 
+categoría, y subcategoría. También calcula estadísticas como el total de visitas y «me gusta».</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>HttpRequest</em>) – El objeto de solicitud HTTP que contiene los parámetros de la petición.</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Renderiza la plantilla “reporte.html” con los contenidos filtrados y el resumen calculado.</p>
 </dd>
 <dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
 <dd class="field-odd"><p>HttpResponse</p>
@@ -363,19 +454,19 @@ cada estado, de la siguiente manera:</p>
     <ul>
 <li><a class="reference internal" href="#">Views_Cont</a><ul>
 <li><a class="reference internal" href="#contenidos.views_cont.cambiar_estado"><code class="docutils literal notranslate"><span class="pre">cambiar_estado()</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.views_cont.contar_visualizaciones"><code class="docutils literal notranslate"><span class="pre">contar_visualizaciones()</span></code></a></li>
 <li><a class="reference internal" href="#contenidos.views_cont.crear_contenido"><code class="docutils literal notranslate"><span class="pre">crear_contenido()</span></code></a></li>
 <li><a class="reference internal" href="#contenidos.views_cont.editar_contenido"><code class="docutils literal notranslate"><span class="pre">editar_contenido()</span></code></a></li>
 <li><a class="reference internal" href="#contenidos.views_cont.eliminar_contenido"><code class="docutils literal notranslate"><span class="pre">eliminar_contenido()</span></code></a></li>
-<<<<<<< HEAD
 <li><a class="reference internal" href="#contenidos.views_cont.filtrar"><code class="docutils literal notranslate"><span class="pre">filtrar()</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.views_cont.generar_reporte_pdf"><code class="docutils literal notranslate"><span class="pre">generar_reporte_pdf()</span></code></a></li>
 <li><a class="reference internal" href="#contenidos.views_cont.gestion_contenido"><code class="docutils literal notranslate"><span class="pre">gestion_contenido()</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.views_cont.graficar_visualizaciones"><code class="docutils literal notranslate"><span class="pre">graficar_visualizaciones()</span></code></a></li>
 <li><a class="reference internal" href="#contenidos.views_cont.guardar_comentario"><code class="docutils literal notranslate"><span class="pre">guardar_comentario()</span></code></a></li>
 <li><a class="reference internal" href="#contenidos.views_cont.guardar_comentario_Roles"><code class="docutils literal notranslate"><span class="pre">guardar_comentario_Roles()</span></code></a></li>
-=======
-<li><a class="reference internal" href="#contenidos.views_cont.gestion_contenido"><code class="docutils literal notranslate"><span class="pre">gestion_contenido()</span></code></a></li>
-<li><a class="reference internal" href="#contenidos.views_cont.guardar_comentario"><code class="docutils literal notranslate"><span class="pre">guardar_comentario()</span></code></a></li>
->>>>>>> johis_dev
 <li><a class="reference internal" href="#contenidos.views_cont.lista_contenidos"><code class="docutils literal notranslate"><span class="pre">lista_contenidos()</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.views_cont.nromegusta"><code class="docutils literal notranslate"><span class="pre">nromegusta()</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.views_cont.reporte"><code class="docutils literal notranslate"><span class="pre">reporte()</span></code></a></li>
 <li><a class="reference internal" href="#contenidos.views_cont.tablero_kanban"><code class="docutils literal notranslate"><span class="pre">tablero_kanban()</span></code></a></li>
 <li><a class="reference internal" href="#contenidos.views_cont.upload_image"><code class="docutils literal notranslate"><span class="pre">upload_image()</span></code></a></li>
 <li><a class="reference internal" href="#contenidos.views_cont.visualizar_contenido"><code class="docutils literal notranslate"><span class="pre">visualizar_contenido()</span></code></a></li>

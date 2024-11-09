@@ -7,6 +7,7 @@
     <title>appcms.views &#8212; documentación de cmsweb - 0.1</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=def86cc0" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=86dffce3" />
     
     <script src="../../_static/documentation_options.js?v=9c9b61ad"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
@@ -54,10 +55,7 @@
 <span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Categoria</span>
 <span class="kn">from</span> <span class="nn">.services.keycloak_service</span> <span class="kn">import</span> <span class="n">KeycloakService</span>
 <span class="kn">from</span> <span class="nn">.utils.utils</span> <span class="kn">import</span> <span class="n">obtenerRPT</span><span class="p">,</span> <span class="n">obtenerToken</span><span class="p">,</span> <span class="n">quitar_acentos</span>
-<<<<<<< HEAD
 <span class="kn">from</span> <span class="nn">appcms.notificacion</span> <span class="kn">import</span> <span class="o">*</span>
-=======
->>>>>>> johis_dev
 
 <span class="n">load_dotenv</span><span class="p">()</span>
 
@@ -170,10 +168,7 @@
                 <span class="n">request</span><span class="p">,</span>
                 <span class="sa">f</span><span class="s1">&#39;La categoría &quot;</span><span class="si">{</span><span class="n">categoria</span><span class="o">.</span><span class="n">nombre</span><span class="si">}</span><span class="s1">&quot; ha sido eliminada correctamente.&#39;</span><span class="p">,</span>
             <span class="p">)</span>
-<<<<<<< HEAD
             <span class="n">notificar_borrar_categoria</span><span class="p">(</span><span class="n">categoria</span><span class="p">)</span>
-=======
->>>>>>> johis_dev
             <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;lista_categorias&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">messages</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
@@ -218,10 +213,7 @@
                 <span class="n">request</span><span class="p">,</span>
                 <span class="sa">f</span><span class="s1">&#39;La categoría &quot;</span><span class="si">{</span><span class="n">categoria</span><span class="o">.</span><span class="n">nombre</span><span class="si">}</span><span class="s1">&quot; ha sido modificado correctamente.&#39;</span><span class="p">,</span>
             <span class="p">)</span>
-<<<<<<< HEAD
             <span class="c1">#notificar_editar_categoria(categoria)</span>
-=======
->>>>>>> johis_dev
             <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;lista_categorias&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s2">&quot;Error: Método no permitido&quot;</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="mi">405</span><span class="p">)</span></div>
@@ -330,7 +322,6 @@
 <a class="viewcode-back" href="../../modulesf/appcms/views.html#appcms.views.upload_image">[documentos]</a>
 <span class="nd">@csrf_exempt</span>
 <span class="k">def</span> <span class="nf">upload_image</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
-<<<<<<< HEAD
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Esta funcion maneja la subida de imagen en el contenido a traves de una solicitud POST</span>
 
 <span class="sd">    Args:</span>
@@ -339,8 +330,6 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        JsonResponse: un objeto JSON que contiene la URL donde se ha guardado la imagen</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-=======
->>>>>>> johis_dev
     <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
         <span class="n">image</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">FILES</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">]</span>
         <span class="c1"># Guardar la imagen en el servidor</span>

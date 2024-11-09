@@ -8,8 +8,4 @@ subcategorias
    views.rst
    models.rst
    forms.rst
-<<<<<<< HEAD
    notificacion.rst
-=======
-   
->>>>>>> johis_dev

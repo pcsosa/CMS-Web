@@ -7,6 +7,7 @@
     <title>subcategorias.views &#8212; documentación de cmsweb - 0.1</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=def86cc0" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=86dffce3" />
     
     <script src="../../_static/documentation_options.js?v=9c9b61ad"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
@@ -45,11 +46,8 @@
 <span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">messages</span>
 <span class="kn">from</span> <span class="nn">django.views.decorators.http</span> <span class="kn">import</span> <span class="n">require_POST</span>
 <span class="kn">from</span> <span class="nn">contenidos.models_cont</span> <span class="kn">import</span> <span class="n">Contenido</span>
-<<<<<<< HEAD
 <span class="kn">from</span> <span class="nn">subcategorias.notificacion</span> <span class="kn">import</span> <span class="o">*</span>
-=======
 
->>>>>>> johis_dev
 <div class="viewcode-block" id="administrar_subcategorias">
 <a class="viewcode-back" href="../../modulesf/subcategorias/views.html#subcategorias.views.administrar_subcategorias">[documentos]</a>
 <span class="k">def</span> <span class="nf">administrar_subcategorias</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
@@ -153,10 +151,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">contenidos</span><span class="p">:</span>
             <span class="n">subcategoria_</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
             <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;La eliminacion ha sido exitosa&quot;</span><span class="p">)</span>
-<<<<<<< HEAD
             <span class="n">notificar_borrar_subcategoria</span><span class="p">(</span><span class="n">subcategoria_</span><span class="p">)</span>
-=======
->>>>>>> johis_dev
             <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;lista_subcategorias&#39;</span><span class="p">,</span><span class="n">pk</span><span class="o">=</span><span class="n">categoria_</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>  <span class="c1"># Redirige a la lista de subcategorías después de eliminar</span>
         <span class="k">else</span> <span class="p">:</span>
             <span class="n">messages</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="s2">&quot;No se pudo borrar la subcategoria. Verifique si existen contenidos publicados.&quot;</span><span class="p">)</span>
@@ -181,11 +176,7 @@
     <span class="n">subcategoria</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Subcategoria</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span>
     <span class="n">subcategoria</span><span class="o">.</span><span class="n">nombre</span> <span class="o">=</span> <span class="n">nombre</span>
     <span class="n">subcategoria</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-<<<<<<< HEAD
     <span class="n">notificar_editar_subcategoria</span><span class="p">(</span><span class="n">subcategoria</span><span class="p">)</span>
-=======
-
->>>>>>> johis_dev
     <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">META</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;HTTP_REFERER&#39;</span><span class="p">))</span></div>
 
 </pre></div>

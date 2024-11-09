@@ -1,0 +1,10 @@
+.highlight .nf { /* Estilo para los nombres de funciones en bloques de código */
+    color: #2196F3; /* Color azul claro */
+    font-weight: bold;
+}
+
+.py-function { /* Estilo para los encabezados de función */
+    background-color: #E3F2FD; /* Fondo azul claro */
+    padding: 2px;
+    border-radius: 4px;
+}

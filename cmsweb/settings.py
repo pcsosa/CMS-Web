@@ -76,7 +76,7 @@ INSTALLED_APPS = [
     "appcms",
     "contenidos",
     "subcategorias",
-] #
+]  #
 
 # -------------------------------------------------
 # ----------------- MIDDLEWARES -------------------
@@ -165,12 +165,12 @@ AUTHENTICATION_BACKENDS = [
 DATABASES = {"default": dj_database_url.parse(DATABASE_URL)}
 
 # SQLite en memoria (para pruebas)
-#DATABASES = {
- #  'default': {
- #      'ENGINE': 'django.db.backends.sqlite3',
-#       'NAME': ':memory:',
-#   }
-#}
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": ":memory:",
+#     }
+# }
 
 # SQLite archivo local
 # DATABASES = {
@@ -198,7 +198,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # -------------------------------------------------
 
 LANGUAGE_CODE = "es"
-TIME_ZONE = 'America/Asuncion'  # O la zona horaria correcta para tu ubicación
+TIME_ZONE = "America/Asuncion"  # O la zona horaria correcta para tu ubicación
 USE_TZ = True  # Asegúrate de que esté habilitado el uso de zonas horarias
 USE_I18N = True
 

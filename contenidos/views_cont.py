@@ -1,21 +1,24 @@
+import os
+import tempfile
+from datetime import datetime, time, timedelta
+from io import BytesIO
+
+import matplotlib.pyplot as plt
 from django.conf import settings
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.core.serializers import serialize
 from django.db.models import Q  # Para realizar búsquedas
-from django.http import JsonResponse
+from django.db.models import Avg, Count, DurationField, ExpressionWrapper, F, Sum
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
+from django.utils.dateparse import parse_date
+from django.utils.timezone import make_aware
 from django.views.decorators.csrf import csrf_exempt
-from django.db.models import Sum
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
-from django.http import HttpResponse
-import matplotlib.pyplot as plt
-from io import BytesIO
-import tempfile  
-import os
-from django.utils import timezone
-from datetime import timedelta
+
 from appcms.models import Categoria
 from appcms.utils.utils import (
     obtenerToken,
@@ -24,9 +27,15 @@ from appcms.utils.utils import (
     obtenerUsersConRol,
     tienePermiso,
 )
-from contenidos.models_cont import Categoria, Comentario, Contenido, ComentarioRoles,Visualizacion
-from subcategorias.models import Subcategoria
+from contenidos.models_cont import (
+    Categoria,
+    Comentario,
+    ComentarioRoles,
+    Contenido,
+    Visualizacion,
+)
 from contenidos.notificacion import *
+from subcategorias.models import Subcategoria
 
 
 def crear_contenido(request):
@@ -365,7 +374,8 @@ def editar_contenido(request, pk):
     # Renderizar el formulario de edición con los datos actuales del contenido
     return render(request, "editar_contenido.html", contexto)
 
-def filtrar(lista,rol, id):
+
+def filtrar(lista, rol, id):
     """
     Filtra una lista de contenidos según el rol del usuario y su identificador.
 
@@ -379,26 +389,61 @@ def filtrar(lista,rol, id):
     :rtype: list
 
     **Roles:**
-    
+
     - *Autor*: Incluye solo contenidos cuyo `autor_id` coincida con el `id` proporcionado.
     - *Editor*: Incluye solo contenidos cuyo `editor_id` coincida con el `id` proporcionado.
     - *Publicador* y *Administrador*: Incluyen todos los contenidos de la lista sin filtrado adicional.
 
     """
-    nuevo =[]
+    nuevo = []
     if rol == "Autor":
         for contenido in lista:
-            if contenido.autor_id == id :
+            if contenido.autor_id == id:
                 nuevo += [contenido]
     elif rol == "Editor":
         for contenido in lista:
-            if contenido.editor_id == id :
+            if contenido.editor_id == id:
                 nuevo += [contenido]
-    elif rol in ("Publicador","Administrador"):
+    elif rol in ("Publicador", "Administrador"):
         for contenido in lista:
             nuevo += [contenido]
-    return nuevo          
-    
+    return nuevo
+
+
+def filtrar(lista, rol, id):
+    """
+    Filtra una lista de contenidos según el rol del usuario y su identificador.
+
+    :param lista: Lista de objetos de contenido a filtrar.
+    :type lista: list
+    :param rol: Rol del usuario, que determina el criterio de filtrado. Puede ser uno de los siguientes: "Autor", "Editor", "Publicador" o "Administrador".
+    :type rol: str
+    :param id: Identificador del usuario que se usará para el filtrado en caso de roles específicos.
+    :type id: int
+    :return: Lista de objetos de contenido filtrados según el rol y el identificador del usuario.
+    :rtype: list
+
+    **Roles:**
+
+    - *Autor*: Incluye solo contenidos cuyo `autor_id` coincida con el `id` proporcionado.
+    - *Editor*: Incluye solo contenidos cuyo `editor_id` coincida con el `id` proporcionado.
+    - *Publicador* y *Administrador*: Incluyen todos los contenidos de la lista sin filtrado adicional.
+
+    """
+    nuevo = []
+    if rol == "Autor":
+        for contenido in lista:
+            if contenido.autor_id == id:
+                nuevo += [contenido]
+    elif rol == "Editor":
+        for contenido in lista:
+            if contenido.editor_id == id:
+                nuevo += [contenido]
+    elif rol in ("Publicador", "Administrador"):
+        for contenido in lista:
+            nuevo += [contenido]
+    return nuevo
+
 
 def tablero_kanban(request):
     """
@@ -433,34 +478,33 @@ def tablero_kanban(request):
     a_publicar = Contenido.objects.filter(estado="A Publicar")
     publicado = Contenido.objects.filter(estado="Publicado")
     inactivo = Contenido.objects.filter(estado="Inactivo")
-    
+
     token = obtenerToken(request)
     user_id = obtenerUserId(token)
-    
+
     users_autores = obtenerUsersConRol("Autor")
     users_editores = obtenerUsersConRol("Editor")
     users_publicadores = obtenerUsersConRol("Publicador")
     users_administradores = obtenerUsersConRol("Administrador")
     rol = ""
     for user in users_autores:
-        if user["id"] == user_id :
-            rol="Autor"
+        if user["id"] == user_id:
+            rol = "Autor"
     for user in users_editores:
-        if user["id"] == user_id :
-            rol="Editor"
+        if user["id"] == user_id:
+            rol = "Editor"
     for user in users_publicadores:
-        if user["id"]== user_id :
-            rol="Publicador"
+        if user["id"] == user_id:
+            rol = "Publicador"
     for user in users_administradores:
-        if user["id"] == user_id :
-            rol="Administrador"   
-    borrador = filtrar(borrador,rol,user_id)
-    en_revision = filtrar(en_revision,rol,user_id)
-    a_publicar = filtrar(a_publicar,rol,user_id)
-    publicado = filtrar(publicado,rol,user_id)
-    inactivo =filtrar(inactivo,rol,user_id)
+        if user["id"] == user_id:
+            rol = "Administrador"
+    borrador = filtrar(borrador, rol, user_id)
+    en_revision = filtrar(en_revision, rol, user_id)
+    a_publicar = filtrar(a_publicar, rol, user_id)
+    publicado = filtrar(publicado, rol, user_id)
+    inactivo = filtrar(inactivo, rol, user_id)
 
-        
     contexto = {
         "borrador": borrador,
         "en_revision": en_revision,
@@ -484,7 +528,7 @@ def visualizar_contenido(request, pk):
     """
     try:
         contenido = Contenido.objects.get(pk=pk)
-        #guarla el numero de visualizaciones
+        # guarla el numero de visualizaciones
         contenido.visualizaciones += 1
         contenido.save()
 
@@ -498,15 +542,27 @@ def visualizar_contenido(request, pk):
         # Reemplazar el ID del usuario por su nombre de usuario en comentarios
         for comentario in comentarios:
             comentario.usuario = obtenerUserInfoById(comentario.usuario).get("username")
-        
+
         # Reemplazar el ID del usuario por su nombre de usuario en comentarios
         for comentario_ in comentarios_roles:
-            comentario_.usuario = obtenerUserInfoById(comentario_.usuario).get("username")
+            comentario_.usuario = obtenerUserInfoById(comentario_.usuario).get(
+                "username"
+            )
+
+        # Reemplazar el ID del usuario por su nombre de usuario en comentarios
+        for comentario_ in comentarios_roles:
+            comentario_.usuario = obtenerUserInfoById(comentario_.usuario).get(
+                "username"
+            )
 
         return render(
             request,
             "contenido.html",
-            {"contenido": contenido, "comentarios": comentarios,"comentarios_roles":comentarios_roles},
+            {
+                "contenido": contenido,
+                "comentarios": comentarios,
+                "comentarios_roles": comentarios_roles,
+            },
         )
     except Contenido.DoesNotExist:
         return JsonResponse({"error": "Contenido no encontrado"}, status=404)
@@ -547,18 +603,46 @@ def cambiar_estado(request, pk, estado_actual, estado_siguiente):
         "Publicado",
         "Inactivo",
     )
-    
-    scopes = ["enviar-borrador-revision","enviar-revision-Apublicar","enviar-Apublicar-Publicado"]
-    scopes += ["enviar-revision-borrador","enviar-Apublicar-revision","enviar-Publicado-Apublicar"]
+
+    scopes = [
+        "enviar-borrador-revision",
+        "enviar-revision-Apublicar",
+        "enviar-Apublicar-Publicado",
+    ]
+    scopes += [
+        "enviar-revision-borrador",
+        "enviar-Apublicar-revision",
+        "enviar-Publicado-Apublicar",
+    ]
     token = obtenerToken(request)
-    permiso={ 
-             ("Borrador","Revisión"):"enviar-borrador-revision",
-             ("Revisión","A Publicar"):"enviar-revision-Apublicar",
-             ("A Publicar","Publicado"):"enviar-Apublicar-Publicado",
-             ("Revisión","Borrador"):"enviar-revision-borrador",
-             ("A Publicar","Revisión"):"enviar-Apublicar-revision",
-             ("Publicado","A Publicar"):"enviar-Publicado-Apublicar",
-             }
+    permiso = {
+        ("Borrador", "Revisión"): "enviar-borrador-revision",
+        ("Revisión", "A Publicar"): "enviar-revision-Apublicar",
+        ("A Publicar", "Publicado"): "enviar-Apublicar-Publicado",
+        ("Revisión", "Borrador"): "enviar-revision-borrador",
+        ("A Publicar", "Revisión"): "enviar-Apublicar-revision",
+        ("Publicado", "A Publicar"): "enviar-Publicado-Apublicar",
+    }
+
+    scopes = [
+        "enviar-borrador-revision",
+        "enviar-revision-Apublicar",
+        "enviar-Apublicar-Publicado",
+    ]
+    scopes += [
+        "enviar-revision-borrador",
+        "enviar-Apublicar-revision",
+        "enviar-Publicado-Apublicar",
+    ]
+    token = obtenerToken(request)
+    permiso = {
+        ("Borrador", "Revisión"): "enviar-borrador-revision",
+        ("Revisión", "A Publicar"): "enviar-revision-Apublicar",
+        ("A Publicar", "Publicado"): "enviar-Apublicar-Publicado",
+        ("Revisión", "Borrador"): "enviar-revision-borrador",
+        ("A Publicar", "Revisión"): "enviar-Apublicar-revision",
+        ("Publicado", "A Publicar"): "enviar-Publicado-Apublicar",
+    }
 
     # Verifica que los estados actual y siguiente existan en la lista de estados
     if estado_actual in estados_disponibles and estado_siguiente in estados_disponibles:
@@ -566,22 +650,30 @@ def cambiar_estado(request, pk, estado_actual, estado_siguiente):
         siguiente = estados_disponibles.index(estado_siguiente)
 
         # Si el estado siguiente no es 'Inactivo' y el estado actual no es 'Publicado'
-        if estado_siguiente != "Inactivo" and estado_actual!="Inactivo":
+        if estado_siguiente != "Inactivo" and estado_actual != "Inactivo":
             # Verifica que los estados estén uno al lado del otro
             if abs(actual - siguiente) == 1 or estado_actual == "Inactivo":
-                if tienePermiso(token,"contenido",scopes)[permiso[(estado_actual,estado_siguiente)]]:
+                if tienePermiso(token, "contenido", scopes)[
+                    permiso[(estado_actual, estado_siguiente)]
+                ]:
                     contenido.estado = estado_siguiente
                     contenido.save()
-                    enviar_notificacion_cambio_estado(estado_siguiente,contenido)
+                    enviar_notificacion_cambio_estado(estado_siguiente, contenido)
                     # messages.success(request, "El estado ha sido cambiado exitosamente.")
                 else:
-                    messages.error(request, "No posee los permisos necesarios para cambiar a ese estado")
+                    messages.error(
+                        request,
+                        "No posee los permisos necesarios para cambiar a ese estado",
+                    )
             else:
-                messages.error(request, "Error. Se debe respetar el flujo de estados de los contenidos")
+                messages.error(
+                    request,
+                    "Error. Se debe respetar el flujo de estados de los contenidos",
+                )
         else:
             contenido.estado = estado_siguiente
             contenido.save()
-            enviar_notificacion_cambio_estado(estado_siguiente,contenido)
+            enviar_notificacion_cambio_estado(estado_siguiente, contenido)
             # messages.success(request, "El contenido ha sido inactivado.")
     else:
         messages.error(request, "Error. Estados proporcionados invalidos")
@@ -638,6 +730,7 @@ def guardar_comentario(request, pk):
 
     return redirect("visualizar_contenido", pk)
 
+
 def guardar_comentario_Roles(request, pk):
     """
     Guarda un comentario desde revision, en un objeto de tipo Contenido.
@@ -669,45 +762,180 @@ def guardar_comentario_Roles(request, pk):
                 active=True,
             )
             nuevo_comentario.save()
-            cambiar_estado(request,pk,"Revisión","Borrador")
+            cambiar_estado(request, pk, "Revisión", "Borrador")
         else:
             error_message = "El comentario no puede estar vacío."
 
     return redirect("visualizar_contenido", pk)
 
-def nromegusta (request, pk):
+
+def nromegusta(request, pk):
+    """
+    Aumenta el número de "me gusta" dado a un contenido específico.
+
+    Esta vista recibe una solicitud HTTP y la clave primaria de un contenido para incrementar
+    su contador de "me gusta".
+
+    :param request: El objeto de solicitud HTTP que contiene los datos de la petición.
+    :type request: HttpRequest
+    :param pk: La clave primaria del contenido al cual se le va a incrementar el contador de "me gusta".
+    :type pk: int
+    :return: Un objeto JsonResponse con el nuevo valor del contador de "me gusta".
+    :rtype: JsonResponse
+    """
     contenido = get_object_or_404(Contenido, id=pk)
 
     # Incrementar el contador de "me gusta"
     contenido.megusta += 1
     contenido.save()
 
-    return JsonResponse({'me_gusta': contenido.megusta})
+    return JsonResponse({"me_gusta": contenido.megusta})
+
 
 def reporte(request):
+    """
+    Genera un reporte filtrado de contenidos basados en parámetros como fecha, estado,
+    categoría, y subcategoría. También calcula estadísticas como el total de visitas y "me gusta".
 
-    contenidos = Contenido.objects.order_by('-megusta')[:5]
+    :param request: El objeto de solicitud HTTP que contiene los parámetros de la petición.
+    :type request: HttpRequest
+    :return: Renderiza la plantilla 'reporte.html' con los contenidos filtrados y el resumen calculado.
+    :rtype: HttpResponse
+    """
+    # Obtener los parámetros de filtrado de la solicitud GET
+    fecha_inicio = request.GET.get("fecha_inicio")
+    fecha_fin = request.GET.get("fecha_fin")
+    estado = request.GET.get("estado")
+
+    categoria_id = request.GET.get("categoria")
+    subcategoria_id = request.GET.get("subcategoria")
+
+    # Filtrar los contenidos según los parámetros
+    # contenidos = Contenido.objects.order_by('-megusta')[:5]
+    contenidos = Contenido.objects.all()
+
+    if fecha_inicio:
+        fecha_inicio = parse_date(fecha_inicio)
+        # Ajustar la fecha de fin para incluir todo el día
+        fecha_inicio = make_aware(datetime.combine(fecha_inicio, time.min))
+        contenidos = contenidos.filter(fecha_creacion__gte=fecha_inicio)
+    if fecha_fin:
+        fecha_fin = parse_date(fecha_fin)
+        # Ajustar la fecha de fin para incluir todo el día
+        fecha_fin = make_aware(datetime.combine(fecha_fin, time.max))
+        contenidos = contenidos.filter(fecha_creacion__lte=fecha_fin)
+    if estado:
+        contenidos = contenidos.filter(estado=estado)
+
+    if categoria_id:
+        contenidos = contenidos.filter(categoria_id=categoria_id)
+
+    if subcategoria_id:
+        contenidos = contenidos.filter(subcategoria_id=subcategoria_id)
+
+    # Calcular el resumen general
     summary = {
-        'total_visitas': Contenido.objects.aggregate(total_visitas=Sum('visualizaciones'))['total_visitas'] or 0,
-        'total_megusta': Contenido.objects.aggregate(total_megusta=Sum('megusta'))['total_megusta'] or 0,
-        'total_contenido': Contenido.objects.count() or 0
+        "total_visitas": contenidos.aggregate(total_visitas=Sum("visualizaciones"))[
+            "total_visitas"
+        ]
+        or 0,
+        "total_megusta": contenidos.aggregate(total_megusta=Sum("megusta"))[
+            "total_megusta"
+        ]
+        or 0,
+        "total_contenido": contenidos.count() or 0,
     }
-    return render(request, 'reporte.html', {'contenidos': contenidos, 'summary': summary})
 
- # Para impresion en pdf 
+    # Calcular la cantidad de artículos redactados en el periodo de tiempo
+    articulos_redactados = contenidos.count()
+
+    # Calcular el promedio de tiempo de revisión de artículos
+    tiempo_revision = None
+    if fecha_inicio and fecha_fin:
+        tiempo_revision = (
+            Contenido.objects.filter(
+                estado="Revisión",
+                fecha_creacion__gte=fecha_inicio,
+                fecha_creacion__lte=fecha_fin,
+            )
+            .annotate(
+                tiempo_revision=ExpressionWrapper(
+                    F("fecha_modificacion") - F("fecha_creacion"),
+                    output_field=DurationField(),
+                )
+            )
+            .aggregate(promedio_tiempo_revision=Avg("tiempo_revision"))[
+                "promedio_tiempo_revision"
+            ]
+        )
+
+    # Obtener los top 5 contenidos con más "me gusta"
+    top_contenidos = contenidos.order_by("-megusta")[:5]
+
+    # Obtener los top 5 contenidos más leídos en el periodo de tiempo
+    if fecha_inicio and fecha_fin:
+        top_leidos = (
+            contenidos.filter(visualizacion__fecha__range=(fecha_inicio, fecha_fin))
+            .annotate(total_visitas=Count("visualizacion__id"))
+            .order_by("-total_visitas")[:5]
+        )
+    else:
+        top_leidos = []
+
+    # Obtener todas las categorías y subcategorías para los filtros
+    categorias = Categoria.objects.all()
+    subcategorias = Subcategoria.objects.all()
+
+    return render(
+        request,
+        "reporte.html",
+        {
+            "contenidos": contenidos,
+            "top_contenidos": top_contenidos,
+            "top_leidos": top_leidos,
+            "summary": summary,
+            "articulos_redactados": articulos_redactados,
+            "tiempo_revision": tiempo_revision,
+            "categorias": categorias,
+            "subcategorias": subcategorias,
+        },
+    )
+
+    # return render(request, 'reporte.html', {
+    #'contenidos': contenidos.order_by('-megusta')[:5],
+    #'summary': summary,
+    # })
+    # return render(request, 'reporte.html', {'contenidos': contenidos, 'summary': summary})
+
+
+# Para impresion en pdf
 
 
 def generar_reporte_pdf(request):
-    # Calcular el resumen
+    """
+    Genera un reporte en formato PDF con un resumen de los contenidos,
+    incluyendo el total de visitas, "me gusta" y un gráfico de los top 5 contenidos
+    con más "me gusta".
+
+    :param request: El objeto de solicitud HTTP para la petición de generar el reporte en PDF.
+    :type request: HttpRequest
+    :return: Un archivo PDF con el reporte generado.
+    :rtype: HttpResponse
+    """
+
     summary = {
-        'total_visitas': Contenido.objects.aggregate(total_visitas=Sum('visualizaciones'))['total_visitas'],
-        'total_megusta': Contenido.objects.aggregate(total_megusta=Sum('megusta'))['total_megusta'],
-        'total_contenido': Contenido.objects.count()
+        "total_visitas": Contenido.objects.aggregate(
+            total_visitas=Sum("visualizaciones")
+        )["total_visitas"],
+        "total_megusta": Contenido.objects.aggregate(total_megusta=Sum("megusta"))[
+            "total_megusta"
+        ],
+        "total_contenido": Contenido.objects.count(),
     }
 
     # Crear la respuesta con tipo de contenido PDF
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="reporte_contenido.pdf"'
+    response = HttpResponse(content_type="application/pdf")
+    response["Content-Disposition"] = 'attachment; filename="reporte_contenido.pdf"'
     pdf = canvas.Canvas(response)
 
     # Escribir el contenido en el PDF
@@ -721,26 +949,30 @@ def generar_reporte_pdf(request):
     contenidos = Contenido.objects.all()  # Asegúrate de obtener todos los contenidos
 
     # Obtener los top 5 contenidos
-    top_contenidos = contenidos.order_by('-megusta')[:5]  # Filtrar los 5 contenidos con más "me gusta"
+    top_contenidos = contenidos.order_by("-megusta")[
+        :5
+    ]  # Filtrar los 5 contenidos con más "me gusta"
 
     # Crear el gráfico
     titulos = [contenido.titulo for contenido in top_contenidos]
     megustas = [contenido.megusta for contenido in top_contenidos]
-    
-    plt.figure(figsize=(8, 4))
-    plt.bar(titulos, megustas, color='lightblue')
-    plt.title('Top 5 Contenidos con Más Me Gusta')
-    plt.xlabel('Contenido')
-    plt.ylabel('Me Gusta')
 
-     # Guardar el gráfico en un archivo temporal
+    plt.figure(figsize=(8, 4))
+    plt.bar(titulos, megustas, color="lightblue")
+    plt.title("Top 5 Contenidos con Más Me Gusta")
+    plt.xlabel("Contenido")
+    plt.ylabel("Me Gusta")
+
+    # Guardar el gráfico en un archivo temporal
     with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as temp_file:
         plt.savefig(temp_file.name)  # Guardar como PNG en el archivo temporal
         plt.close()
         temp_file_path = temp_file.name  # Guardar la ruta del archivo temporal
 
     # Agregar el gráfico al PDF
-    pdf.drawImage(temp_file_path, 100, 400, width=400, height=200)  # Ajusta la posición y el tamaño según sea necesario
+    pdf.drawImage(
+        temp_file_path, 100, 400, width=400, height=200
+    )  # Ajusta la posición y el tamaño según sea necesario
 
     # Terminar el documento
     pdf.showPage()
@@ -752,30 +984,55 @@ def generar_reporte_pdf(request):
     return response
 
 
-
 def contar_visualizaciones(articulo_id, inicio, fin):
+    """
+    Cuenta el número de visualizaciones de un artículo en un rango de fechas determinado.
+
+    :param articulo_id: El ID del artículo para el cual se van a contar las visualizaciones.
+    :type articulo_id: int
+    :param inicio: La fecha de inicio del rango en el que se contarán las visualizaciones.
+    :type inicio: datetime
+    :param fin: La fecha de fin del rango en el que se contarán las visualizaciones.
+    :type fin: datetime
+    :return: El número de visualizaciones del artículo en el rango de fechas especificado.
+    :rtype: int
+    """
     return Visualizacion.objects.filter(
-        articulo_id=articulo_id,
-        fecha__range=(inicio, fin)
+        articulo_id=articulo_id, fecha__range=(inicio, fin)
     ).count()
 
+
 def graficar_visualizaciones(request):
+    """
+    Genera un gráfico de visualizaciones por artículo dentro de un rango de fechas determinado.
+
+    Esta función obtiene las fechas de inicio y fin del formulario enviado por el usuario
+    (o usa un valor predeterminado de los últimos 30 días) y cuenta las visualizaciones de cada
+    artículo en ese rango de fechas. Luego prepara los datos para mostrarlos en un gráfico.
+
+    :param request: El objeto de solicitud HTTP que contiene los parámetros de fecha y las peticiones de datos.
+    :type request: HttpRequest
+    :return: Una respuesta que renderiza una plantilla con los datos de visualizaciones y el gráfico.
+    :rtype: HttpResponse
+    """
     fin = timezone.now()
     inicio = fin - timedelta(days=30)  # Valor por defecto de 30 días atrás
 
-    if request.method == 'POST':
+    if request.method == "POST":
         # Obtener las fechas del formulario
-        inicio = request.POST.get('fecha_inicio')
-        fin = request.POST.get('fecha_fin')
+        inicio = request.POST.get("fecha_inicio")
+        fin = request.POST.get("fecha_fin")
 
         # Convertir las fechas a objetos datetime
-        inicio = timezone.datetime.strptime(inicio, '%Y-%m-%d')
-        fin = timezone.datetime.strptime(fin, '%Y-%m-%d')
+        inicio = timezone.datetime.strptime(inicio, "%Y-%m-%d")
+        fin = timezone.datetime.strptime(fin, "%Y-%m-%d")
 
     # Contar visualizaciones por artículo en el rango de fechas
     contenidos = Contenido.objects.all()
     datos_visualizaciones = {
-        contenido.titulo: Visualizacion.objects.filter(contenido=contenido, fecha__range=(inicio, fin)).count()
+        contenido.titulo: Visualizacion.objects.filter(
+            contenido=contenido, fecha__range=(inicio, fin)
+        ).count()
         for contenido in contenidos
     }
 
@@ -783,10 +1040,13 @@ def graficar_visualizaciones(request):
     titulos = list(datos_visualizaciones.keys())
     conteos = list(datos_visualizaciones.values())
 
-    return render(request, 'graficar_visualizaciones.html', {
-        'titulos': titulos,
-        'conteos': conteos,
-        'fecha_inicio': inicio.date(),
-        'fecha_fin': fin.date(),
-    })
-    
+    return render(
+        request,
+        "graficar_visualizaciones.html",
+        {
+            "titulos": titulos,
+            "conteos": conteos,
+            "fecha_inicio": inicio.date(),
+            "fecha_fin": fin.date(),
+        },
+    )
