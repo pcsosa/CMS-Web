@@ -28,6 +28,7 @@ urlpatterns = [
     path("articulos/", views_cont.lista_contenidos, name="lista_contenidos"),
     path("articulos/gestion", views_cont.gestion_contenido, name="gestion_contenido"),
     path("articulos/crear", views_cont.crear_contenido, name="crear_contenido"),
+    
     path(
         "articulos/editar/<int:pk>/",
         views_cont.editar_contenido,
@@ -62,6 +63,7 @@ urlpatterns = [
     path("articulos/<int:pk>/me-gusta",views_cont.nromegusta,name ="me-gusta"),
     path("panel/reporte",views_cont.reporte,name="reporte"),
     path('panel/reporte/pdf/', views_cont.generar_reporte_pdf, name='generar_reporte_pdf'),
+    path('panel/historial/', views_cont.lista_historial, name='historial'),
 ]
 
 if settings.DEBUG:

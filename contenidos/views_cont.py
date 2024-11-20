@@ -32,6 +32,7 @@ from contenidos.models_cont import (
     Comentario,
     ComentarioRoles,
     Contenido,
+    Historico,
     Visualizacion,
 )
 from contenidos.notificacion import *
@@ -39,7 +40,7 @@ from subcategorias.models import Subcategoria
 
 
 def crear_contenido(request):
-    """comneta
+    """
     Crea un nuevo contenido en el sistema a partir de los datos enviados a través del formulario.
 
     :param request: Objeto HttpRequest que contiene los datos de la solicitud.
@@ -109,6 +110,16 @@ def crear_contenido(request):
             editor_id=editor_id,
             autor_id=autor_id,
         )
+        # Creacion de un nuevo registro en Historico
+        nuevo_Historico = Historico(
+            titulo = nuevo_contenido.titulo,
+            usuario = nuevo_contenido.autor_id,
+            accion = "CREADO",
+            fecha=datetime.now()
+        )
+
+        nuevo_Historico.save()
+
 
         # Imprimir el nuevo contenido
         print("--------------Nuevo contenido-------------")
@@ -274,6 +285,21 @@ def eliminar_contenido(request, pk):
     try:
         contenido = Contenido.objects.get(pk=pk)
         contenido.delete()
+
+         # Creacion de un nuevo registro en Historico
+        token = obtenerToken(request)
+
+        nuevo_Historico = Historico(
+            titulo = contenido.titulo,
+            usuario =  obtenerUserId(token),
+            accion = "ELIMINADO",
+            fecha=datetime.now()
+        )
+
+        nuevo_Historico.save()
+
+
+
         notificar_borrar_contenido(contenido)
         return redirect("gestion_contenido")
     except Contenido.DoesNotExist:
@@ -358,6 +384,16 @@ def editar_contenido(request, pk):
         contenido.editor_id = editor_id
         contenido.autor_id = autor_id  # Mantener el autor actual
 
+         # Creacion de un nuevo registro en Historico
+        nuevo_Historico = Historico(
+            titulo = contenido.titulo,
+            usuario =  obtenerUserId(token),
+            accion = "ELIMINADO",
+            fecha=datetime.now()
+        )
+        nuevo_Historico.save()
+
+
         # Guardar los cambios en el contenido
         contenido.save()
         notificar_edicion_contenido(contenido)
@@ -373,41 +409,6 @@ def editar_contenido(request, pk):
 
     # Renderizar el formulario de edición con los datos actuales del contenido
     return render(request, "editar_contenido.html", contexto)
-
-
-def filtrar(lista, rol, id):
-    """
-    Filtra una lista de contenidos según el rol del usuario y su identificador.
-
-    :param lista: Lista de objetos de contenido a filtrar.
-    :type lista: list
-    :param rol: Rol del usuario, que determina el criterio de filtrado. Puede ser uno de los siguientes: "Autor", "Editor", "Publicador" o "Administrador".
-    :type rol: str
-    :param id: Identificador del usuario que se usará para el filtrado en caso de roles específicos.
-    :type id: int
-    :return: Lista de objetos de contenido filtrados según el rol y el identificador del usuario.
-    :rtype: list
-
-    **Roles:**
-
-    - *Autor*: Incluye solo contenidos cuyo `autor_id` coincida con el `id` proporcionado.
-    - *Editor*: Incluye solo contenidos cuyo `editor_id` coincida con el `id` proporcionado.
-    - *Publicador* y *Administrador*: Incluyen todos los contenidos de la lista sin filtrado adicional.
-
-    """
-    nuevo = []
-    if rol == "Autor":
-        for contenido in lista:
-            if contenido.autor_id == id:
-                nuevo += [contenido]
-    elif rol == "Editor":
-        for contenido in lista:
-            if contenido.editor_id == id:
-                nuevo += [contenido]
-    elif rol in ("Publicador", "Administrador"):
-        for contenido in lista:
-            nuevo += [contenido]
-    return nuevo
 
 
 def filtrar(lista, rol, id):
@@ -624,26 +625,6 @@ def cambiar_estado(request, pk, estado_actual, estado_siguiente):
         ("Publicado", "A Publicar"): "enviar-Publicado-Apublicar",
     }
 
-    scopes = [
-        "enviar-borrador-revision",
-        "enviar-revision-Apublicar",
-        "enviar-Apublicar-Publicado",
-    ]
-    scopes += [
-        "enviar-revision-borrador",
-        "enviar-Apublicar-revision",
-        "enviar-Publicado-Apublicar",
-    ]
-    token = obtenerToken(request)
-    permiso = {
-        ("Borrador", "Revisión"): "enviar-borrador-revision",
-        ("Revisión", "A Publicar"): "enviar-revision-Apublicar",
-        ("A Publicar", "Publicado"): "enviar-Apublicar-Publicado",
-        ("Revisión", "Borrador"): "enviar-revision-borrador",
-        ("A Publicar", "Revisión"): "enviar-Apublicar-revision",
-        ("Publicado", "A Publicar"): "enviar-Publicado-Apublicar",
-    }
-
     # Verifica que los estados actual y siguiente existan en la lista de estados
     if estado_actual in estados_disponibles and estado_siguiente in estados_disponibles:
         actual = estados_disponibles.index(estado_actual)
@@ -656,6 +637,30 @@ def cambiar_estado(request, pk, estado_actual, estado_siguiente):
                 if tienePermiso(token, "contenido", scopes)[
                     permiso[(estado_actual, estado_siguiente)]
                 ]:
+
+                    # Creacion de un nuevo registro en Historico
+                    token = obtenerToken(request)
+
+                    if estado_siguiente == "ELIMINADO":
+                        accion = "ELIMINADO"
+                    elif estado_siguiente == "PUBLICADO":
+                        accion = "PUBLICADO"
+                    elif estado_siguiente == "A_PUBLICAR":
+                        accion = "ENVIADO A PUBLICAR"
+                    elif estado_siguiente == "REVISION":
+                        accion = "ENVIADO A EDICION"
+                    elif estado_siguiente == "BORRADOR":
+                        accion = "ENVIADO A BORRADOR"
+                        
+                    nuevo_Historico = Historico(
+                        titulo = contenido.titulo,
+                        usuario =  obtenerUserId(token),
+                        fecha = datetime.now(),
+                        accion  = accion    
+                    )
+
+                    nuevo_Historico.save()
+
                     contenido.estado = estado_siguiente
                     contenido.save()
                     enviar_notificacion_cambio_estado(estado_siguiente, contenido)
