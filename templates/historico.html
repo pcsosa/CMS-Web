@@ -75,19 +75,22 @@
   <table class="table table-bordered">
     <thead>
       <tr>
-        <th>Nombre</th>
-        <th>Me gusta</th>
-        <th>Visitas</th>
+        <th>Titulo</th>
+        <th>Accion</th>
+        <th>Usuario</th>
+        <th>Fecha</th>
       </tr>
     </thead>
     <tbody>
       {% for historico in historicos %}
         <tr>
-          <td>{{ contenido.titulo }}</td>
-          <td>{{ contenido.megusta }}</td>
-          <td>{{ contenido.visualizaciones }}</td>
+          <td>{{ historico.titulo }}</td>
+          <td>{{ historico.accion }}</td>
+          <td>{{ historico.usuario}}</td>
+          <td>{{ historico.fecha}}</td>
         </tr>
       {% endfor %}
+      
     </tbody>
   </table>
   
