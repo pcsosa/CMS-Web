@@ -1067,7 +1067,7 @@ def visualizar_historial(request):
     fecha_fin = request.GET.get('fecha_fin')  # Fecha final (YYYY-MM-DD)
 
     # Iniciar queryset base
-    historial = HistoricoContenido.objects.select_related('contenido', 'usuario').all()
+    historial = Historico.objects.select_related('contenido', 'usuario').all()
 
     # Aplicar filtros dinámicamente
     if contenido_id:

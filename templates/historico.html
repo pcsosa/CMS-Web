@@ -1,0 +1,96 @@
+{% extends "panel.html" %}
+{% load permisos %}
+{% load static %}
+{% load custom_filters %}
+{% block title %}
+  Reporte de Contenido
+{% endblock title %}
+{% block head %}
+  {{ block.super }}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/kanban.css' %}">
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock head %}
+{% block content %}
+  {% if messages %}
+    {% for message in messages %}
+      {% if message.tags == 'error' %}<div class="message-error">{{ message }}</div>{% endif %}
+    {% endfor %}
+  {% endif %}
+  <h1 class='text-center'>Historial de Contenidos</h1>
+  <!--FILTROS-->
+  <h4>Filtrar Contenidos</h4>
+  <form method="get" action="{% url 'reporte' %}">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="form-group">
+          <label for="fecha_inicio">Fecha Inicio:</label>
+          <input type="date"
+                 id="fecha_inicio"
+                 name="fecha_inicio"
+                 class="form-control"
+                 value="{{ request.GET.fecha_inicio }}">
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label for="fecha_fin">Fecha Fin:</label>
+          <input type="date"
+                 id="fecha_fin"
+                 name="fecha_fin"
+                 class="form-control"
+                 value="{{ request.GET.fecha_fin }}">
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label for="estado">Estado:</label>
+          <select id="estado" name="estado" class="form-control">
+            <option value = "">Todos</option>
+            <option value="Publicado"
+                    {% if request.GET.estado == 'Publicado' %}selected{% endif %}>Publicado</option>
+            <option value="Borrador"
+                    {% if request.GET.estado == 'Borrador' %}selected{% endif %}>Borrador</option>
+            <option value="Revisión"
+                    {% if request.GET.estado == 'Revisión' %}selected{% endif %}>Revisión</option>
+            <option value="A Publicar"
+                    {% if request.GET.estado == 'A Publicar' %}selected{% endif %}>A Publicar</option>
+            <option value="Inactivo"
+                    {% if request.GET.estado == 'Inactivo' %}selected{% endif %}>Inactivo</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+      
+      
+  <!--FIN NUEVO-->
+  <h4>Detalles por Contenido</h4>
+  <div style="text-align: right;">
+    <a href="{% url 'generar_reporte_pdf' %}" class="btn btn-primary">
+      <i class="fas fa-download"></i>
+    </a>
+  </div>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Me gusta</th>
+        <th>Visitas</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for historico in historicos %}
+        <tr>
+          <td>{{ contenido.titulo }}</td>
+          <td>{{ contenido.megusta }}</td>
+          <td>{{ contenido.visualizaciones }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  
+  
+
+{% endblock content %}
