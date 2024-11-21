@@ -860,7 +860,6 @@ def generar_reporte_pdf(request):
     plt.ylabel('Me Gusta')
     plt.xticks(rotation=45, ha='right')  # Rotar los títulos para evitar superposición
 
-
     # Guardar el gráfico en un archivo temporal
     with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as temp_file:
         plt.savefig(temp_file.name, bbox_inches='tight')  # Guardar como PNG en el archivo temporal
@@ -868,7 +867,7 @@ def generar_reporte_pdf(request):
         temp_file_path = temp_file.name  # Guardar la ruta del archivo temporal
 
     # Agregar el gráfico al PDF
-    pdf.drawImage(temp_file_path, 100, 400, width=400, height=200)  # Ajusta la posición y el tamaño según sea necesario
+    pdf.drawImage(temp_file_path, 100, y_position - 200, width=400, height=200)  # Ajusta la posición y el tamaño según sea necesario
     y_position -= 220
 
     # Agregar los top 5 contenidos más leídos
@@ -892,7 +891,6 @@ def generar_reporte_pdf(request):
     for contenido in datos_reporte['contenidos']:
         pdf.drawString(100, y_position, f"{contenido.titulo}: {contenido.megusta} me gusta, {contenido.visualizaciones} visitas")
         y_position -= 20
-
 
     # Terminar el documento
     pdf.showPage()
