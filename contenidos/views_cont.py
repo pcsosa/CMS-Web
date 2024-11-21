@@ -388,7 +388,7 @@ def editar_contenido(request, pk):
         nuevo_Historico = Historico(
             titulo = contenido.titulo,
             usuario =  obtenerUserId(token),
-            accion = "ELIMINADO",
+            accion = "EDITADO",
             fecha=datetime.now()
         )
         nuevo_Historico.save()
