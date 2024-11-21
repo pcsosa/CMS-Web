@@ -9,6 +9,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Sum, Count, Avg, F, ExpressionWrapper, DurationField
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_CENTER
+from reportlab.platypus import Paragraph
 from django.http import HttpResponse
 import matplotlib.pyplot as plt
 from io import BytesIO
@@ -687,23 +691,20 @@ def nromegusta (request, pk):
 
     return JsonResponse({'me_gusta': contenido.megusta})
 
-def reporte(request):
+def obtener_datos_reporte(request):
     # Obtener los parámetros de filtrado de la solicitud GET
     fecha_inicio = request.GET.get('fecha_inicio')
     fecha_fin = request.GET.get('fecha_fin')
     estado = request.GET.get('estado')
-
     categoria_id = request.GET.get('categoria')
     subcategoria_id = request.GET.get('subcategoria')
 
-
     # Filtrar los contenidos según los parámetros
-    #contenidos = Contenido.objects.order_by('-megusta')[:5]
     contenidos = Contenido.objects.all()
 
     if fecha_inicio:
         fecha_inicio = parse_date(fecha_inicio)
-        # Ajustar la fecha de fin para incluir todo el día
+        # Ajustar la fecha de inicio para incluir todo el día
         fecha_inicio = make_aware(datetime.combine(fecha_inicio, time.min))
         contenidos = contenidos.filter(fecha_creacion__gte=fecha_inicio)
     if fecha_fin:
@@ -713,13 +714,11 @@ def reporte(request):
         contenidos = contenidos.filter(fecha_creacion__lte=fecha_fin)
     if estado:
         contenidos = contenidos.filter(estado=estado)
-    
     if categoria_id:
         contenidos = contenidos.filter(categoria_id=categoria_id)
-
     if subcategoria_id:
         contenidos = contenidos.filter(subcategoria_id=subcategoria_id)
-
+    
     # Calcular el resumen general
     summary = {
         'total_visitas': contenidos.aggregate(total_visitas=Sum('visualizaciones'))['total_visitas'] or 0,
@@ -729,7 +728,6 @@ def reporte(request):
 
     # Calcular la cantidad de artículos redactados en el periodo de tiempo
     articulos_redactados = contenidos.count()
-
     # Calcular el promedio de tiempo de revisión de artículos
     tiempo_revision = None
     if fecha_inicio and fecha_fin:
@@ -745,20 +743,18 @@ def reporte(request):
     top_contenidos = contenidos.order_by('-megusta')[:5]
 
     # Obtener los top 5 contenidos más leídos en el periodo de tiempo
+    top_leidos = []
     if fecha_inicio and fecha_fin:
         top_leidos = Contenido.objects.filter(
             visualizacion__fecha__range=(fecha_inicio, fecha_fin)
         ).annotate(
             total_visitas=Sum('visualizacion__id')
         ).order_by('-total_visitas')[:5]
-    else:
-        top_leidos = []
-
     # Obtener todas las categorías y subcategorías para los filtros
     categorias = Categoria.objects.all()
     subcategorias = Subcategoria.objects.all()
 
-    return render(request, 'reporte.html', {
+    return {
         'contenidos': contenidos,
         'top_contenidos': top_contenidos,
         'top_leidos': top_leidos,
@@ -767,42 +763,91 @@ def reporte(request):
         'tiempo_revision': tiempo_revision,
         'categorias': categorias,
         'subcategorias': subcategorias,
-    })
+    }
 
-    #return render(request, 'reporte.html', {
-        #'contenidos': contenidos.order_by('-megusta')[:5],
-        #'summary': summary,
-    #})
-    #return render(request, 'reporte.html', {'contenidos': contenidos, 'summary': summary})
-
- # Para impresion en pdf 
-
+def reporte(request):
+    datos_reporte = obtener_datos_reporte(request)
+    return render(request, 'reporte.html', datos_reporte)
 
 def generar_reporte_pdf(request):
-    # Calcular el resumen
-    summary = {
-        'total_visitas': Contenido.objects.aggregate(total_visitas=Sum('visualizaciones'))['total_visitas'],
-        'total_megusta': Contenido.objects.aggregate(total_megusta=Sum('megusta'))['total_megusta'],
-        'total_contenido': Contenido.objects.count()
-    }
+    datos_reporte = obtener_datos_reporte(request)
 
     # Crear la respuesta con tipo de contenido PDF
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="reporte_contenido.pdf"'
-    pdf = canvas.Canvas(response)
+    pdf = canvas.Canvas(response, pagesize=letter)
 
-    # Escribir el contenido en el PDF
-    pdf.drawString(100, 750, "Reporte de Contenidos")
-    pdf.drawString(100, 730, "Resumen General")
-    pdf.drawString(100, 710, f"Total de Visitas: {summary['total_visitas']}")
-    pdf.drawString(100, 690, f"Total de Me Gusta: {summary['total_megusta']}")
-    pdf.drawString(100, 670, f"Total de Contenidos: {summary['total_contenido']}")
+    # Configurar estilos
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle(
+        'Title',
+        parent=styles['Title'],
+        fontName='Helvetica-BoldOblique',
+        fontSize=18,
+        leading=22,
+        textColor=colors.darkblue,
+        alignment=TA_CENTER
+    )
+    subtitle_style = ParagraphStyle(
+        'Subtitle',
+        parent=styles['Title'],
+        fontName='Helvetica-BoldOblique',
+        fontSize=14,
+        leading=18,
+        textColor=colors.darkblue,
+        alignment=TA_CENTER
+    )
+    normal_style = styles['Normal']
 
-    # Obtener los contenidos
-    contenidos = Contenido.objects.all()  # Asegúrate de obtener todos los contenidos
+    # Escribir el título del PDF
+    pdf.setFont("Helvetica-BoldOblique", 18)
+    pdf.setFillColor(colors.darkblue)
+    pdf.drawCentredString(300, 750, "Reporte de Contenidos")
 
-    # Obtener los top 5 contenidos
-    top_contenidos = contenidos.order_by('-megusta')[:5]  # Filtrar los 5 contenidos con más "me gusta"
+    # Escribir los filtros aplicados
+    pdf.setFont("Helvetica", 12)
+    pdf.setFillColor(colors.black)
+    y_position = 720
+    pdf.drawString(100, y_position, "Filtros Aplicados:")
+    y_position -= 20
+    if request.GET.get('fecha_inicio'):
+        pdf.drawString(100, y_position, f"Fecha Inicio: {request.GET.get('fecha_inicio')}")
+        y_position -= 20
+    if request.GET.get('fecha_fin'):
+        pdf.drawString(100, y_position, f"Fecha Fin: {request.GET.get('fecha_fin')}")
+        y_position -= 20
+    if request.GET.get('estado'):
+        pdf.drawString(100, y_position, f"Estado: {request.GET.get('estado')}")
+        y_position -= 20
+    if request.GET.get('categoria'):
+        categoria = Categoria.objects.get(id_categoria=request.GET.get('categoria'))
+        pdf.drawString(100, y_position, f"Categoría: {categoria.nombre}")
+        y_position -= 20
+    if request.GET.get('subcategoria'):
+        subcategoria = Subcategoria.objects.get(id_subcategoria=request.GET.get('subcategoria'))
+        pdf.drawString(100, y_position, f"Subcategoría: {subcategoria.nombre}")
+        y_position -= 20
+
+    # Escribir el resumen general
+    pdf.setFont("Helvetica-BoldOblique", 14)
+    pdf.setFillColor(colors.darkblue)
+    pdf.drawCentredString(300, y_position - 20, "Resumen General")
+    y_position -= 40
+    pdf.setFont("Helvetica", 12)
+    pdf.setFillColor(colors.black)
+    pdf.drawString(100, y_position, f"Total de Visitas: {datos_reporte['summary']['total_visitas']}")
+    y_position -= 20
+    pdf.drawString(100, y_position, f"Total de Me Gusta: {datos_reporte['summary']['total_megusta']}")
+    y_position -= 20
+    pdf.drawString(100, y_position, f"Total de Contenidos: {datos_reporte['summary']['total_contenido']}")
+    y_position -= 20
+    pdf.drawString(100, y_position, f"Artículos Redactados: {datos_reporte['articulos_redactados']}")
+    y_position -= 20
+    pdf.drawString(100, y_position, f"Promedio de Tiempo de Revisión: {datos_reporte['tiempo_revision']} días")
+    y_position -= 40
+
+    # Obtener los top 5 contenidos con más "me gusta"
+    top_contenidos = datos_reporte['top_contenidos']
 
     # Crear el gráfico
     titulos = [contenido.titulo for contenido in top_contenidos]
@@ -813,15 +858,41 @@ def generar_reporte_pdf(request):
     plt.title('Top 5 Contenidos con Más Me Gusta')
     plt.xlabel('Contenido')
     plt.ylabel('Me Gusta')
+    plt.xticks(rotation=45, ha='right')  # Rotar los títulos para evitar superposición
 
-     # Guardar el gráfico en un archivo temporal
+
+    # Guardar el gráfico en un archivo temporal
     with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as temp_file:
-        plt.savefig(temp_file.name)  # Guardar como PNG en el archivo temporal
+        plt.savefig(temp_file.name, bbox_inches='tight')  # Guardar como PNG en el archivo temporal
         plt.close()
         temp_file_path = temp_file.name  # Guardar la ruta del archivo temporal
 
     # Agregar el gráfico al PDF
     pdf.drawImage(temp_file_path, 100, 400, width=400, height=200)  # Ajusta la posición y el tamaño según sea necesario
+    y_position -= 220
+
+    # Agregar los top 5 contenidos más leídos
+    pdf.setFont("Helvetica-BoldOblique", 14)
+    pdf.setFillColor(colors.darkblue)
+    pdf.drawCentredString(300, y_position, "Top 5 Artículos Más Leídos")
+    y_position -= 20
+    pdf.setFont("Helvetica", 12)
+    pdf.setFillColor(colors.black)
+    for contenido in datos_reporte['top_leidos']:
+        pdf.drawString(100, y_position, f"{contenido.titulo}: {contenido.total_visitas} visitas")
+        y_position -= 20
+
+    # Agregar detalles por contenido
+    pdf.setFont("Helvetica-BoldOblique", 14)
+    pdf.setFillColor(colors.darkblue)
+    pdf.drawCentredString(300, y_position - 20, "Detalles por Contenido")
+    y_position -= 40
+    pdf.setFont("Helvetica", 12)
+    pdf.setFillColor(colors.black)
+    for contenido in datos_reporte['contenidos']:
+        pdf.drawString(100, y_position, f"{contenido.titulo}: {contenido.megusta} me gusta, {contenido.visualizaciones} visitas")
+        y_position -= 20
+
 
     # Terminar el documento
     pdf.showPage()
@@ -829,10 +900,8 @@ def generar_reporte_pdf(request):
 
     # Eliminar el archivo temporal
     os.remove(temp_file_path)
-
+    
     return response
-
-
 
 def contar_visualizaciones(articulo_id, inicio, fin):
     return Visualizacion.objects.filter(

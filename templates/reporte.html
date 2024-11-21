@@ -62,31 +62,33 @@ Reporte de Contenido
       </div>
     </div>
   </div>
-  <!--CATEGORIA Y SUBCATEGORIA-->
-  <div class="row">
-    <div class="col-md-6">
-      <div class="form-group">
-        <label for="categoria">Categoría:</label>
-        <select id="categoria" name="categoria" class="form-control">
-          <option value="">Todas</option>
-          {% for categoria in categorias %}
-            <option value="{{ categoria.id_categoria }}" {% if request.GET.categoria == categoria.id_categoria|stringformat:"s" %}selected{% endif %}>{{ categoria.nombre }}</option>
-          {% endfor %}
-        </select>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="form-group">
-        <label for="subcategoria">Subcategoría:</label>
-        <select id="subcategoria" name="subcategoria" class="form-control">
-          <option value="">Todas</option>
-          {% for subcategoria in subcategorias %}
-            <option value="{{ subcategoria.id_subcategoria }}" {% if request.GET.subcategoria == subcategoria.id_subcategoria|stringformat:"s" %}selected{% endif %}>{{subcategoria.nombre }}</option>
-          {% endfor %}
-        </select>
-      </div>
+<!--CATEGORIA Y SUBCATEGORIA-->
+<div class="row">
+  <div class="col-md-6">
+    <div class="form-group">
+      <label for="categoria">Categoría:</label>
+      <select id="categoria" name="categoria" class="form-control">
+        <option value="">Todas</option>
+        {% for categoria in categorias %}
+        <option value="{{ categoria.id_categoria }}" {% if request.GET.categoria == categoria.id_categoria|stringformat:"s" %}selected{% endif %}>{{ categoria.nombre }}
+        </option>
+        {% endfor %}
+      </select>
     </div>
   </div>
+  <div class="col-md-6">
+    <div class="form-group">
+      <label for="subcategoria">Subcategoría:</label>
+      <select id="subcategoria" name="subcategoria" class="form-control">
+        <option value="">Todas</option>
+        {% for subcategoria in subcategorias %}
+        <option value="{{ subcategoria.id_subcategoria }}" {% if request.GET.subcategoria == subcategoria.id_subcategoria|stringformat:"s" %}selected{% endif %}>{{
+          subcategoria.nombre }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+</div>
 <!--FIN CATEGORIA Y SUBCATEGORIA-->
   <div class="row mt-3">
     <div class="col-md-12 text-center">
@@ -98,7 +100,7 @@ Reporte de Contenido
 <!--FIN NUEVO-->
 <h4>Detalles por Contenido</h4>
 <div style="text-align: right;">
-  <a href="{% url 'generar_reporte_pdf' %}" class="btn btn-primary">
+  <a href="{% url 'generar_reporte_pdf' %}?fecha_inicio={{ request.GET.fecha_inicio }}&fecha_fin={{ request.GET.fecha_fin }}&estado={{ request.GET.estado }}&categoria={{ request.GET.categoria }}&subcategoria={{ request.GET.subcategoria }}" class="btn btn-primary">
     <i class="fas fa-download"></i>
   </a>
 </div>
@@ -148,7 +150,7 @@ Reporte de Contenido
 </div>
 
 <script>
-//<!--CATEGORIA Y SUBCATEGORIA-->
+  //<!--CATEGORIA Y SUBCATEGORIA-->
   const subcategoriasPorCategoria = {
     {% for categoria in categorias %}
       "{{ categoria.id_categoria }}": [
@@ -160,9 +162,11 @@ Reporte de Contenido
       ],
     {% endfor %}
   };
+
   document.getElementById('categoria').addEventListener('change', function () {
     const categoriaId = this.value;
     const subcategoriaSelect = document.getElementById('subcategoria');
+    const selectedSubcategoria = "{{ request.GET.subcategoria }}";
     subcategoriaSelect.innerHTML = '<option value="">Todas</option>';
 
     if (categoriaId && subcategoriasPorCategoria[categoriaId]) {
@@ -170,14 +174,19 @@ Reporte de Contenido
         const option = document.createElement('option');
         option.value = subcategoria.id;
         option.textContent = subcategoria.nombre;
+        if (subcategoria.id === selectedSubcategoria) {
+          option.selected = true;
+        }
         subcategoriaSelect.appendChild(option);
       });
     }
   });
 
-    // Trigger change event on page load to populate subcategories if a category is already selected
-    document.getElementById('categoria').dispatchEvent(new Event('change'));
-
+  // Trigger change event on page load to populate subcategories if a category is already selected
+  document.getElementById('categoria').dispatchEvent(new Event('change'));
+  
+  //<!--FIN CATEGORIA Y SUBCATEGORIA-->
+  
   const ctx = document.getElementById('meGustaChart').getContext('2d');
   const meGustaChart = new Chart(ctx, {
     type: 'bar',
