@@ -1050,3 +1050,31 @@ def graficar_visualizaciones(request):
             "fecha_fin": fin.date(),
         },
     )
+def visualizar_historial(request):
+    """
+    Visualiza el historial con detalles y permite filtrar por contenido, usuario y rango de fechas.
+    """
+    # Obtener parámetros de filtro desde la solicitud
+    contenido_id = request.GET.get('contenido')  # ID del contenido
+    usuario_id = request.GET.get('usuario')  # ID del usuario
+    fecha_inicio = request.GET.get('fecha_inicio')  # Fecha inicial (YYYY-MM-DD)
+    fecha_fin = request.GET.get('fecha_fin')  # Fecha final (YYYY-MM-DD)
+
+    # Iniciar queryset base
+    historial = Historico.objects.select_related('contenido', 'usuario').all()
+
+    # Aplicar filtros dinámicamente
+    if contenido_id:
+        historial = historial.filter(contenido_id=contenido_id)
+    if usuario_id:
+        historial = historial.filter(usuario_id=usuario_id)
+    if fecha_inicio and fecha_fin:
+        try:
+            fecha_inicio = datetime.strptime(fecha_inicio, '%Y-%m-%d')
+            fecha_fin = datetime.strptime(fecha_fin, '%Y-%m-%d')
+            historial = historial.filter(fecha__range=(fecha_inicio, fecha_fin))
+        except ValueError:
+            pass  # Ignorar si las fechas no tienen el formato correcto
+
+    # Pasar los datos al template
+    return render(request, 'historial.html', {'historial': historial})

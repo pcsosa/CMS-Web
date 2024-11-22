@@ -198,3 +198,21 @@ class ComentarioRoles(models.Model):
 class Visualizacion(models.Model):
     contenido = models.ForeignKey(Contenido, on_delete=models.CASCADE)
     fecha = models.DateTimeField(auto_now_add=True)
+    
+class Historico(models.Model):
+    titulo = models.CharField(max_length=255)
+    usuario = models.CharField(max_length=255)
+    accion = models.CharField(max_length=50, choices=[
+        ('CREADO','CREADO'), ('EDITADO','EDITADO'), ('ELIMINADO','ELIMINADO'), ('PUBLICADO','PUBLICADO'), 
+        ('ENVIADO A BORRADOR','ENVIADO A BORRADOR'),
+        ('ENVIADO A PUBLICAR','ENVIADO A PUBLICAR'),('ENVIADO A EDICION','ENVIADO A EDICION')
+    ])
+    fecha = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        verbose_name = "Histórico de Contenido"
+        verbose_name_plural = "Históricos de Contenidos"
+        ordering = ['-fecha']
+
+    def __str__(self):
+        return f"{self.contenido} - {self.accion} - {self.fecha}"
