@@ -33,6 +33,7 @@ from contenidos.models_cont import (
     ComentarioRoles,
     Contenido,
     Visualizacion,
+    Historico,
 )
 from contenidos.notificacion import *
 from subcategorias.models import Subcategoria
@@ -109,6 +110,15 @@ def crear_contenido(request):
             editor_id=editor_id,
             autor_id=autor_id,
         )
+        # Creacion de un nuevo registro en Historico
+        nuevo_Historico = Historico(
+            titulo = nuevo_contenido.titulo,
+            usuario = nuevo_contenido.autor_id,
+            accion = "CREADO",
+            fecha=datetime.now()
+        )
+
+        nuevo_Historico.save()
 
         # Imprimir el nuevo contenido
         print("--------------Nuevo contenido-------------")
@@ -273,6 +283,20 @@ def eliminar_contenido(request, pk):
     """
     try:
         contenido = Contenido.objects.get(pk=pk)
+
+        # Creacion de un nuevo registro en Historico
+        token = obtenerToken(request)
+
+        nuevo_Historico = Historico(
+            titulo = contenido.titulo,
+            usuario =  obtenerUserId(token),
+            accion = "ELIMINADO",
+            fecha=datetime.now()
+        )
+
+        nuevo_Historico.save()
+
+
         contenido.delete()
         notificar_borrar_contenido(contenido)
         return redirect("gestion_contenido")
@@ -357,6 +381,16 @@ def editar_contenido(request, pk):
         contenido.subcategoria = subcategoria_obj
         contenido.editor_id = editor_id
         contenido.autor_id = autor_id  # Mantener el autor actual
+
+          # Creacion de un nuevo registro en Historico
+        nuevo_Historico = Historico(
+            titulo = contenido.titulo,
+            usuario =  obtenerUserId(token),
+            accion = "EDITADO",
+            fecha=datetime.now()
+        )
+        nuevo_Historico.save()
+
 
         # Guardar los cambios en el contenido
         contenido.save()
@@ -656,6 +690,29 @@ def cambiar_estado(request, pk, estado_actual, estado_siguiente):
                 if tienePermiso(token, "contenido", scopes)[
                     permiso[(estado_actual, estado_siguiente)]
                 ]:
+                     # Creacion de un nuevo registro en Historico
+                    token = obtenerToken(request)
+
+                    if estado_siguiente == "ELIMINADO":
+                        accion = "ELIMINADO"
+                    elif estado_siguiente == "PUBLICADO":
+                        accion = "PUBLICADO"
+                    elif estado_siguiente == "A_PUBLICAR":
+                        accion = "ENVIADO A PUBLICAR"
+                    elif estado_siguiente == "REVISION":
+                        accion = "ENVIADO A EDICION"
+                    elif estado_siguiente == "BORRADOR":
+                        accion = "ENVIADO A BORRADOR"
+
+                    nuevo_Historico = Historico(
+                        titulo = contenido.titulo,
+                        usuario =  obtenerUserId(token),
+                        fecha = datetime.now(),
+                        accion  = accion    
+                    )
+
+                    nuevo_Historico.save()
+
                     contenido.estado = estado_siguiente
                     contenido.save()
                     enviar_notificacion_cambio_estado(estado_siguiente, contenido)
