@@ -117,7 +117,6 @@ def crear_contenido(request):
             accion = "CREADO",
             fecha=datetime.now()
         )
-
         nuevo_Historico.save()
 
         # Imprimir el nuevo contenido
@@ -1117,14 +1116,15 @@ def visualizar_historial(request):
     fecha_inicio = request.GET.get('fecha_inicio')  # Fecha inicial (YYYY-MM-DD)
     fecha_fin = request.GET.get('fecha_fin')  # Fecha final (YYYY-MM-DD)
 
+    titulo = Contenido.objects.filter(id=contenido_id)
     # Iniciar queryset base
-    historial = Historico.objects.select_related('contenido', 'usuario').all()
+    historial = Historico.objects.all()
 
     # Aplicar filtros dinámicamente
     if contenido_id:
-        historial = historial.filter(contenido_id=contenido_id)
+        historial = historial.filter(titulo=titulo)
     if usuario_id:
-        historial = historial.filter(usuario_id=usuario_id)
+        historial = historial.filter(usuario=usuario_id)
     if fecha_inicio and fecha_fin:
         try:
             fecha_inicio = datetime.strptime(fecha_inicio, '%Y-%m-%d')
@@ -1134,4 +1134,4 @@ def visualizar_historial(request):
             pass  # Ignorar si las fechas no tienen el formato correcto
 
     # Pasar los datos al template
-    return render(request, 'historial.html', {'historial': historial})
+    return render(request, 'historial.html', {'historicos': historial})
