@@ -215,4 +215,4 @@ class Historico(models.Model):
         ordering = ['-fecha']
 
     def __str__(self):
-        return f"{self.contenido} - {self.accion} - {self.fecha}"
+        return f"{self.titulo} - {self.accion} - {self.fecha}"
