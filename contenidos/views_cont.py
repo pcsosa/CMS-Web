@@ -1108,7 +1108,12 @@ def graficar_visualizaciones(request):
     )
 def visualizar_historial(request):
     """
-    Visualiza el historial con detalles y permite filtrar por contenido, usuario y rango de fechas.
+   Visualiza el historial con detalles y permite filtrar por contenido, usuario y rango de fechas.
+
+   :param request: Objeto de solicitud que contiene los datos de la petición.
+   :type request: HttpRequest
+   :return: Renderiza el template 'historial.html' con los datos filtrados.
+   :rtype: HttpResponse
     """
     # Obtener parámetros de filtro desde la solicitud
     contenido_id = request.GET.get('contenido')  # ID del contenido

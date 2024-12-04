@@ -200,6 +200,22 @@ class Visualizacion(models.Model):
     fecha = models.DateTimeField(auto_now_add=True)
     
 class Historico(models.Model):
+    """
+    Modelo que representa un comentario asociado a un contenido específico.
+
+    Atributos:
+        titulo (str): Referencia al contenido relacionado con esa historia.
+        usuario (str): Nombre del usuario que realizó una accion.
+        accion (str): Nombre de la accion realizado por el usuario.
+        fecha (DateTimeField): Fecha en que se realizo una accion sobre el contenido.
+
+
+    Meta:
+        ordering (list): Ordena las historias por fecha.
+
+    Métodos:
+        __str__: Devuelve una representación en cadena del historico(el usuario, la accion y la fecha).
+    """
     titulo = models.CharField(max_length=255)
     usuario = models.CharField(max_length=255)
     accion = models.CharField(max_length=50, choices=[
