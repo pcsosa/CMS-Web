@@ -45,7 +45,7 @@
       </div>
       <div class="col-md-4">
         <div class="form-group">
-          <label for="fecha_fin">Usuario:</label>
+          <label for="usuario">Usuario:</label>
           <select id="usuario" name="usuario" class="form-select">
             <option value="">Seleccione un usuario</option>
             {% for usuario in usuarios %}<option value="{{ usuario.id }}">{{ usuario.username }}</option>{% endfor %}
@@ -54,10 +54,19 @@
       </div>
       <div class="col-md-4">
         <div class="form-group">
-          <label for="fecha_fin">Autor:</label>
+          <label for="autor">Autor:</label>
           <select id="autor" name="autor" class="form-select">
             <option value="">Seleccione un autor</option>
             {% for usuario in usuarios %}<option value="{{ usuario.id }}">{{ usuario.username }}</option>{% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label for="articulo">Artículo:</label>
+          <select id="articulo" name="articulo" class="form-select">
+            <option value="">Seleccione un artículo</option>
+            {% for articulo in articulos %}<option value="{{ articulo.id }}">{{ articulo.titulo }}</option>{% endfor %}
           </select>
         </div>
       </div>
