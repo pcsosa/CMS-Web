@@ -1162,7 +1162,11 @@ def visualizar_historial(request):
     if fecha_inicio and fecha_fin:
         try:
             fecha_inicio = datetime.strptime(fecha_inicio, "%Y-%m-%d")
-            fecha_fin = datetime.strptime(fecha_fin, "%Y-%m-%d")
+            fecha_fin = (
+                datetime.strptime(fecha_fin, "%Y-%m-%d")
+                + timedelta(days=1)
+                - timedelta(seconds=1)
+            )
             historial = historial.filter(fecha__range=(fecha_inicio, fecha_fin))
         except ValueError:
             pass  # Ignorar si las fechas no tienen el formato correcto
