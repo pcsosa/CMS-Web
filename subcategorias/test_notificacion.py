@@ -3,7 +3,10 @@ from unittest.mock import patch
 from subcategorias.models import Subcategoria
 from appcms.models import Categoria 
 from subcategorias.notificacion import *
+import unittest
+
 class SubcategorySignalsTestCase(TestCase):
+
     def setUp(self):
         """Prepara los datos necesarios para las pruebas."""
         self.client = Client()
@@ -41,7 +44,8 @@ class SubcategorySignalsTestCase(TestCase):
 
         # Create a Subcategoria instance
         subcategoria = Subcategoria.objects.create(
-            nombre="Test Subcategoria"
+            nombre="Test Subcategoria",
+            categoria = self.categoria
         )
 
         # Verify notification parameters
@@ -56,88 +60,63 @@ class SubcategorySignalsTestCase(TestCase):
             expected_emails
         )
 
-    @patch('subcategorias.notificacion.obtenerUsersConRol')
-    @patch('subcategorias.notificacion.obtenerUserInfoById')
     @patch('subcategorias.notificacion.enviar_notificacion')
-    def test_notificar_editar_subcategoria(self, 
-        mock_enviar_notificacion, 
-        mock_obtener_user_info, 
-        mock_obtener_users_con_rol
-    ):
-        # Setup mock data for different user roles
-        autores = [{'id': 1}, {'id': 2}]
-        editores = [{'id': 3}, {'id': 4}]
-        publicadores = [{'id': 5}, {'id': 6}]
-
-        mock_obtener_users_con_rol.side_effect = [
-            autores, editores, publicadores
-        ]
-
-        # Setup email mock for each user
-        mock_obtener_user_info.side_effect = [
-            {"email": f"autor{i}@example.com"} for i in range(1, 7)
-        ]
-
-        # Create a Subcategoria instance
-        subcategoria = Subcategoria.objects.create(
-            nombre="Test Subcategoria Edit"
-        )
-
-        # Import and call the edit notification function
-        from subcategorias.signals import notificar_editar_subcategoria
-        notificar_editar_subcategoria(subcategoria)
-
-        # Verify notification parameters
-        expected_emails = [
-            "autor1@example.com", "autor2@example.com", 
-            "autor3@example.com", "autor4@example.com", 
-            "autor5@example.com", "autor6@example.com"
-        ]
-        mock_enviar_notificacion.assert_called_once_with(
-            'Edicion de subcategoria Test Subcategoria Edit', 
-            'La subcategoria "Test Subcategoria Edit" ha sido editada.', 
-            expected_emails
-        )
-
-    @patch('subcategorias.notificacion.obtenerUsersConRol')
     @patch('subcategorias.notificacion.obtenerUserInfoById')
-    @patch('subcategorias.notificacion.enviar_notificacion')
-    def test_notificar_borrar_subcategoria(self, 
-        mock_enviar_notificacion, 
-        mock_obtener_user_info, 
-        mock_obtener_users_con_rol
-    ):
-        # Setup mock data for different user roles
-        autores = [{'id': 1}, {'id': 2}]
-        editores = [{'id': 3}, {'id': 4}]
-        publicadores = [{'id': 5}, {'id': 6}]
+    @patch('subcategorias.notificacion.obtenerUsersConRol')
+    def test_notificar_editar_subcategoria(self, mock_obtenerUsersConRol, mock_obtenerUserInfoById, mock_enviar_notificacion):
+        # Configuración de mocks
+        mock_obtenerUsersConRol.side_effect = lambda rol: [{"id": 1}, {"id": 2}]
+        mock_obtenerUserInfoById.side_effect = lambda user_id: {"email": f"user{user_id}@example.com"}
+        mock_enviar_notificacion.return_value = None
 
-        mock_obtener_users_con_rol.side_effect = [
-            autores, editores, publicadores
-        ]
+        # Ejecutar la función
+        notificar_editar_subcategoria(self.subcategoria)
 
-        # Setup email mock for each user
-        mock_obtener_user_info.side_effect = [
-            {"email": f"autor{i}@example.com"} for i in range(1, 7)
-        ]
+        # Verificar destinatarios construidos
+        destinatarios = []
+        for role in ["Autor", "Editor", "Publicador"]:
+            users = mock_obtenerUsersConRol(role)
+            emails = [mock_obtenerUserInfoById(user["id"])["email"] for user in users]
+            destinatarios.extend(emails)
 
-        # Create a Subcategoria instance
-        subcategoria = Subcategoria.objects.create(
-            nombre="Test Subcategoria Delete",
-            categoria=self.categoria
-        )
-
-        # Import and call the delete notification function
-        notificar_borrar_subcategoria(subcategoria)
-
-        # Verify notification parameters
-        expected_emails = [
-            "autor1@example.com", "autor2@example.com", 
-            "autor3@example.com", "autor4@example.com", 
-            "autor5@example.com", "autor6@example.com"
-        ]
+        # Verificar que enviar_notificacion fue llamado con los datos correctos
         mock_enviar_notificacion.assert_called_once_with(
-            'Edicion de subcategoria Test Subcategoria Delete', 
-            'La subcategoria "Test Subcategoria Delete" ha sido editada.', 
-            expected_emails
+            "Edicion de subcategoria Prueba",
+            'La subcategoria "Prueba" ha sido editada.',
+            destinatarios
+        )
+    @patch('subcategorias.notificacion.enviar_notificacion')
+    @patch('subcategorias.notificacion.obtenerUserInfoById')
+    @patch('subcategorias.notificacion.obtenerUsersConRol')
+    def test_notificar_borrar_subcategoria(
+        self, mock_obtenerUsersConRol, mock_obtenerUserInfoById, mock_enviar_notificacion
+    ):
+        mock_obtenerUsersConRol.side_effect = [
+            [{"id": 1}, {"id": 2}],  # Para 'Autor'
+            [{"id": 3}, {"id": 4}],  # Para 'Editor'
+            [{"id": 5}, {"id": 6}],  # Para 'Publicador'
+        ]
+        mock_obtenerUserInfoById.side_effect = lambda user_id: {"email": f"user{user_id}@example.com"}
+
+        # Ejecutar la función
+        notificar_borrar_subcategoria(self.subcategoria)
+
+        # Verificar que se llamaron las funciones con los valores correctos
+        mock_obtenerUsersConRol.assert_has_calls(
+            [unittest.mock.call("Autor"), unittest.mock.call("Editor"), unittest.mock.call("Publicador")]
+        )
+        mock_obtenerUserInfoById.assert_any_call(1)
+        mock_obtenerUserInfoById.assert_any_call(2)
+        mock_obtenerUserInfoById.assert_any_call(3)
+        mock_obtenerUserInfoById.assert_any_call(4)
+        mock_obtenerUserInfoById.assert_any_call(5)
+        mock_obtenerUserInfoById.assert_any_call(6)
+        mock_enviar_notificacion.assert_called_once_with(
+            "Edicion de subcategoria Prueba",
+            'La subcategoria "Prueba" ha sido editada.',
+            [
+                "user1@example.com", "user2@example.com",  # Correos de 'Autor'
+                "user3@example.com", "user4@example.com",  # Correos de 'Editor'
+                "user5@example.com", "user6@example.com",  # Correos de 'Publicador'
+            ]
         )
