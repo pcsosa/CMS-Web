@@ -32,8 +32,8 @@ from contenidos.models_cont import (
     Comentario,
     ComentarioRoles,
     Contenido,
-    Visualizacion,
     Historico,
+    Visualizacion,
 )
 from contenidos.notificacion import *
 from subcategorias.models import Subcategoria
@@ -110,12 +110,13 @@ def crear_contenido(request):
             editor_id=editor_id,
             autor_id=autor_id,
         )
+
         # Creacion de un nuevo registro en Historico
         nuevo_Historico = Historico(
-            titulo = nuevo_contenido.titulo,
-            usuario = nuevo_contenido.autor_id,
-            accion = "CREADO",
-            fecha=datetime.now()
+            titulo=nuevo_contenido.titulo,
+            usuario=nuevo_contenido.autor_id,
+            accion="CREADO",
+            fecha=datetime.now(),
         )
         nuevo_Historico.save()
 
@@ -287,14 +288,13 @@ def eliminar_contenido(request, pk):
         token = obtenerToken(request)
 
         nuevo_Historico = Historico(
-            titulo = contenido.titulo,
-            usuario =  obtenerUserId(token),
-            accion = "ELIMINADO",
-            fecha=datetime.now()
+            titulo=contenido.titulo,
+            usuario=obtenerUserId(token),
+            accion="ELIMINADO",
+            fecha=datetime.now(),
         )
 
         nuevo_Historico.save()
-
 
         contenido.delete()
         notificar_borrar_contenido(contenido)
@@ -381,15 +381,14 @@ def editar_contenido(request, pk):
         contenido.editor_id = editor_id
         contenido.autor_id = autor_id  # Mantener el autor actual
 
-          # Creacion de un nuevo registro en Historico
+        # Creacion de un nuevo registro en Historico
         nuevo_Historico = Historico(
-            titulo = contenido.titulo,
-            usuario =  obtenerUserId(token),
-            accion = "EDITADO",
-            fecha=datetime.now()
+            titulo=contenido.titulo,
+            usuario=obtenerUserId(token),
+            accion="EDITADO",
+            fecha=datetime.now(),
         )
         nuevo_Historico.save()
-
 
         # Guardar los cambios en el contenido
         contenido.save()
@@ -689,7 +688,7 @@ def cambiar_estado(request, pk, estado_actual, estado_siguiente):
                 if tienePermiso(token, "contenido", scopes)[
                     permiso[(estado_actual, estado_siguiente)]
                 ]:
-                     # Creacion de un nuevo registro en Historico
+                    # Creacion de un nuevo registro en Historico
                     token = obtenerToken(request)
 
                     if estado_siguiente == "ELIMINADO":
@@ -704,10 +703,10 @@ def cambiar_estado(request, pk, estado_actual, estado_siguiente):
                         accion = "ENVIADO A BORRADOR"
 
                     nuevo_Historico = Historico(
-                        titulo = contenido.titulo,
-                        usuario =  obtenerUserId(token),
-                        fecha = datetime.now(),
-                        accion  = accion    
+                        titulo=contenido.titulo,
+                        usuario=obtenerUserId(token),
+                        fecha=datetime.now(),
+                        accion=accion,
                     )
 
                     nuevo_Historico.save()
@@ -1106,24 +1105,30 @@ def graficar_visualizaciones(request):
             "fecha_fin": fin.date(),
         },
     )
+
+
 def visualizar_historial(request):
     """
-   Visualiza el historial con detalles y permite filtrar por contenido, usuario y rango de fechas.
+    Visualiza el historial con detalles y permite filtrar por contenido, usuario y rango de fechas.
 
-   :param request: Objeto de solicitud que contiene los datos de la petición.
-   :type request: HttpRequest
-   :return: Renderiza el template 'historial.html' con los datos filtrados.
-   :rtype: HttpResponse
+    :param request: Objeto de solicitud que contiene los datos de la petición.
+    :type request: HttpRequest
+    :return: Renderiza el template 'historial.html' con los datos filtrados.
+    :rtype: HttpResponse
     """
     # Obtener parámetros de filtro desde la solicitud
-    contenido_id = request.GET.get('contenido')  # ID del contenido
-    usuario_id = request.GET.get('usuario')  # ID del usuario
-    fecha_inicio = request.GET.get('fecha_inicio')  # Fecha inicial (YYYY-MM-DD)
-    fecha_fin = request.GET.get('fecha_fin')  # Fecha final (YYYY-MM-DD)
+    contenido_id = request.GET.get("contenido")  # ID del contenido
+    usuario_id = request.GET.get("usuario")  # ID del usuario
+    fecha_inicio = request.GET.get("fecha_inicio")  # Fecha inicial (YYYY-MM-DD)
+    fecha_fin = request.GET.get("fecha_fin")  # Fecha final (YYYY-MM-DD)
 
     titulo = Contenido.objects.filter(id=contenido_id)
     # Iniciar queryset base
     historial = Historico.objects.all()
+
+    # Reemplazar el ID del usuario por su nombre de usuario en historial
+    for historico in historial:
+        historico.usuario = obtenerUserInfoById(historico.usuario).get("username")
 
     # Aplicar filtros dinámicamente
     if contenido_id:
@@ -1132,11 +1137,27 @@ def visualizar_historial(request):
         historial = historial.filter(usuario=usuario_id)
     if fecha_inicio and fecha_fin:
         try:
-            fecha_inicio = datetime.strptime(fecha_inicio, '%Y-%m-%d')
-            fecha_fin = datetime.strptime(fecha_fin, '%Y-%m-%d')
+            fecha_inicio = datetime.strptime(fecha_inicio, "%Y-%m-%d")
+            fecha_fin = datetime.strptime(fecha_fin, "%Y-%m-%d")
             historial = historial.filter(fecha__range=(fecha_inicio, fecha_fin))
         except ValueError:
             pass  # Ignorar si las fechas no tienen el formato correcto
 
+    # Obtener todos los usuarios menos suscriptores
+    autores = obtenerUsersConRol("Autor")
+    editores = obtenerUsersConRol("Editor")
+    administradores = obtenerUsersConRol("Administrador")
+    publicadores = obtenerUsersConRol("Publicador")
+
+    # juntar los usuarios sin repetir
+    usuarios = list(
+        {
+            usuario["id"]: usuario
+            for usuario in autores + editores + administradores + publicadores
+        }.values()
+    )
+
     # Pasar los datos al template
-    return render(request, 'historial.html', {'historicos': historial})
+    return render(
+        request, "historial.html", {"historicos": historial, "usuarios": usuarios}
+    )
