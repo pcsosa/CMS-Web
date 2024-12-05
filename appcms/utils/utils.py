@@ -6,11 +6,12 @@ import jwt
 import requests
 from django.conf import settings
 from django.core.cache import cache
-
-from appcms.services.keycloak_service import KeycloakService
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+
+from appcms.services.keycloak_service import KeycloakService
+
 
 # Obtener información del usuario a partir del user id
 def obtenerUserInfoById(user_id):
@@ -181,13 +182,13 @@ def decode_token(token, audience="cmsweb", verify_exp=True):
     public_key = settings.KEYCLOAK_RS256_PUBLIC_KEY
     public_key = re.sub(r"\\n", "\n", public_key)
     # Decodifica sin validar la audiencia para inspeccionarla
-    payload = jwt.decode(
-        token,
-        public_key,
-        algorithms=["RS256"],
-        options={"verify_exp": verify_exp, "verify_aud": False},
-    )
-    print("Audiencia encontrada en el token:", payload.get("aud"))
+    # payload = jwt.decode(
+    #     token,
+    #     public_key,
+    #     algorithms=["RS256"],
+    #     options={"verify_exp": verify_exp, "verify_aud": False},
+    # )
+    # print("Audiencia encontrada en el token:", payload.get("aud"))
 
     # Ahora valida la audiencia correcta
     return jwt.decode(
@@ -297,6 +298,7 @@ def quitar_acentos(texto):
     )
     return texto_sin_acentos
 
+
 def enviar_notificacion(asunto, mensaje, destinatarios):
     """
     Envía una notificación por correo electrónico.
@@ -314,9 +316,12 @@ def enviar_notificacion(asunto, mensaje, destinatarios):
     :returns: Esta función no devuelve ningún valor.
     :rtype: None
     """
-    html_mensaje = render_to_string('notificacion.html', {
-        'mensaje': mensaje,
-    })
+    html_mensaje = render_to_string(
+        "notificacion.html",
+        {
+            "mensaje": mensaje,
+        },
+    )
     mensaje_plano = strip_tags(html_mensaje)
     send_mail(
         asunto,
