@@ -205,6 +205,7 @@ class Historico(models.Model):
 
     Atributos:
         titulo (str): Referencia al contenido relacionado con esa historia.
+        contenido_id (ForeignKey): Referencia al contenido relacionado con esa historia.
         usuario (str): Nombre del usuario que realizó una accion.
         accion (str): Nombre de la accion realizado por el usuario.
         fecha (DateTimeField): Fecha en que se realizo una accion sobre el contenido.
@@ -217,6 +218,7 @@ class Historico(models.Model):
         __str__: Devuelve una representación en cadena del historico(el usuario, la accion y la fecha).
     """
     titulo = models.CharField(max_length=255)
+    contenido_id = models.ForeignKey(Contenido, on_delete=models.CASCADE)
     usuario = models.CharField(max_length=255)
     accion = models.CharField(max_length=50, choices=[
         ('CREADO','CREADO'), ('EDITADO','EDITADO'), ('ELIMINADO','ELIMINADO'), ('PUBLICADO','PUBLICADO'), 
