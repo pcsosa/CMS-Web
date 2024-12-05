@@ -18,7 +18,7 @@ def obtenerUserInfoById(user_id):
     if settings.TESTING == "True":
         return {"id": 1, "username": "autor1"}
 
-    kc = KeycloakService()
+    kc = KeycloakService.get_instance()
     user = kc.admin.get_user(user_id)
     return user
 
@@ -161,7 +161,7 @@ def obtenerUsersConRol(rol):
     Returns:
         list: Una lista de diccionarios con los IDs y nombres de usuario de los usuarios.
     """
-    kc = KeycloakService()
+    kc = KeycloakService.get_instance()
     users = kc.admin.get_realm_role_members(rol)
 
     # Usar comprensión de lista para extraer solo los campos 'id' y 'username'
