@@ -114,6 +114,7 @@ def crear_contenido(request):
         # Creacion de un nuevo registro en Historico
         nuevo_Historico = Historico(
             titulo=nuevo_contenido.titulo,
+            contenido_id=nuevo_contenido,
             usuario=nuevo_contenido.autor_id,
             accion="CREADO",
             fecha=datetime.now(),
@@ -289,6 +290,7 @@ def eliminar_contenido(request, pk):
 
         nuevo_Historico = Historico(
             titulo=contenido.titulo,
+            contenido_id=contenido,
             usuario=obtenerUserId(token),
             accion="ELIMINADO",
             fecha=datetime.now(),
@@ -384,6 +386,7 @@ def editar_contenido(request, pk):
         # Creacion de un nuevo registro en Historico
         nuevo_Historico = Historico(
             titulo=contenido.titulo,
+            contenido_id=contenido,
             usuario=obtenerUserId(token),
             accion="EDITADO",
             fecha=datetime.now(),
@@ -690,20 +693,19 @@ def cambiar_estado(request, pk, estado_actual, estado_siguiente):
                 ]:
                     # Creacion de un nuevo registro en Historico
                     token = obtenerToken(request)
-
-                    if estado_siguiente == "ELIMINADO":
-                        accion = "ELIMINADO"
-                    elif estado_siguiente == "PUBLICADO":
+                    accion = ""
+                    if estado_siguiente == "Publicado":
                         accion = "PUBLICADO"
-                    elif estado_siguiente == "A_PUBLICAR":
+                    elif estado_siguiente == "A Publicar":
                         accion = "ENVIADO A PUBLICAR"
-                    elif estado_siguiente == "REVISION":
-                        accion = "ENVIADO A EDICION"
-                    elif estado_siguiente == "BORRADOR":
+                    elif estado_siguiente == "Revisión":
+                        accion = "ENVIADO A EDICIÓN"
+                    elif estado_siguiente == "Borrador":
                         accion = "ENVIADO A BORRADOR"
 
                     nuevo_Historico = Historico(
                         titulo=contenido.titulo,
+                        contenido_id=contenido,
                         usuario=obtenerUserId(token),
                         fecha=datetime.now(),
                         accion=accion,
@@ -726,6 +728,27 @@ def cambiar_estado(request, pk, estado_actual, estado_siguiente):
                     "Error. Se debe respetar el flujo de estados de los contenidos",
                 )
         else:
+
+            accion = "INACTIVADO"
+            if estado_siguiente == "Publicado":
+                accion = "PUBLICADO"
+            elif estado_siguiente == "A Publicar":
+                accion = "ENVIADO A PUBLICAR"
+            elif estado_siguiente == "Revisión":
+                accion = "ENVIADO A EDICIÓN"
+            elif estado_siguiente == "Borrador":
+                accion = "ENVIADO A BORRADOR"
+
+            nuevo_Historico = Historico(
+                titulo=contenido.titulo,
+                contenido_id=contenido,
+                usuario=obtenerUserId(token),
+                fecha=datetime.now(),
+                accion=accion,
+            )
+
+            nuevo_Historico.save()
+
             contenido.estado = estado_siguiente
             contenido.save()
             enviar_notificacion_cambio_estado(estado_siguiente, contenido)
@@ -1117,24 +1140,25 @@ def visualizar_historial(request):
     :rtype: HttpResponse
     """
     # Obtener parámetros de filtro desde la solicitud
-    contenido_id = request.GET.get("contenido")  # ID del contenido
+    contenido_id = request.GET.get("articulo")  # ID del contenido
     usuario_id = request.GET.get("usuario")  # ID del usuario
+    autor_id = request.GET.get("autor")  # ID del autor
     fecha_inicio = request.GET.get("fecha_inicio")  # Fecha inicial (YYYY-MM-DD)
     fecha_fin = request.GET.get("fecha_fin")  # Fecha final (YYYY-MM-DD)
 
-    titulo = Contenido.objects.filter(id=contenido_id)
     # Iniciar queryset base
     historial = Historico.objects.all()
 
-    # Reemplazar el ID del usuario por su nombre de usuario en historial
-    for historico in historial:
-        historico.usuario = obtenerUserInfoById(historico.usuario).get("username")
+    # Obtener el nombre del contenido si se proporciona un ID
+    titulo = Contenido.objects.get(pk=contenido_id).titulo if contenido_id else None
 
     # Aplicar filtros dinámicamente
     if contenido_id:
         historial = historial.filter(titulo=titulo)
     if usuario_id:
         historial = historial.filter(usuario=usuario_id)
+    if autor_id:
+        historial = historial.filter(contenido_id__autor_id=autor_id)
     if fecha_inicio and fecha_fin:
         try:
             fecha_inicio = datetime.strptime(fecha_inicio, "%Y-%m-%d")
@@ -1157,7 +1181,16 @@ def visualizar_historial(request):
         }.values()
     )
 
+    # Obtener los contenidos
+    contenidos = Contenido.objects.all()
+
+    # Reemplazar el ID del usuario por su nombre de usuario en historial
+    for historico in historial:
+        historico.usuario = obtenerUserInfoById(historico.usuario).get("username")
+
     # Pasar los datos al template
     return render(
-        request, "historial.html", {"historicos": historial, "usuarios": usuarios}
+        request,
+        "historial.html",
+        {"historicos": historial, "usuarios": usuarios, "articulos": contenidos},
     )
