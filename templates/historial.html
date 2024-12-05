@@ -18,10 +18,10 @@
       {% if message.tags == 'error' %}<div class="message-error">{{ message }}</div>{% endif %}
     {% endfor %}
   {% endif %}
-  <h1 class='text-center'>Historial de Contenidos</h1>
+  <h1 class="text-center">Historial de Contenidos</h1>
   <!--FILTROS-->
   <h4>Filtrar Contenidos</h4>
-  <form method="get" action="{% url 'reporte' %}">
+  <form method="get" action="{% url 'historial' %}">
     <div class="row">
       <div class="col-md-4">
         <div class="form-group">
@@ -65,32 +65,40 @@
         <div class="form-group">
           <label for="articulo">Artículo:</label>
           <select id="articulo" name="articulo" class="form-select" size="3">
-            <option selected>Todos</option>
+            <option value="" selected>Todos</option>
             {% for articulo in articulos %}<option value="{{ articulo.id }}">{{ articulo.titulo }}</option>{% endfor %}
           </select>
         </div>
       </div>
-      <!--FIN NUEVO-->
-      <div class="mt-5">
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>Titulo</th>
-              <th>Accion</th>
-              <th>Usuario</th>
-              <th>Fecha</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for historico in historicos %}
-              <tr>
-                <td>{{ historico.titulo }}</td>
-                <td>{{ historico.accion }}</td>
-                <td>{{ historico.usuario }}</td>
-                <td>{{ historico.fecha }}</td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label>&nbsp;</label>
+          <button type="submit" class="btn btn-primary form-control">Filtrar</button>
+        </div>
       </div>
-    {% endblock content %}
+    </div>
+  </form>
+  <!--FIN NUEVO-->
+  <div class="mt-5">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Titulo</th>
+          <th>Accion</th>
+          <th>Usuario</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for historico in historicos %}
+          <tr>
+            <td>{{ historico.titulo }}</td>
+            <td>{{ historico.accion }}</td>
+            <td>{{ historico.usuario }}</td>
+            <td>{{ historico.fecha }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock content %}
