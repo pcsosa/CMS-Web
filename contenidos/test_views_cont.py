@@ -4,14 +4,15 @@ from unittest.mock import Mock, patch
 from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.shortcuts import render
 from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 from django.utils import timezone
 
 from appcms.models import Categoria
-from appcms.utils.utils import decode_token, obtenerToken, obtenerUserId
+from appcms.utils.utils import decode_token, obtenerToken, obtenerUserId, obtenerUserInfoById, obtenerUsersConRol
 from cmsweb.settings import KEYCLOAK_RS256_PUBLIC_KEY
-from contenidos.models_cont import Categoria, Comentario, Contenido
+from contenidos.models_cont import Categoria, Comentario, Contenido,Historico
 from subcategorias.models import Subcategoria
 
 
@@ -435,3 +436,74 @@ class GuardarComentarioTestCase(TestCase):
             {"comentario": "Este es un comentario."},
         )
         self.assertEqual(response.status_code, 404)  # No encontrado
+
+
+def visualizar_historial(request):
+    """
+    Visualiza el historial con detalles y permite filtrar por contenido, usuario y rango de fechas.
+
+    :param request: Objeto de solicitud que contiene los datos de la petición.
+    :type request: HttpRequest
+    :return: Renderiza el template 'historial.html' con los datos filtrados.
+    :rtype: HttpResponse
+    """
+    # Obtener parámetros de filtro desde la solicitud
+    contenido_id = request.GET.get("articulo")  # ID del contenido
+    usuario = request.GET.get("usuario")  # Nombre del usuario
+    autor_id = request.GET.get("autor")  # ID del autor del contenido
+    fecha_inicio = request.GET.get("fecha_inicio")  # Fecha inicial (YYYY-MM-DD)
+    fecha_fin = request.GET.get("fecha_fin")  # Fecha final (YYYY-MM-DD)
+
+    # Iniciar queryset base
+    historial = Historico.objects.all()
+
+    # Aplicar filtros dinámicamente
+    if contenido_id:
+        historial = historial.filter(contenido_id=contenido_id)
+    if usuario:
+        historial = historial.filter(usuario=usuario)
+    if autor_id:
+        historial = historial.filter(contenido_id__autor_id=autor_id)
+    if fecha_inicio and fecha_fin:
+        try:
+            fecha_inicio = datetime.strptime(fecha_inicio, "%Y-%m-%d")
+            fecha_fin = (
+                datetime.strptime(fecha_fin, "%Y-%m-%d")
+                + timedelta(days=1)
+                - timedelta(seconds=1)
+            )
+            historial = historial.filter(fecha__range=(fecha_inicio, fecha_fin))
+        except ValueError:
+            pass  # Ignorar si las fechas no tienen el formato correcto
+
+    # Obtener todos los usuarios menos suscriptores
+    autores = obtenerUsersConRol("Autor")
+    editores = obtenerUsersConRol("Editor")
+    administradores = obtenerUsersConRol("Administrador")
+    publicadores = obtenerUsersConRol("Publicador")
+
+    # Juntar los usuarios sin repetir
+    usuarios = list(
+        {
+            usuario["id"]: usuario
+            for usuario in autores + editores + administradores + publicadores
+        }.values()
+    )
+
+    # Obtener los contenidos
+    contenidos = Contenido.objects.all()
+
+    # Reemplazar el nombre del usuario en el historial
+    for historico in historial:
+        historico.usuario = obtenerUserInfoById(historico.usuario).get("username")
+
+    # Pasar los datos al template
+    return render(
+        request,
+        "historial.html",
+        {
+            "historicos": historial,
+            "usuarios": usuarios,
+            "articulos": contenidos,
+        },
+    )
