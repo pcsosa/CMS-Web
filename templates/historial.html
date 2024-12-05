@@ -64,8 +64,8 @@
       <div class="col-md-4">
         <div class="form-group">
           <label for="articulo">Artículo:</label>
-          <select id="articulo" name="articulo" class="form-select">
-            <option value="">Seleccione un artículo</option>
+          <select id="articulo" name="articulo" class="form-select" size="3">
+            <option selected>Todos</option>
             {% for articulo in articulos %}<option value="{{ articulo.id }}">{{ articulo.titulo }}</option>{% endfor %}
           </select>
         </div>
