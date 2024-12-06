@@ -437,3 +437,113 @@ class GuardarComentarioTestCase(TestCase):
         )
         self.assertEqual(response.status_code, 404)  # No encontrado
 
+
+class VisualizarHistorialTests(TestCase):
+    def setUp(self):
+        # Crear datos de prueba
+        self.categoria = Categoria.objects.create(nombre="categoria de prueba")
+        self.autor = {"id": "1", "username": "autor1"}
+        self.editor = {"id": "2", "username": "editor1"}
+        self.publicador = {"id": "3", "username": "publicador1"}
+        
+        self.contenido = Contenido.objects.create(
+            titulo="El futuro de los móviles",
+            texto="Texto acerca de móviles",
+            categoria=self.categoria,
+            autor_id=self.autor["id"],
+            editor_id=self.editor["id"],
+            publicador_id=self.publicador["id"],
+        )
+        self.historico1 = Historico.objects.create(
+            titulo=self.contenido.titulo,
+            contenido_id = self.contenido,
+            usuario=1,
+            fecha=datetime.now()
+        )
+        self.historico2 = Historico.objects.create(
+            titulo="prueba de segunda",
+            contenido_id =self.contenido,
+            usuario=2,
+            fecha=datetime.now() - timedelta(days=1)
+        )
+
+    @patch("contenidos.views_cont.obtenerUsersConRol")
+    @patch("contenidos.views_cont.obtenerUserInfoById")
+    def test_visualizar_historial_sin_filtros(self, mock_obtenerUserInfoById, mock_obtenerUsersConRol):
+        # Mockear datos de usuarios
+        mock_obtenerUsersConRol.return_value = [{"id": 1, "username": "user1"}, {"id": 2, "username": "user2"}]
+        mock_obtenerUserInfoById.side_effect = lambda user_id: {"username": f"user{user_id}"}
+
+        # Realizar la solicitud
+        response = self.client.get(reverse("historial"))
+
+        # Verificar la respuesta
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "historial.html")
+        self.assertIn("historicos", response.context)
+        self.assertEqual(len(response.context["historicos"]), 2)
+
+    @patch("contenidos.views_cont.obtenerUsersConRol")
+    @patch("contenidos.views_cont.obtenerUserInfoById")
+    def test_visualizar_historial_con_filtro_por_usuario(self, mock_obtenerUserInfoById, mock_obtenerUsersConRol):
+        # Mockear datos de usuarios
+        mock_obtenerUsersConRol.return_value = [{"id": 1, "username": "user1"}, {"id": 2, "username": "user2"}]
+        mock_obtenerUserInfoById.side_effect = lambda user_id: {"username": f"user{user_id}"}
+
+        # Realizar la solicitud con filtro de usuario
+        response = self.client.get(reverse("historial"), {"usuario": 1})
+
+        # Verificar la respuesta
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context["historicos"]), 1)
+        self.assertEqual(response.context["historicos"][0].usuario, "user1")
+
+    @patch("contenidos.views_cont.obtenerUsersConRol")
+    @patch("contenidos.views_cont.obtenerUserInfoById")
+    def test_visualizar_historial_con_filtro_por_fecha(self, mock_obtenerUserInfoById, mock_obtenerUsersConRol):
+        # Mockear datos de usuarios
+        mock_obtenerUsersConRol.return_value = [{"id": 1, "username": "user1"}, {"id": 2, "username": "user2"}]
+        mock_obtenerUserInfoById.side_effect = lambda user_id: {"username": f"user{user_id}"}
+
+        # Filtrar por fecha
+        fecha_inicio = (datetime.now() - timedelta(days=2)).strftime("%Y-%m-%d")
+        fecha_fin = datetime.now().strftime("%Y-%m-%d")
+        response = self.client.get(
+            reverse("historial"),
+            {"fecha_inicio": fecha_inicio, "fecha_fin": fecha_fin},
+        )
+
+        # Verificar la respuesta
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context["historicos"]), 2)
+
+    @patch("contenidos.views_cont.obtenerUsersConRol")
+    @patch("contenidos.views_cont.obtenerUserInfoById")
+    def test_visualizar_historial_sin_resultados(self, mock_obtenerUserInfoById, mock_obtenerUsersConRol):
+        # Mockear datos de usuarios
+        mock_obtenerUsersConRol.return_value = [{"id": 1, "username": "user1"}, {"id": 2, "username": "user2"}]
+        mock_obtenerUserInfoById.side_effect = lambda user_id: {"username": f"user{user_id}"}
+
+        # Filtro que no debería devolver resultados
+        response = self.client.get(
+            reverse("historial"),
+            {"usuario": 9999},  # Usuario inexistente
+        )
+
+        # Verificar la respuesta
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context["historicos"]), 0)
+        
+    @patch("contenidos.views_cont.obtenerUsersConRol")
+    @patch("contenidos.views_cont.obtenerUserInfoById")
+    def test_filtrar_por_contenido(self,mock_obtenerUserInfoById,mock_obtenerUsersConRol):
+        # Mockear datos de usuarios
+        mock_obtenerUsersConRol.return_value = [{"id": 1, "username": "user1"}, {"id": 2, "username": "user2"}]
+        mock_obtenerUserInfoById.side_effect = lambda user_id: {"username": f"user{user_id}"}
+        # Filtrar por contenido
+        response = self.client.get(
+            reverse("historial"), {"articulo": self.contenido.id}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(self.historico1, response.context["historicos"])
+        self.assertNotIn(self.historico2, response.context["historicos"])
