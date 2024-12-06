@@ -438,72 +438,65 @@ class GuardarComentarioTestCase(TestCase):
         self.assertEqual(response.status_code, 404)  # No encontrado
 
 
-def visualizar_historial(request):
-    """
-    Visualiza el historial con detalles y permite filtrar por contenido, usuario y rango de fechas.
+class VisualizarHistorialTest(TestCase):
+    def setUp(self):
+        # Configuración inicial de datos
+        self.client = Client()
+        
+        # Crear usuarios con diferentes roles
+        self.autor = User.objects.create_user(username="autor", password="test123")
+        self.editor = User.objects.create_user(username="editor", password="test123")
+        
+        # Crear contenidos
+        self.contenido1 = Contenido.objects.create(titulo="Articulo 1", autor=self.autor)
+        self.contenido2 = Contenido.objects.create(titulo="Articulo 2", autor=self.editor)
+        
+        # Crear historial
+        self.historial1 = Historico.objects.create(
+            contenido=self.contenido1,
+            usuario=self.autor.id,
+            fecha=datetime.now() - timedelta(days=1),
+        )
+        self.historial2 = Historico.objects.create(
+            contenido=self.contenido2,
+            usuario=self.editor.id,
+            fecha=datetime.now(),
+        )
 
-    :param request: Objeto de solicitud que contiene los datos de la petición.
-    :type request: HttpRequest
-    :return: Renderiza el template 'historial.html' con los datos filtrados.
-    :rtype: HttpResponse
-    """
-    # Obtener parámetros de filtro desde la solicitud
-    contenido_id = request.GET.get("articulo")  # ID del contenido
-    usuario = request.GET.get("usuario")  # Nombre del usuario
-    autor_id = request.GET.get("autor")  # ID del autor del contenido
-    fecha_inicio = request.GET.get("fecha_inicio")  # Fecha inicial (YYYY-MM-DD)
-    fecha_fin = request.GET.get("fecha_fin")  # Fecha final (YYYY-MM-DD)
+    def test_historial_sin_filtros(self):
+        # Solicitud sin filtros
+        response = self.client.get(reverse("visualizar_historial"))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(self.historial1, response.context["historicos"])
+        self.assertIn(self.historial2, response.context["historicos"])
 
-    # Iniciar queryset base
-    historial = Historico.objects.all()
+    def test_filtrar_por_contenido(self):
+        # Filtrar por contenido
+        response = self.client.get(
+            reverse("visualizar_historial"), {"articulo": self.contenido1.id}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(self.historial1, response.context["historicos"])
+        self.assertNotIn(self.historial2, response.context["historicos"])
 
-    # Aplicar filtros dinámicamente
-    if contenido_id:
-        historial = historial.filter(contenido_id=contenido_id)
-    if usuario:
-        historial = historial.filter(usuario=usuario)
-    if autor_id:
-        historial = historial.filter(contenido_id__autor_id=autor_id)
-    if fecha_inicio and fecha_fin:
-        try:
-            fecha_inicio = datetime.strptime(fecha_inicio, "%Y-%m-%d")
-            fecha_fin = (
-                datetime.strptime(fecha_fin, "%Y-%m-%d")
-                + timedelta(days=1)
-                - timedelta(seconds=1)
-            )
-            historial = historial.filter(fecha__range=(fecha_inicio, fecha_fin))
-        except ValueError:
-            pass  # Ignorar si las fechas no tienen el formato correcto
+    def test_filtrar_por_fecha(self):
+        # Filtrar por rango de fechas
+        fecha_inicio = (datetime.now() - timedelta(days=2)).strftime("%Y-%m-%d")
+        fecha_fin = datetime.now().strftime("%Y-%m-%d")
+        response = self.client.get(
+            reverse("visualizar_historial"),
+            {"fecha_inicio": fecha_inicio, "fecha_fin": fecha_fin},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(self.historial1, response.context["historicos"])
+        self.assertIn(self.historial2, response.context["historicos"])
 
-    # Obtener todos los usuarios menos suscriptores
-    autores = obtenerUsersConRol("Autor")
-    editores = obtenerUsersConRol("Editor")
-    administradores = obtenerUsersConRol("Administrador")
-    publicadores = obtenerUsersConRol("Publicador")
+    def test_filtrar_por_usuario(self):
+        # Filtrar por usuario
+        response = self.client.get(
+            reverse("visualizar_historial"), {"usuario": self.autor.id}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(self.historial1, response.context["historicos"])
+        self.assertNotIn(self.historial2, response.context["historicos"])
 
-    # Juntar los usuarios sin repetir
-    usuarios = list(
-        {
-            usuario["id"]: usuario
-            for usuario in autores + editores + administradores + publicadores
-        }.values()
-    )
-
-    # Obtener los contenidos
-    contenidos = Contenido.objects.all()
-
-    # Reemplazar el nombre del usuario en el historial
-    for historico in historial:
-        historico.usuario = obtenerUserInfoById(historico.usuario).get("username")
-
-    # Pasar los datos al template
-    return render(
-        request,
-        "historial.html",
-        {
-            "historicos": historial,
-            "usuarios": usuarios,
-            "articulos": contenidos,
-        },
-    )
