@@ -119,7 +119,7 @@ def crear_contenido(request):
             accion="CREADO",
             fecha=datetime.now(),
         )
-        nuevo_Historico.save()
+        
 
         # Imprimir el nuevo contenido
         print("--------------Nuevo contenido-------------")
@@ -134,7 +134,7 @@ def crear_contenido(request):
         print(f"Autor: {nuevo_contenido.autor_id}")
 
         nuevo_contenido.save()
-
+        nuevo_Historico.save()
         # Redireccionar después de guardar
         return redirect("gestion_contenido")
 
@@ -659,25 +659,25 @@ def cambiar_estado(request, pk, estado_actual, estado_siguiente):
         ("Publicado", "A Publicar"): "enviar-Publicado-Apublicar",
     }
 
-    scopes = [
-        "enviar-borrador-revision",
-        "enviar-revision-Apublicar",
-        "enviar-Apublicar-Publicado",
-    ]
-    scopes += [
-        "enviar-revision-borrador",
-        "enviar-Apublicar-revision",
-        "enviar-Publicado-Apublicar",
-    ]
-    token = obtenerToken(request)
-    permiso = {
-        ("Borrador", "Revisión"): "enviar-borrador-revision",
-        ("Revisión", "A Publicar"): "enviar-revision-Apublicar",
-        ("A Publicar", "Publicado"): "enviar-Apublicar-Publicado",
-        ("Revisión", "Borrador"): "enviar-revision-borrador",
-        ("A Publicar", "Revisión"): "enviar-Apublicar-revision",
-        ("Publicado", "A Publicar"): "enviar-Publicado-Apublicar",
-    }
+    # scopes = [
+    #     "enviar-borrador-revision",
+    #     "enviar-revision-Apublicar",
+    #     "enviar-Apublicar-Publicado",
+    # ]
+    # scopes += [
+    #     "enviar-revision-borrador",
+    #     "enviar-Apublicar-revision",
+    #     "enviar-Publicado-Apublicar",
+    # ]
+    # token = obtenerToken(request)
+    # permiso = {
+    #     ("Borrador", "Revisión"): "enviar-borrador-revision",
+    #     ("Revisión", "A Publicar"): "enviar-revision-Apublicar",
+    #     ("A Publicar", "Publicado"): "enviar-Apublicar-Publicado",
+    #     ("Revisión", "Borrador"): "enviar-revision-borrador",
+    #     ("A Publicar", "Revisión"): "enviar-Apublicar-revision",
+    #     ("Publicado", "A Publicar"): "enviar-Publicado-Apublicar",
+    # }
 
     # Verifica que los estados actual y siguiente existan en la lista de estados
     if estado_actual in estados_disponibles and estado_siguiente in estados_disponibles:

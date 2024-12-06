@@ -56,10 +56,10 @@ class ContenidoViewsTest(TestCase):
             response = self.client.get(reverse("crear_contenido"))
             self.assertEqual(response.status_code, 200)
             self.assertTemplateUsed(response, "crear_contenido.html")
-
-    def test_crear_contenido_view_post(self):
+    @patch('contenidos.views_cont.obtenerUserId')
+    def test_crear_contenido_view_post(self,mock_obtenerUserId):
         """Prueba que se puede crear un contenido a través del formulario."""
-
+        mock_obtenerUserId.return_value = {'id':1,'nombre':'user1'}
         image = SimpleUploadedFile(
             "test_image.jpg", b"file_content", content_type="image/jpeg"
         )
@@ -100,23 +100,25 @@ class ContenidoViewsTest(TestCase):
 
         # Verificar que la imagen se haya guardado correctamente
         self.assertIsNotNone(nuevo_contenido.imagen)
-
+    
     def test_editar_contenido_view_get(self):
         """Prueba que la vista editar_contenido devuelve el formulario correctamente."""
-        with patch("appcms.utils.utils.obtenerUsersConRol") as mock_obtenerUsersConRol:
+        with patch("appcms.utils.utils.obtenerUsersConRol") as mock_obtenerUsersConRol, \
+            patch("contenidos.views_cont.obtenerUserId") as mock_obtenerUserId:
             mock_obtenerUsersConRol.side_effect = lambda user_id: {
                 "username": f"autor{user_id}"
             }
+            mock_obtenerUserId.return_value = {'id':1 , 'nombre':'user1'}
             response = self.client.get(
                 reverse("editar_contenido", kwargs={"pk": self.contenido.id})
             )
             self.assertEqual(response.status_code, 200)
             self.assertTemplateUsed(response, "editar_contenido.html")
             self.assertContains(response, "El futuro de los móviles")
-
-    def test_editar_contenido_view_post(self):
+    @patch('contenidos.views_cont.obtenerUserId')
+    def test_editar_contenido_view_post(self,mock_obtenerUserId):
         """Prueba que se puede editar un contenido a través del formulario."""
-
+        mock_obtenerUserId.return_value = {'id':1,'nombre':'user1'}
         response = self.client.post(
             reverse("editar_contenido", kwargs={"pk": self.contenido.id}),
             {
@@ -132,9 +134,10 @@ class ContenidoViewsTest(TestCase):
         contenido_actualizado = Contenido.objects.get(id=self.contenido.id)
         self.assertEqual(contenido_actualizado.titulo, "Contenido actualizado")
         self.assertEqual(contenido_actualizado.texto, "Texto actualizado")
-
-    def test_eliminar_contenido_view(self):
+    @patch('contenidos.views_cont.obtenerUserId')
+    def test_eliminar_contenido_view(self,mock_obtenerUserId):
         """Prueba que se puede eliminar un contenido."""
+        mock_obtenerUserId.return_value = {'id':1, 'nombre':'user1'}
         response = self.client.post(
             reverse("eliminar_contenido", kwargs={"pk": self.contenido.id})
         )
@@ -342,7 +345,9 @@ class CambiarEstadoTestCase(TestCase):
         self.assertEqual(self.contenido.estado, "Borrador")
 
     # Verifica que el estado puede cambiarse a "Inactivo".
-    def test_cambiar_estado_inactivo(self):
+    @patch('contenidos.views_cont.obtenerUserId')
+    def test_cambiar_estado_inactivo(self, mock_obtenerUserId):
+        mock_obtenerUserId.return_value = {'id':1,'nombre':'autor2'}
         self.contenido.estado = "Publicado"
         self.contenido.save()
         response = self.client.post(
