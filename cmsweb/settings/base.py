@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 # ------------------- PATHS ----------------------
 # -------------------------------------------------
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 
 # -------------------------------------------------
