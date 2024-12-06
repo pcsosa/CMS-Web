@@ -6,170 +6,151 @@
   Reporte de Contenido
 {% endblock title %}
 {% block head %}
-  {{ block.super }}
-  <link rel="stylesheet" type="text/css" href="{% static 'css/kanban.css' %}">
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'css/kanban.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% endblock head %}
 {% block content %}
-  {% if messages %}
-    {% for message in messages %}
-      {% if message.tags == 'error' %}<div class="message-error">{{ message }}</div>{% endif %}
+{% if messages %}
+{% for message in messages %}
+{% if message.tags == 'error' %}
+<div class="message-error">
+  {{ message }}
+</div>
+{% endif %}
+{% endfor %}
+{% endif %}
+<h1 class='text-center'>Reporte de Contenidos</h1>
+
+<h4>Resumen General</h4>
+<ul>
+  <li>Total de Visitas: {{ summary.total_visitas }}</li>
+  <li>Total de Me Gusta: {{ summary.total_megusta }}</li>
+  <li>Total de Contenidos: {{ summary.total_contenido }}</li>
+  <li>Artículos Redactados: {{ articulos_redactados }}</li>
+  <li>Promedio de Tiempo de Revisión: {{ tiempo_revision|floatformat:2 }} días</li>
+</ul>
+<!--FILTROS-->
+<h4>Filtrar Contenidos</h4>
+<form method="get" action="{% url 'reporte' %}">
+  <div class="row">
+    <div class="col-md-4">
+      <div class="form-group">
+        <label for="fecha_inicio">Fecha Inicio:</label>
+        <input type="date" id="fecha_inicio" name="fecha_inicio" class="form-control"
+          value="{{ request.GET.fecha_inicio }}">
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group">
+        <label for="fecha_fin">Fecha Fin:</label>
+        <input type="date" id="fecha_fin" name="fecha_fin" class="form-control" value="{{ request.GET.fecha_fin }}">
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group">
+        <label for="estado">Estado:</label>
+        <select id="estado" name="estado" class="form-control">
+          <option value = "">Todos</option>
+          <option value = "Publicado" {% if request.GET.estado == 'Publicado' %}selected{% endif %}>Publicado</option>
+          <option value = "Borrador" {% if request.GET.estado == 'Borrador' %}selected{% endif %}>Borrador</option>
+          <option value = "Revisión" {% if request.GET.estado == 'Revisión' %}selected{% endif %}>Revisión</option>
+          <option value = "A Publicar" {% if request.GET.estado == 'A Publicar' %}selected{% endif %}>A Publicar</option>
+          <option value = "Inactivo" {% if request.GET.estado == 'Inactivo' %}selected{% endif %}>Inactivo</option>
+        </select>
+      </div>
+    </div>
+  </div>
+<!--CATEGORIA Y SUBCATEGORIA-->
+<div class="row">
+  <div class="col-md-6">
+    <div class="form-group">
+      <label for="categoria">Categoría:</label>
+      <select id="categoria" name="categoria" class="form-control">
+        <option value="">Todas</option>
+        {% for categoria in categorias %}
+        <option value="{{ categoria.id_categoria }}" {% if request.GET.categoria == categoria.id_categoria|stringformat:"s" %}selected{% endif %}>{{ categoria.nombre }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group">
+      <label for="subcategoria">Subcategoría:</label>
+      <select id="subcategoria" name="subcategoria" class="form-control">
+        <option value="">Todas</option>
+        {% for subcategoria in subcategorias %}
+        <option value="{{ subcategoria.id_subcategoria }}" {% if request.GET.subcategoria == subcategoria.id_subcategoria|stringformat:"s" %}selected{% endif %}>{{
+          subcategoria.nombre }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+</div>
+<!--FIN CATEGORIA Y SUBCATEGORIA-->
+  <div class="row mt-3">
+    <div class="col-md-12 text-center">
+      <button type="submit" class="btn btn-primary">Filtrar</button>
+      <a href="{% url 'reporte' %}" class="btn btn-secondary">Limpiar Filtros</a>
+    </div>
+  </div>
+</form>
+<!--FIN NUEVO-->
+<h4>Detalles por Contenido</h4>
+<div style="text-align: right;">
+  <a href="{% url 'generar_reporte_pdf' %}?fecha_inicio={{ request.GET.fecha_inicio }}&fecha_fin={{ request.GET.fecha_fin }}&estado={{ request.GET.estado }}&categoria={{ request.GET.categoria }}&subcategoria={{ request.GET.subcategoria }}" class="btn btn-primary">
+    <i class="fas fa-download"></i>
+  </a>
+</div>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Me gusta</th>
+      <th>Visitas</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for contenido in contenidos %}
+    <tr>
+      <td>{{ contenido.titulo }}</td>
+      <td>{{ contenido.megusta }}</td>
+      <td>{{ contenido.visualizaciones }}</td>
+    </tr>
     {% endfor %}
-  {% endif %}
-  <h1 class='text-center'>Reporte de Contenidos</h1>
-  <h4>Resumen General</h4>
-  <ul>
-    <li>Total de Visitas: {{ summary.total_visitas }}</li>
-    <li>Total de Me Gusta: {{ summary.total_megusta }}</li>
-    <li>Total de Contenidos: {{ summary.total_contenido }}</li>
-    <li>Artículos Redactados: {{ articulos_redactados }}</li>
-    <li>Promedio de Tiempo de Revisión: {{ tiempo_revision|floatformat:2 }} días</li>
-  </ul>
-  <!--FILTROS-->
-  <h4>Filtrar Contenidos</h4>
-  <form method="get" action="{% url 'reporte' %}">
-    <div class="row">
-      <div class="col-md-4">
-        <div class="form-group">
-          <label for="fecha_inicio">Fecha Inicio:</label>
-          <input type="date"
-                 id="fecha_inicio"
-                 name="fecha_inicio"
-                 class="form-control"
-                 value="{{ request.GET.fecha_inicio }}">
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="form-group">
-          <label for="fecha_fin">Fecha Fin:</label>
-          <input type="date"
-                 id="fecha_fin"
-                 name="fecha_fin"
-                 class="form-control"
-                 value="{{ request.GET.fecha_fin }}">
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="form-group">
-          <label for="estado">Estado:</label>
-          <select id="estado" name="estado" class="form-control">
-            <option value = "">Todos</option>
-            <option value="Publicado"
-                    {% if request.GET.estado == 'Publicado' %}selected{% endif %}>Publicado</option>
-            <option value="Borrador"
-                    {% if request.GET.estado == 'Borrador' %}selected{% endif %}>Borrador</option>
-            <option value="Revisión"
-                    {% if request.GET.estado == 'Revisión' %}selected{% endif %}>Revisión</option>
-            <option value="A Publicar"
-                    {% if request.GET.estado == 'A Publicar' %}selected{% endif %}>A Publicar</option>
-            <option value="Inactivo"
-                    {% if request.GET.estado == 'Inactivo' %}selected{% endif %}>Inactivo</option>
-          </select>
-        </div>
-      </div>
-    </div>
-    <!--CATEGORIA Y SUBCATEGORIA-->
-    <div class="row">
-      <div class="col-md-6">
-        <div class="form-group">
-          <label for="categoria">Categoría:</label>
-          <select id="categoria" name="categoria" class="form-control">
-            <option value="">Todas</option>
-            {% for categoria in categorias %}
-              <option value="{{ categoria.id_categoria }}"
-                      {% if request.GET.categoria == categoria.id_categoria|stringformat:"s" %}selected{% endif %}>
-                {{ categoria.nombre }}
-              </option>
-            {% endfor %}
-          </select>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="form-group">
-          <label for="subcategoria">Subcategoría:</label>
-          <select id="subcategoria" name="subcategoria" class="form-control">
-            <option value="">Todas</option>
-            {% for subcategoria in subcategorias %}
-              <option value="{{ subcategoria.id_subcategoria }}"
-                      {% if request.GET.subcategoria == subcategoria.id_subcategoria|stringformat:"s" %}selected{% endif %}>
-                {{ subcategoria.nombre }}
-              </option>
-            {% endfor %}
-          </select>
-        </div>
-      </div>
-    </div>
-    <!--FIN CATEGORIA Y SUBCATEGORIA-->
-    <div class="row mt-3">
-      <div class="col-md-12 text-center">
-        <button type="submit" class="btn btn-primary">Filtrar</button>
-        <a href="{% url 'reporte' %}" class="btn btn-secondary">Limpiar Filtros</a>
-      </div>
-    </div>
-  </form>
-  <!--FIN NUEVO-->
-  <h4>Detalles por Contenido</h4>
-  <div style="text-align: right;">
-    <a href="{% url 'generar_reporte_pdf' %}" class="btn btn-primary">
-      <i class="fas fa-download"></i>
-    </a>
+  </tbody>
+</table>
+
+<h4>Top 5 Artículos Más Leídos</h4>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Visitas</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for contenido in top_leidos %}
+    <tr>
+      <td>{{ contenido.titulo }}</td>
+      <td>{{ contenido.total_visitas }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<div class="container">
+  <h4>Gráfico de Me Gusta (Top 5)</h4>
+  <div class="chart-container" style="width: 80%; margin: auto;">
+    <canvas id="meGustaChart" width="300" height="150"></canvas>
   </div>
-  <table class="table table-bordered">
-    <thead>
-      <tr>
-        <th>Nombre</th>
-        <th>Me gusta</th>
-        <th>Visitas</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for contenido in contenidos %}
-        <tr>
-          <td>{{ contenido.titulo }}</td>
-          <td>{{ contenido.megusta }}</td>
-          <td>{{ contenido.visualizaciones }}</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  <h4>Top 5 Artículos Más Leídos</h4>
-  <table class="table table-bordered">
-    <thead>
-      <tr>
-        <th>Nombre</th>
-        <th>Visitas</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for contenido in top_leidos %}
-        <tr>
-          <td>{{ contenido.titulo }}</td>
-          <td>{{ contenido.total_visitas }}</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  <div class="container">
-    <h4>Gráfico de Me Gusta (Top 5)</h4>
-    <div class="chart-container" style="width: 80%; margin: auto;">
-      <canvas id="meGustaChart" width="300" height="150"></canvas>
-    </div>
-  </div>
-  <script>
-      const ctx = document.getElementById('meGustaChart').getContext('2d');
-      const meGustaChart = new Chart(ctx, {
-          type: 'bar',
-          data: {
-              labels: [{% for contenido in contenidos  %}'{{ contenido.titulo }}'{% if not forloop.last %}, {% endif %}{% endfor %}], // Nombres de los contenidos
-              datasets: [{
-                  label: 'Me Gusta',
-                  data: [{% for contenido in contenidos %}{{ contenido.megusta }}{% if not forloop.last %}, {% endif %}{% endfor %}], // Valores de "me gusta"
-                  backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                  borderColor: 'rgba(75, 192, 192, 1)',
-                  borderWidth: 1
-//<!--CATEGORIA Y SUBCATEGORIA-->
+</div>
+
+<script>
+  //<!--CATEGORIA Y SUBCATEGORIA-->
   const subcategoriasPorCategoria = {
     {% for categoria in categorias %}
       "{{ categoria.id_categoria }}": [
@@ -181,9 +162,11 @@
       ],
     {% endfor %}
   };
+
   document.getElementById('categoria').addEventListener('change', function () {
     const categoriaId = this.value;
     const subcategoriaSelect = document.getElementById('subcategoria');
+    const selectedSubcategoria = "{{ request.GET.subcategoria }}";
     subcategoriaSelect.innerHTML = '<option value="">Todas</option>';
 
     if (categoriaId && subcategoriasPorCategoria[categoriaId]) {
@@ -191,14 +174,19 @@
         const option = document.createElement('option');
         option.value = subcategoria.id;
         option.textContent = subcategoria.nombre;
+        if (subcategoria.id === selectedSubcategoria) {
+          option.selected = true;
+        }
         subcategoriaSelect.appendChild(option);
       });
     }
   });
 
-    // Trigger change event on page load to populate subcategories if a category is already selected
-    document.getElementById('categoria').dispatchEvent(new Event('change'));
-
+  // Trigger change event on page load to populate subcategories if a category is already selected
+  document.getElementById('categoria').dispatchEvent(new Event('change'));
+  
+  //<!--FIN CATEGORIA Y SUBCATEGORIA-->
+  
   const ctx = document.getElementById('meGustaChart').getContext('2d');
   const meGustaChart = new Chart(ctx, {
     type: 'bar',
@@ -220,5 +208,5 @@
     }
   }
       });
-  </script>
+</script>
 {% endblock content %}
