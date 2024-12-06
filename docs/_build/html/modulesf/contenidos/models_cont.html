@@ -397,6 +397,21 @@ object the first time, the query is executed.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="contenidos.models_cont.Contenido.historico_set">
+<span class="sig-name descname"><span class="pre">historico_set</span></span><a class="headerlink" href="#contenidos.models_cont.Contenido.historico_set" title="Link to this definition">¶</a></dt>
+<dd><p>Accessor to the related objects manager on the reverse side of a
+many-to-one relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Parent.children</span></code> is a <code class="docutils literal notranslate"><span class="pre">ReverseManyToOneDescriptor</span></code> instance.</p>
+<p>Most of the implementation is delegated to a dynamically defined manager
+class built by <code class="docutils literal notranslate"><span class="pre">create_forward_many_to_many_manager()</span></code> defined below.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="contenidos.models_cont.Contenido.id">
 <span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#contenidos.models_cont.Contenido.id" title="Link to this definition">¶</a></dt>
 <dd><p>A wrapper for a deferred-loading field. When the value is read from this
@@ -558,6 +573,107 @@ object the first time, the query is executed.</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="contenidos.models_cont.Historico">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">contenidos.models_cont.</span></span><span class="sig-name descname"><span class="pre">Historico</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/contenidos/models_cont.html#Historico"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#contenidos.models_cont.Historico" title="Link to this definition">¶</a></dt>
+<dd><p>Modelo que representa un comentario asociado a un contenido específico.</p>
+<dl class="simple">
+<dt>Atributos:</dt><dd><p>titulo (str): Referencia al contenido relacionado con esa historia.
+contenido_id (ForeignKey): Referencia al contenido relacionado con esa historia.
+usuario (str): Nombre del usuario que realizó una accion.
+accion (str): Nombre de la accion realizado por el usuario.
+fecha (DateTimeField): Fecha en que se realizo una accion sobre el contenido.</p>
+</dd>
+<dt>Meta:</dt><dd><p>ordering (list): Ordena las historias por fecha.</p>
+</dd>
+<dt>Métodos:</dt><dd><p>__str__: Devuelve una representación en cadena del historico(el usuario, la accion y la fecha).</p>
+</dd>
+</dl>
+<dl class="py exception">
+<dt class="sig sig-object py" id="contenidos.models_cont.Historico.DoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#contenidos.models_cont.Historico.DoesNotExist" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="contenidos.models_cont.Historico.MultipleObjectsReturned">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#contenidos.models_cont.Historico.MultipleObjectsReturned" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="contenidos.models_cont.Historico.accion">
+<span class="sig-name descname"><span class="pre">accion</span></span><a class="headerlink" href="#contenidos.models_cont.Historico.accion" title="Link to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="contenidos.models_cont.Historico.contenido_id">
+<span class="sig-name descname"><span class="pre">contenido_id</span></span><a class="headerlink" href="#contenidos.models_cont.Historico.contenido_id" title="Link to this definition">¶</a></dt>
+<dd><p>Accessor to the related object on the forward side of a many-to-one or
+one-to-one (via ForwardOneToOneDescriptor subclass) relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Child.parent</span></code> is a <code class="docutils literal notranslate"><span class="pre">ForwardManyToOneDescriptor</span></code> instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="contenidos.models_cont.Historico.contenido_id_id">
+<span class="sig-name descname"><span class="pre">contenido_id_id</span></span><a class="headerlink" href="#contenidos.models_cont.Historico.contenido_id_id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="contenidos.models_cont.Historico.fecha">
+<span class="sig-name descname"><span class="pre">fecha</span></span><a class="headerlink" href="#contenidos.models_cont.Historico.fecha" title="Link to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="contenidos.models_cont.Historico.get_accion_display">
+<span class="sig-name descname"><span class="pre">get_accion_display</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field=&lt;django.db.models.fields.CharField:</span> <span class="pre">accion&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#contenidos.models_cont.Historico.get_accion_display" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="contenidos.models_cont.Historico.get_next_by_fecha">
+<span class="sig-name descname"><span class="pre">get_next_by_fecha</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field=&lt;django.db.models.fields.DateTimeField:</span> <span class="pre">fecha&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_next=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#contenidos.models_cont.Historico.get_next_by_fecha" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="contenidos.models_cont.Historico.get_previous_by_fecha">
+<span class="sig-name descname"><span class="pre">get_previous_by_fecha</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field=&lt;django.db.models.fields.DateTimeField:</span> <span class="pre">fecha&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_next=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#contenidos.models_cont.Historico.get_previous_by_fecha" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="contenidos.models_cont.Historico.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#contenidos.models_cont.Historico.id" title="Link to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="contenidos.models_cont.Historico.objects">
+<span class="sig-name descname"><span class="pre">objects</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;django.db.models.manager.Manager</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#contenidos.models_cont.Historico.objects" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="contenidos.models_cont.Historico.titulo">
+<span class="sig-name descname"><span class="pre">titulo</span></span><a class="headerlink" href="#contenidos.models_cont.Historico.titulo" title="Link to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="contenidos.models_cont.Historico.usuario">
+<span class="sig-name descname"><span class="pre">usuario</span></span><a class="headerlink" href="#contenidos.models_cont.Historico.usuario" title="Link to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="contenidos.models_cont.Visualizacion">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">contenidos.models_cont.</span></span><span class="sig-name descname"><span class="pre">Visualizacion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contenido</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fecha</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/contenidos/models_cont.html#Visualizacion"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#contenidos.models_cont.Visualizacion" title="Link to this definition">¶</a></dt>
 <dd><dl class="py exception">
@@ -683,6 +799,7 @@ object the first time, the query is executed.</p>
 <li><a class="reference internal" href="#contenidos.models_cont.Contenido.get_previous_by_fecha_creacion"><code class="docutils literal notranslate"><span class="pre">Contenido.get_previous_by_fecha_creacion()</span></code></a></li>
 <li><a class="reference internal" href="#contenidos.models_cont.Contenido.get_previous_by_fecha_modificacion"><code class="docutils literal notranslate"><span class="pre">Contenido.get_previous_by_fecha_modificacion()</span></code></a></li>
 <li><a class="reference internal" href="#contenidos.models_cont.Contenido.get_tipo_display"><code class="docutils literal notranslate"><span class="pre">Contenido.get_tipo_display()</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.models_cont.Contenido.historico_set"><code class="docutils literal notranslate"><span class="pre">Contenido.historico_set</span></code></a></li>
 <li><a class="reference internal" href="#contenidos.models_cont.Contenido.id"><code class="docutils literal notranslate"><span class="pre">Contenido.id</span></code></a></li>
 <li><a class="reference internal" href="#contenidos.models_cont.Contenido.id_historial_mod"><code class="docutils literal notranslate"><span class="pre">Contenido.id_historial_mod</span></code></a></li>
 <li><a class="reference internal" href="#contenidos.models_cont.Contenido.imagen"><code class="docutils literal notranslate"><span class="pre">Contenido.imagen</span></code></a></li>
@@ -709,6 +826,22 @@ object the first time, the query is executed.</p>
 <li><a class="reference internal" href="#contenidos.models_cont.ContenidoForm.base_fields"><code class="docutils literal notranslate"><span class="pre">ContenidoForm.base_fields</span></code></a></li>
 <li><a class="reference internal" href="#contenidos.models_cont.ContenidoForm.declared_fields"><code class="docutils literal notranslate"><span class="pre">ContenidoForm.declared_fields</span></code></a></li>
 <li><a class="reference internal" href="#contenidos.models_cont.ContenidoForm.media"><code class="docutils literal notranslate"><span class="pre">ContenidoForm.media</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#contenidos.models_cont.Historico"><code class="docutils literal notranslate"><span class="pre">Historico</span></code></a><ul>
+<li><a class="reference internal" href="#contenidos.models_cont.Historico.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">Historico.DoesNotExist</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.models_cont.Historico.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">Historico.MultipleObjectsReturned</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.models_cont.Historico.accion"><code class="docutils literal notranslate"><span class="pre">Historico.accion</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.models_cont.Historico.contenido_id"><code class="docutils literal notranslate"><span class="pre">Historico.contenido_id</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.models_cont.Historico.contenido_id_id"><code class="docutils literal notranslate"><span class="pre">Historico.contenido_id_id</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.models_cont.Historico.fecha"><code class="docutils literal notranslate"><span class="pre">Historico.fecha</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.models_cont.Historico.get_accion_display"><code class="docutils literal notranslate"><span class="pre">Historico.get_accion_display()</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.models_cont.Historico.get_next_by_fecha"><code class="docutils literal notranslate"><span class="pre">Historico.get_next_by_fecha()</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.models_cont.Historico.get_previous_by_fecha"><code class="docutils literal notranslate"><span class="pre">Historico.get_previous_by_fecha()</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.models_cont.Historico.id"><code class="docutils literal notranslate"><span class="pre">Historico.id</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.models_cont.Historico.objects"><code class="docutils literal notranslate"><span class="pre">Historico.objects</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.models_cont.Historico.titulo"><code class="docutils literal notranslate"><span class="pre">Historico.titulo</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.models_cont.Historico.usuario"><code class="docutils literal notranslate"><span class="pre">Historico.usuario</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#contenidos.models_cont.Visualizacion"><code class="docutils literal notranslate"><span class="pre">Visualizacion</span></code></a><ul>

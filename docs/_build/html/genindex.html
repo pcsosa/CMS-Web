@@ -66,6 +66,8 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Historico.accion">accion (atributo de contenidos.models_cont.Historico)</a>
+</li>
       <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Comentario.active">active (atributo de contenidos.models_cont.Comentario)</a>
 
       <ul>
@@ -97,6 +99,8 @@
         <li><a href="modulesf/appcms/forms.html#module-appcms.forms">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     appcms.models
 
@@ -104,8 +108,6 @@
         <li><a href="modulesf/appcms/models.html#module-appcms.models">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     appcms.notificacion
 
@@ -210,10 +212,10 @@
 </li>
       <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Contenido.comments">comments (atributo de contenidos.models_cont.Contenido)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modulesf/appcms/utils.html#appcms.utils.utils.comprobarToken">comprobarToken() (en el módulo appcms.utils.utils)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modulesf/contenidos/views_cont.html#contenidos.views_cont.contar_visualizaciones">contar_visualizaciones() (en el módulo contenidos.views_cont)</a>
 </li>
       <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Comentario.contenido">contenido (atributo de contenidos.models_cont.Comentario)</a>
@@ -235,9 +237,13 @@
       <ul>
         <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.ComentarioRoles.contenido_id">(atributo de contenidos.models_cont.ComentarioRoles)</a>
 </li>
+        <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Historico.contenido_id">(atributo de contenidos.models_cont.Historico)</a>
+</li>
         <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Visualizacion.contenido_id">(atributo de contenidos.models_cont.Visualizacion)</a>
 </li>
       </ul></li>
+      <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Historico.contenido_id_id">contenido_id_id (atributo de contenidos.models_cont.Historico)</a>
+</li>
       <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.ContenidoForm">ContenidoForm (clase en contenidos.models_cont)</a>
 </li>
       <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.ContenidoForm.Meta">ContenidoForm.Meta (clase en contenidos.models_cont)</a>
@@ -336,6 +342,8 @@
       <ul>
         <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.ComentarioRoles.fecha">(atributo de contenidos.models_cont.ComentarioRoles)</a>
 </li>
+        <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Historico.fecha">(atributo de contenidos.models_cont.Historico)</a>
+</li>
         <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Visualizacion.fecha">(atributo de contenidos.models_cont.Visualizacion)</a>
 </li>
       </ul></li>
@@ -365,6 +373,8 @@
 </li>
       <li><a href="modulesf/contenidos/views_cont.html#contenidos.views_cont.gestion_contenido">gestion_contenido() (en el módulo contenidos.views_cont)</a>
 </li>
+      <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Historico.get_accion_display">get_accion_display() (método de contenidos.models_cont.Historico)</a>
+</li>
       <li><a href="modulesf/appcms/models.html#appcms.models.Categoria.get_descripcion">get_descripcion() (método de appcms.models.Categoria)</a>
 </li>
       <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Contenido.get_estado_display">get_estado_display() (método de contenidos.models_cont.Contenido)</a>
@@ -376,6 +386,8 @@
       <ul>
         <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.ComentarioRoles.get_next_by_fecha">(método de contenidos.models_cont.ComentarioRoles)</a>
 </li>
+        <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Historico.get_next_by_fecha">(método de contenidos.models_cont.Historico)</a>
+</li>
         <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Visualizacion.get_next_by_fecha">(método de contenidos.models_cont.Visualizacion)</a>
 </li>
       </ul></li>
@@ -383,14 +395,16 @@
 </li>
       <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Contenido.get_next_by_fecha_modificacion">get_next_by_fecha_modificacion() (método de contenidos.models_cont.Contenido)</a>
 </li>
-      <li><a href="modulesf/appcms/services.html#appcms.services.keycloak_service.KeycloakService.get_permisos">get_permisos() (método de appcms.services.keycloak_service.KeycloakService)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modulesf/appcms/services.html#appcms.services.keycloak_service.KeycloakService.get_permisos">get_permisos() (método de appcms.services.keycloak_service.KeycloakService)</a>
+</li>
       <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Comentario.get_previous_by_fecha">get_previous_by_fecha() (método de contenidos.models_cont.Comentario)</a>
 
       <ul>
         <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.ComentarioRoles.get_previous_by_fecha">(método de contenidos.models_cont.ComentarioRoles)</a>
+</li>
+        <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Historico.get_previous_by_fecha">(método de contenidos.models_cont.Historico)</a>
 </li>
         <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Visualizacion.get_previous_by_fecha">(método de contenidos.models_cont.Visualizacion)</a>
 </li>
@@ -417,6 +431,16 @@
 <h2 id="H">H</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Historico">Historico (clase en contenidos.models_cont)</a>
+</li>
+      <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Historico.DoesNotExist">Historico.DoesNotExist</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Historico.MultipleObjectsReturned">Historico.MultipleObjectsReturned</a>
+</li>
+      <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Contenido.historico_set">historico_set (atributo de contenidos.models_cont.Contenido)</a>
+</li>
       <li><a href="modulesf/appcms/views.html#appcms.views.home">home() (en el módulo appcms.views)</a>
 </li>
   </ul></td>
@@ -432,13 +456,15 @@
 </li>
         <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Contenido.id">(atributo de contenidos.models_cont.Contenido)</a>
 </li>
+        <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Historico.id">(atributo de contenidos.models_cont.Historico)</a>
+</li>
         <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Visualizacion.id">(atributo de contenidos.models_cont.Visualizacion)</a>
 </li>
       </ul></li>
-      <li><a href="modulesf/appcms/models.html#appcms.models.Categoria.id_categoria">id_categoria (atributo de appcms.models.Categoria)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modulesf/appcms/models.html#appcms.models.Categoria.id_categoria">id_categoria (atributo de appcms.models.Categoria)</a>
+</li>
       <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Contenido.id_historial_mod">id_historial_mod (atributo de contenidos.models_cont.Contenido)</a>
 </li>
       <li><a href="modulesf/subcategorias/models.html#subcategorias.models.Subcategoria.id_subcategoria">id_subcategoria (atributo de subcategorias.models.Subcategoria)</a>
@@ -587,15 +613,17 @@
 </li>
         <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Contenido.objects">(atributo de contenidos.models_cont.Contenido)</a>
 </li>
+        <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Historico.objects">(atributo de contenidos.models_cont.Historico)</a>
+</li>
         <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Visualizacion.objects">(atributo de contenidos.models_cont.Visualizacion)</a>
 </li>
         <li><a href="modulesf/subcategorias/models.html#subcategorias.models.Subcategoria.objects">(atributo de subcategorias.models.Subcategoria)</a>
 </li>
       </ul></li>
-      <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Contenido.obtener_imagen">obtener_imagen() (método de contenidos.models_cont.Contenido)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Contenido.obtener_imagen">obtener_imagen() (método de contenidos.models_cont.Contenido)</a>
+</li>
       <li><a href="modulesf/appcms/utils.html#appcms.utils.utils.obtenerRolesUser">obtenerRolesUser() (en el módulo appcms.utils.utils)</a>
 </li>
       <li><a href="modulesf/appcms/utils.html#appcms.utils.utils.obtenerRPT">obtenerRPT() (en el módulo appcms.utils.utils)</a>
@@ -719,7 +747,11 @@
       <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Contenido.TIPO_CONTENIDO">TIPO_CONTENIDO (atributo de contenidos.models_cont.Contenido)</a>
 </li>
       <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Contenido.titulo">titulo (atributo de contenidos.models_cont.Contenido)</a>
+
+      <ul>
+        <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Historico.titulo">(atributo de contenidos.models_cont.Historico)</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -738,6 +770,8 @@
 
       <ul>
         <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.ComentarioRoles.usuario">(atributo de contenidos.models_cont.ComentarioRoles)</a>
+</li>
+        <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Historico.usuario">(atributo de contenidos.models_cont.Historico)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -759,6 +793,8 @@
       <li><a href="modulesf/contenidos/models_cont.html#contenidos.models_cont.Contenido.visualizaciones">visualizaciones (atributo de contenidos.models_cont.Contenido)</a>
 </li>
       <li><a href="modulesf/contenidos/views_cont.html#contenidos.views_cont.visualizar_contenido">visualizar_contenido() (en el módulo contenidos.views_cont)</a>
+</li>
+      <li><a href="modulesf/contenidos/views_cont.html#contenidos.views_cont.visualizar_historial">visualizar_historial() (en el módulo contenidos.views_cont)</a>
 </li>
   </ul></td>
 </tr></table>

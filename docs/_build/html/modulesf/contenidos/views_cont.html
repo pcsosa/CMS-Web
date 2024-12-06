@@ -213,8 +213,8 @@ base de datos, se retorna un JSON con un mensaje de error y un estado HTTP 404.<
 <dl class="py function">
 <dt class="sig sig-object py" id="contenidos.views_cont.generar_reporte_pdf">
 <span class="sig-prename descclassname"><span class="pre">contenidos.views_cont.</span></span><span class="sig-name descname"><span class="pre">generar_reporte_pdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/contenidos/views_cont.html#generar_reporte_pdf"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#contenidos.views_cont.generar_reporte_pdf" title="Link to this definition">¶</a></dt>
-<dd><p>Genera un reporte en formato PDF con un resumen de los contenidos, 
-incluyendo el total de visitas, «me gusta» y un gráfico de los top 5 contenidos 
+<dd><p>Genera un reporte en formato PDF con un resumen de los contenidos,
+incluyendo el total de visitas, «me gusta» y un gráfico de los top 5 contenidos
 con más «me gusta».</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parámetros<span class="colon">:</span></dt>
@@ -335,7 +335,7 @@ se gestiona un mensaje de error.</p>
 <dt class="sig sig-object py" id="contenidos.views_cont.nromegusta">
 <span class="sig-prename descclassname"><span class="pre">contenidos.views_cont.</span></span><span class="sig-name descname"><span class="pre">nromegusta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pk</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/contenidos/views_cont.html#nromegusta"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#contenidos.views_cont.nromegusta" title="Link to this definition">¶</a></dt>
 <dd><p>Aumenta el número de «me gusta» dado a un contenido específico.</p>
-<p>Esta vista recibe una solicitud HTTP y la clave primaria de un contenido para incrementar 
+<p>Esta vista recibe una solicitud HTTP y la clave primaria de un contenido para incrementar
 su contador de «me gusta».</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parámetros<span class="colon">:</span></dt>
@@ -356,7 +356,7 @@ su contador de «me gusta».</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="contenidos.views_cont.reporte">
 <span class="sig-prename descclassname"><span class="pre">contenidos.views_cont.</span></span><span class="sig-name descname"><span class="pre">reporte</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/contenidos/views_cont.html#reporte"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#contenidos.views_cont.reporte" title="Link to this definition">¶</a></dt>
-<dd><p>Genera un reporte filtrado de contenidos basados en parámetros como fecha, estado, 
+<dd><p>Genera un reporte filtrado de contenidos basados en parámetros como fecha, estado,
 categoría, y subcategoría. También calcula estadísticas como el total de visitas y «me gusta».</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parámetros<span class="colon">:</span></dt>
@@ -440,6 +440,23 @@ cada estado, de la siguiente manera:</p>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="contenidos.views_cont.visualizar_historial">
+<span class="sig-prename descclassname"><span class="pre">contenidos.views_cont.</span></span><span class="sig-name descname"><span class="pre">visualizar_historial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/contenidos/views_cont.html#visualizar_historial"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#contenidos.views_cont.visualizar_historial" title="Link to this definition">¶</a></dt>
+<dd><p>Visualiza el historial con detalles y permite filtrar por contenido, usuario y rango de fechas.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>HttpRequest</em>) – Objeto de solicitud que contiene los datos de la petición.</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Renderiza el template “historial.html” con los datos filtrados.</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -470,6 +487,7 @@ cada estado, de la siguiente manera:</p>
 <li><a class="reference internal" href="#contenidos.views_cont.tablero_kanban"><code class="docutils literal notranslate"><span class="pre">tablero_kanban()</span></code></a></li>
 <li><a class="reference internal" href="#contenidos.views_cont.upload_image"><code class="docutils literal notranslate"><span class="pre">upload_image()</span></code></a></li>
 <li><a class="reference internal" href="#contenidos.views_cont.visualizar_contenido"><code class="docutils literal notranslate"><span class="pre">visualizar_contenido()</span></code></a></li>
+<li><a class="reference internal" href="#contenidos.views_cont.visualizar_historial"><code class="docutils literal notranslate"><span class="pre">visualizar_historial()</span></code></a></li>
 </ul>
 </li>
 </ul>

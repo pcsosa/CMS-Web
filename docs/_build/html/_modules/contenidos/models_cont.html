@@ -259,6 +259,45 @@
     <span class="n">contenido</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Contenido</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">)</span>
     <span class="n">fecha</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
+    
+<div class="viewcode-block" id="Historico">
+<a class="viewcode-back" href="../../modulesf/contenidos/models_cont.html#contenidos.models_cont.Historico">[documentos]</a>
+<span class="k">class</span> <span class="nc">Historico</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Modelo que representa un comentario asociado a un contenido específico.</span>
+
+<span class="sd">    Atributos:</span>
+<span class="sd">        titulo (str): Referencia al contenido relacionado con esa historia.</span>
+<span class="sd">        contenido_id (ForeignKey): Referencia al contenido relacionado con esa historia.</span>
+<span class="sd">        usuario (str): Nombre del usuario que realizó una accion.</span>
+<span class="sd">        accion (str): Nombre de la accion realizado por el usuario.</span>
+<span class="sd">        fecha (DateTimeField): Fecha en que se realizo una accion sobre el contenido.</span>
+
+
+<span class="sd">    Meta:</span>
+<span class="sd">        ordering (list): Ordena las historias por fecha.</span>
+
+<span class="sd">    Métodos:</span>
+<span class="sd">        __str__: Devuelve una representación en cadena del historico(el usuario, la accion y la fecha).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">titulo</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">)</span>
+    <span class="n">contenido_id</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Contenido</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">)</span>
+    <span class="n">usuario</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">)</span>
+    <span class="n">accion</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;CREADO&#39;</span><span class="p">,</span><span class="s1">&#39;CREADO&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;EDITADO&#39;</span><span class="p">,</span><span class="s1">&#39;EDITADO&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;ELIMINADO&#39;</span><span class="p">,</span><span class="s1">&#39;ELIMINADO&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;PUBLICADO&#39;</span><span class="p">,</span><span class="s1">&#39;PUBLICADO&#39;</span><span class="p">),</span> 
+        <span class="p">(</span><span class="s1">&#39;ENVIADO A BORRADOR&#39;</span><span class="p">,</span><span class="s1">&#39;ENVIADO A BORRADOR&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;ENVIADO A PUBLICAR&#39;</span><span class="p">,</span><span class="s1">&#39;ENVIADO A PUBLICAR&#39;</span><span class="p">),(</span><span class="s1">&#39;ENVIADO A EDICION&#39;</span><span class="p">,</span><span class="s1">&#39;ENVIADO A EDICION&#39;</span><span class="p">)</span>
+    <span class="p">])</span>
+    <span class="n">fecha</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s2">&quot;Histórico de Contenido&quot;</span>
+        <span class="n">verbose_name_plural</span> <span class="o">=</span> <span class="s2">&quot;Históricos de Contenidos&quot;</span>
+        <span class="n">ordering</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;-fecha&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">titulo</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">accion</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fecha</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
 </pre></div>
 
             <div class="clearer"></div>

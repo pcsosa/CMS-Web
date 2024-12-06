@@ -46,11 +46,12 @@
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">from</span> <span class="nn">django.conf</span> <span class="kn">import</span> <span class="n">settings</span>
 <span class="kn">from</span> <span class="nn">django.core.cache</span> <span class="kn">import</span> <span class="n">cache</span>
-
-<span class="kn">from</span> <span class="nn">appcms.services.keycloak_service</span> <span class="kn">import</span> <span class="n">KeycloakService</span>
 <span class="kn">from</span> <span class="nn">django.core.mail</span> <span class="kn">import</span> <span class="n">send_mail</span>
 <span class="kn">from</span> <span class="nn">django.template.loader</span> <span class="kn">import</span> <span class="n">render_to_string</span>
 <span class="kn">from</span> <span class="nn">django.utils.html</span> <span class="kn">import</span> <span class="n">strip_tags</span>
+
+<span class="kn">from</span> <span class="nn">appcms.services.keycloak_service</span> <span class="kn">import</span> <span class="n">KeycloakService</span>
+
 
 <span class="c1"># Obtener información del usuario a partir del user id</span>
 <div class="viewcode-block" id="obtenerUserInfoById">
@@ -59,7 +60,7 @@
     <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">TESTING</span> <span class="o">==</span> <span class="s2">&quot;True&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;autor1&quot;</span><span class="p">}</span>
 
-    <span class="n">kc</span> <span class="o">=</span> <span class="n">KeycloakService</span><span class="p">()</span>
+    <span class="n">kc</span> <span class="o">=</span> <span class="n">KeycloakService</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span>
     <span class="n">user</span> <span class="o">=</span> <span class="n">kc</span><span class="o">.</span><span class="n">admin</span><span class="o">.</span><span class="n">get_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">user</span></div>
 
@@ -217,7 +218,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        list: Una lista de diccionarios con los IDs y nombres de usuario de los usuarios.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">kc</span> <span class="o">=</span> <span class="n">KeycloakService</span><span class="p">()</span>
+    <span class="n">kc</span> <span class="o">=</span> <span class="n">KeycloakService</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span>
     <span class="n">users</span> <span class="o">=</span> <span class="n">kc</span><span class="o">.</span><span class="n">admin</span><span class="o">.</span><span class="n">get_realm_role_members</span><span class="p">(</span><span class="n">rol</span><span class="p">)</span>
 
     <span class="c1"># Usar comprensión de lista para extraer solo los campos &#39;id&#39; y &#39;username&#39;</span>
@@ -244,13 +245,13 @@
     <span class="n">public_key</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">KEYCLOAK_RS256_PUBLIC_KEY</span>
     <span class="n">public_key</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">n&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">public_key</span><span class="p">)</span>
     <span class="c1"># Decodifica sin validar la audiencia para inspeccionarla</span>
-    <span class="n">payload</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span>
-        <span class="n">token</span><span class="p">,</span>
-        <span class="n">public_key</span><span class="p">,</span>
-        <span class="n">algorithms</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;RS256&quot;</span><span class="p">],</span>
-        <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;verify_exp&quot;</span><span class="p">:</span> <span class="n">verify_exp</span><span class="p">,</span> <span class="s2">&quot;verify_aud&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
-    <span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Audiencia encontrada en el token:&quot;</span><span class="p">,</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;aud&quot;</span><span class="p">))</span>
+    <span class="c1"># payload = jwt.decode(</span>
+    <span class="c1">#     token,</span>
+    <span class="c1">#     public_key,</span>
+    <span class="c1">#     algorithms=[&quot;RS256&quot;],</span>
+    <span class="c1">#     options={&quot;verify_exp&quot;: verify_exp, &quot;verify_aud&quot;: False},</span>
+    <span class="c1"># )</span>
+    <span class="c1"># print(&quot;Audiencia encontrada en el token:&quot;, payload.get(&quot;aud&quot;))</span>
 
     <span class="c1"># Ahora valida la audiencia correcta</span>
     <span class="k">return</span> <span class="n">jwt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span>
@@ -373,6 +374,7 @@
     <span class="k">return</span> <span class="n">texto_sin_acentos</span></div>
 
 
+
 <div class="viewcode-block" id="enviar_notificacion">
 <a class="viewcode-back" href="../../../modulesf/appcms/utils.html#appcms.utils.utils.enviar_notificacion">[documentos]</a>
 <span class="k">def</span> <span class="nf">enviar_notificacion</span><span class="p">(</span><span class="n">asunto</span><span class="p">,</span> <span class="n">mensaje</span><span class="p">,</span> <span class="n">destinatarios</span><span class="p">):</span>
@@ -392,9 +394,12 @@
 <span class="sd">    :returns: Esta función no devuelve ningún valor.</span>
 <span class="sd">    :rtype: None</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">html_mensaje</span> <span class="o">=</span> <span class="n">render_to_string</span><span class="p">(</span><span class="s1">&#39;notificacion.html&#39;</span><span class="p">,</span> <span class="p">{</span>
-        <span class="s1">&#39;mensaje&#39;</span><span class="p">:</span> <span class="n">mensaje</span><span class="p">,</span>
-    <span class="p">})</span>
+    <span class="n">html_mensaje</span> <span class="o">=</span> <span class="n">render_to_string</span><span class="p">(</span>
+        <span class="s2">&quot;notificacion.html&quot;</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;mensaje&quot;</span><span class="p">:</span> <span class="n">mensaje</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">)</span>
     <span class="n">mensaje_plano</span> <span class="o">=</span> <span class="n">strip_tags</span><span class="p">(</span><span class="n">html_mensaje</span><span class="p">)</span>
     <span class="n">send_mail</span><span class="p">(</span>
         <span class="n">asunto</span><span class="p">,</span>

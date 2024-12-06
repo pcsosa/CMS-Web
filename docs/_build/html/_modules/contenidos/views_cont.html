@@ -72,6 +72,7 @@
     <span class="n">Comentario</span><span class="p">,</span>
     <span class="n">ComentarioRoles</span><span class="p">,</span>
     <span class="n">Contenido</span><span class="p">,</span>
+    <span class="n">Historico</span><span class="p">,</span>
     <span class="n">Visualizacion</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">contenidos.notificacion</span> <span class="kn">import</span> <span class="o">*</span>
@@ -152,6 +153,16 @@
             <span class="n">autor_id</span><span class="o">=</span><span class="n">autor_id</span><span class="p">,</span>
         <span class="p">)</span>
 
+        <span class="c1"># Creacion de un nuevo registro en Historico</span>
+        <span class="n">nuevo_Historico</span> <span class="o">=</span> <span class="n">Historico</span><span class="p">(</span>
+            <span class="n">titulo</span><span class="o">=</span><span class="n">nuevo_contenido</span><span class="o">.</span><span class="n">titulo</span><span class="p">,</span>
+            <span class="n">contenido_id</span><span class="o">=</span><span class="n">nuevo_contenido</span><span class="p">,</span>
+            <span class="n">usuario</span><span class="o">=</span><span class="n">nuevo_contenido</span><span class="o">.</span><span class="n">autor_id</span><span class="p">,</span>
+            <span class="n">accion</span><span class="o">=</span><span class="s2">&quot;CREADO&quot;</span><span class="p">,</span>
+            <span class="n">fecha</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+        <span class="p">)</span>
+        
+
         <span class="c1"># Imprimir el nuevo contenido</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;--------------Nuevo contenido-------------&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Título: </span><span class="si">{</span><span class="n">nuevo_contenido</span><span class="o">.</span><span class="n">titulo</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -165,7 +176,7 @@
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Autor: </span><span class="si">{</span><span class="n">nuevo_contenido</span><span class="o">.</span><span class="n">autor_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="n">nuevo_contenido</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-
+        <span class="n">nuevo_Historico</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
         <span class="c1"># Redireccionar después de guardar</span>
         <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;gestion_contenido&quot;</span><span class="p">)</span>
 
@@ -327,6 +338,20 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">contenido</span> <span class="o">=</span> <span class="n">Contenido</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
+
+        <span class="c1"># Creacion de un nuevo registro en Historico</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">obtenerToken</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+
+        <span class="n">nuevo_Historico</span> <span class="o">=</span> <span class="n">Historico</span><span class="p">(</span>
+            <span class="n">titulo</span><span class="o">=</span><span class="n">contenido</span><span class="o">.</span><span class="n">titulo</span><span class="p">,</span>
+            <span class="n">contenido_id</span><span class="o">=</span><span class="n">contenido</span><span class="p">,</span>
+            <span class="n">usuario</span><span class="o">=</span><span class="n">obtenerUserId</span><span class="p">(</span><span class="n">token</span><span class="p">),</span>
+            <span class="n">accion</span><span class="o">=</span><span class="s2">&quot;ELIMINADO&quot;</span><span class="p">,</span>
+            <span class="n">fecha</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+        <span class="p">)</span>
+
+        <span class="n">nuevo_Historico</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
         <span class="n">contenido</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
         <span class="n">notificar_borrar_contenido</span><span class="p">(</span><span class="n">contenido</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;gestion_contenido&quot;</span><span class="p">)</span>
@@ -414,6 +439,16 @@
         <span class="n">contenido</span><span class="o">.</span><span class="n">subcategoria</span> <span class="o">=</span> <span class="n">subcategoria_obj</span>
         <span class="n">contenido</span><span class="o">.</span><span class="n">editor_id</span> <span class="o">=</span> <span class="n">editor_id</span>
         <span class="n">contenido</span><span class="o">.</span><span class="n">autor_id</span> <span class="o">=</span> <span class="n">autor_id</span>  <span class="c1"># Mantener el autor actual</span>
+
+        <span class="c1"># Creacion de un nuevo registro en Historico</span>
+        <span class="n">nuevo_Historico</span> <span class="o">=</span> <span class="n">Historico</span><span class="p">(</span>
+            <span class="n">titulo</span><span class="o">=</span><span class="n">contenido</span><span class="o">.</span><span class="n">titulo</span><span class="p">,</span>
+            <span class="n">contenido_id</span><span class="o">=</span><span class="n">contenido</span><span class="p">,</span>
+            <span class="n">usuario</span><span class="o">=</span><span class="n">obtenerUserId</span><span class="p">(</span><span class="n">token</span><span class="p">),</span>
+            <span class="n">accion</span><span class="o">=</span><span class="s2">&quot;EDITADO&quot;</span><span class="p">,</span>
+            <span class="n">fecha</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+        <span class="p">)</span>
+        <span class="n">nuevo_Historico</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
 
         <span class="c1"># Guardar los cambios en el contenido</span>
         <span class="n">contenido</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
@@ -693,25 +728,25 @@
         <span class="p">(</span><span class="s2">&quot;Publicado&quot;</span><span class="p">,</span> <span class="s2">&quot;A Publicar&quot;</span><span class="p">):</span> <span class="s2">&quot;enviar-Publicado-Apublicar&quot;</span><span class="p">,</span>
     <span class="p">}</span>
 
-    <span class="n">scopes</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s2">&quot;enviar-borrador-revision&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;enviar-revision-Apublicar&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;enviar-Apublicar-Publicado&quot;</span><span class="p">,</span>
-    <span class="p">]</span>
-    <span class="n">scopes</span> <span class="o">+=</span> <span class="p">[</span>
-        <span class="s2">&quot;enviar-revision-borrador&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;enviar-Apublicar-revision&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;enviar-Publicado-Apublicar&quot;</span><span class="p">,</span>
-    <span class="p">]</span>
-    <span class="n">token</span> <span class="o">=</span> <span class="n">obtenerToken</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
-    <span class="n">permiso</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="p">(</span><span class="s2">&quot;Borrador&quot;</span><span class="p">,</span> <span class="s2">&quot;Revisión&quot;</span><span class="p">):</span> <span class="s2">&quot;enviar-borrador-revision&quot;</span><span class="p">,</span>
-        <span class="p">(</span><span class="s2">&quot;Revisión&quot;</span><span class="p">,</span> <span class="s2">&quot;A Publicar&quot;</span><span class="p">):</span> <span class="s2">&quot;enviar-revision-Apublicar&quot;</span><span class="p">,</span>
-        <span class="p">(</span><span class="s2">&quot;A Publicar&quot;</span><span class="p">,</span> <span class="s2">&quot;Publicado&quot;</span><span class="p">):</span> <span class="s2">&quot;enviar-Apublicar-Publicado&quot;</span><span class="p">,</span>
-        <span class="p">(</span><span class="s2">&quot;Revisión&quot;</span><span class="p">,</span> <span class="s2">&quot;Borrador&quot;</span><span class="p">):</span> <span class="s2">&quot;enviar-revision-borrador&quot;</span><span class="p">,</span>
-        <span class="p">(</span><span class="s2">&quot;A Publicar&quot;</span><span class="p">,</span> <span class="s2">&quot;Revisión&quot;</span><span class="p">):</span> <span class="s2">&quot;enviar-Apublicar-revision&quot;</span><span class="p">,</span>
-        <span class="p">(</span><span class="s2">&quot;Publicado&quot;</span><span class="p">,</span> <span class="s2">&quot;A Publicar&quot;</span><span class="p">):</span> <span class="s2">&quot;enviar-Publicado-Apublicar&quot;</span><span class="p">,</span>
-    <span class="p">}</span>
+    <span class="c1"># scopes = [</span>
+    <span class="c1">#     &quot;enviar-borrador-revision&quot;,</span>
+    <span class="c1">#     &quot;enviar-revision-Apublicar&quot;,</span>
+    <span class="c1">#     &quot;enviar-Apublicar-Publicado&quot;,</span>
+    <span class="c1"># ]</span>
+    <span class="c1"># scopes += [</span>
+    <span class="c1">#     &quot;enviar-revision-borrador&quot;,</span>
+    <span class="c1">#     &quot;enviar-Apublicar-revision&quot;,</span>
+    <span class="c1">#     &quot;enviar-Publicado-Apublicar&quot;,</span>
+    <span class="c1"># ]</span>
+    <span class="c1"># token = obtenerToken(request)</span>
+    <span class="c1"># permiso = {</span>
+    <span class="c1">#     (&quot;Borrador&quot;, &quot;Revisión&quot;): &quot;enviar-borrador-revision&quot;,</span>
+    <span class="c1">#     (&quot;Revisión&quot;, &quot;A Publicar&quot;): &quot;enviar-revision-Apublicar&quot;,</span>
+    <span class="c1">#     (&quot;A Publicar&quot;, &quot;Publicado&quot;): &quot;enviar-Apublicar-Publicado&quot;,</span>
+    <span class="c1">#     (&quot;Revisión&quot;, &quot;Borrador&quot;): &quot;enviar-revision-borrador&quot;,</span>
+    <span class="c1">#     (&quot;A Publicar&quot;, &quot;Revisión&quot;): &quot;enviar-Apublicar-revision&quot;,</span>
+    <span class="c1">#     (&quot;Publicado&quot;, &quot;A Publicar&quot;): &quot;enviar-Publicado-Apublicar&quot;,</span>
+    <span class="c1"># }</span>
 
     <span class="c1"># Verifica que los estados actual y siguiente existan en la lista de estados</span>
     <span class="k">if</span> <span class="n">estado_actual</span> <span class="ow">in</span> <span class="n">estados_disponibles</span> <span class="ow">and</span> <span class="n">estado_siguiente</span> <span class="ow">in</span> <span class="n">estados_disponibles</span><span class="p">:</span>
@@ -725,6 +760,28 @@
                 <span class="k">if</span> <span class="n">tienePermiso</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="s2">&quot;contenido&quot;</span><span class="p">,</span> <span class="n">scopes</span><span class="p">)[</span>
                     <span class="n">permiso</span><span class="p">[(</span><span class="n">estado_actual</span><span class="p">,</span> <span class="n">estado_siguiente</span><span class="p">)]</span>
                 <span class="p">]:</span>
+                    <span class="c1"># Creacion de un nuevo registro en Historico</span>
+                    <span class="n">token</span> <span class="o">=</span> <span class="n">obtenerToken</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+                    <span class="n">accion</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                    <span class="k">if</span> <span class="n">estado_siguiente</span> <span class="o">==</span> <span class="s2">&quot;Publicado&quot;</span><span class="p">:</span>
+                        <span class="n">accion</span> <span class="o">=</span> <span class="s2">&quot;PUBLICADO&quot;</span>
+                    <span class="k">elif</span> <span class="n">estado_siguiente</span> <span class="o">==</span> <span class="s2">&quot;A Publicar&quot;</span><span class="p">:</span>
+                        <span class="n">accion</span> <span class="o">=</span> <span class="s2">&quot;ENVIADO A PUBLICAR&quot;</span>
+                    <span class="k">elif</span> <span class="n">estado_siguiente</span> <span class="o">==</span> <span class="s2">&quot;Revisión&quot;</span><span class="p">:</span>
+                        <span class="n">accion</span> <span class="o">=</span> <span class="s2">&quot;ENVIADO A EDICIÓN&quot;</span>
+                    <span class="k">elif</span> <span class="n">estado_siguiente</span> <span class="o">==</span> <span class="s2">&quot;Borrador&quot;</span><span class="p">:</span>
+                        <span class="n">accion</span> <span class="o">=</span> <span class="s2">&quot;ENVIADO A BORRADOR&quot;</span>
+
+                    <span class="n">nuevo_Historico</span> <span class="o">=</span> <span class="n">Historico</span><span class="p">(</span>
+                        <span class="n">titulo</span><span class="o">=</span><span class="n">contenido</span><span class="o">.</span><span class="n">titulo</span><span class="p">,</span>
+                        <span class="n">contenido_id</span><span class="o">=</span><span class="n">contenido</span><span class="p">,</span>
+                        <span class="n">usuario</span><span class="o">=</span><span class="n">obtenerUserId</span><span class="p">(</span><span class="n">token</span><span class="p">),</span>
+                        <span class="n">fecha</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+                        <span class="n">accion</span><span class="o">=</span><span class="n">accion</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+                    <span class="n">nuevo_Historico</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
                     <span class="n">contenido</span><span class="o">.</span><span class="n">estado</span> <span class="o">=</span> <span class="n">estado_siguiente</span>
                     <span class="n">contenido</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
                     <span class="n">enviar_notificacion_cambio_estado</span><span class="p">(</span><span class="n">estado_siguiente</span><span class="p">,</span> <span class="n">contenido</span><span class="p">)</span>
@@ -740,6 +797,27 @@
                     <span class="s2">&quot;Error. Se debe respetar el flujo de estados de los contenidos&quot;</span><span class="p">,</span>
                 <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">accion</span> <span class="o">=</span> <span class="s2">&quot;INACTIVADO&quot;</span>
+            <span class="k">if</span> <span class="n">estado_siguiente</span> <span class="o">==</span> <span class="s2">&quot;Publicado&quot;</span><span class="p">:</span>
+                <span class="n">accion</span> <span class="o">=</span> <span class="s2">&quot;PUBLICADO&quot;</span>
+            <span class="k">elif</span> <span class="n">estado_siguiente</span> <span class="o">==</span> <span class="s2">&quot;A Publicar&quot;</span><span class="p">:</span>
+                <span class="n">accion</span> <span class="o">=</span> <span class="s2">&quot;ENVIADO A PUBLICAR&quot;</span>
+            <span class="k">elif</span> <span class="n">estado_siguiente</span> <span class="o">==</span> <span class="s2">&quot;Revisión&quot;</span><span class="p">:</span>
+                <span class="n">accion</span> <span class="o">=</span> <span class="s2">&quot;ENVIADO A EDICIÓN&quot;</span>
+            <span class="k">elif</span> <span class="n">estado_siguiente</span> <span class="o">==</span> <span class="s2">&quot;Borrador&quot;</span><span class="p">:</span>
+                <span class="n">accion</span> <span class="o">=</span> <span class="s2">&quot;ENVIADO A BORRADOR&quot;</span>
+
+            <span class="n">nuevo_Historico</span> <span class="o">=</span> <span class="n">Historico</span><span class="p">(</span>
+                <span class="n">titulo</span><span class="o">=</span><span class="n">contenido</span><span class="o">.</span><span class="n">titulo</span><span class="p">,</span>
+                <span class="n">contenido_id</span><span class="o">=</span><span class="n">contenido</span><span class="p">,</span>
+                <span class="n">usuario</span><span class="o">=</span><span class="n">obtenerUserId</span><span class="p">(</span><span class="n">token</span><span class="p">),</span>
+                <span class="n">fecha</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+                <span class="n">accion</span><span class="o">=</span><span class="n">accion</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">nuevo_Historico</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
             <span class="n">contenido</span><span class="o">.</span><span class="n">estado</span> <span class="o">=</span> <span class="n">estado_siguiente</span>
             <span class="n">contenido</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
             <span class="n">enviar_notificacion_cambio_estado</span><span class="p">(</span><span class="n">estado_siguiente</span><span class="p">,</span> <span class="n">contenido</span><span class="p">)</span>
@@ -851,8 +929,8 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Aumenta el número de &quot;me gusta&quot; dado a un contenido específico.</span>
 
-<span class="sd">    Esta vista recibe una solicitud HTTP y la clave primaria de un contenido para incrementar </span>
-<span class="sd">    su contador de &quot;me gusta&quot;. </span>
+<span class="sd">    Esta vista recibe una solicitud HTTP y la clave primaria de un contenido para incrementar</span>
+<span class="sd">    su contador de &quot;me gusta&quot;.</span>
 
 <span class="sd">    :param request: El objeto de solicitud HTTP que contiene los datos de la petición.</span>
 <span class="sd">    :type request: HttpRequest</span>
@@ -875,7 +953,7 @@
 <a class="viewcode-back" href="../../modulesf/contenidos/views_cont.html#contenidos.views_cont.reporte">[documentos]</a>
 <span class="k">def</span> <span class="nf">reporte</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Genera un reporte filtrado de contenidos basados en parámetros como fecha, estado, </span>
+<span class="sd">    Genera un reporte filtrado de contenidos basados en parámetros como fecha, estado,</span>
 <span class="sd">    categoría, y subcategoría. También calcula estadísticas como el total de visitas y &quot;me gusta&quot;.</span>
 
 <span class="sd">    :param request: El objeto de solicitud HTTP que contiene los parámetros de la petición.</span>
@@ -997,8 +1075,8 @@
 <a class="viewcode-back" href="../../modulesf/contenidos/views_cont.html#contenidos.views_cont.generar_reporte_pdf">[documentos]</a>
 <span class="k">def</span> <span class="nf">generar_reporte_pdf</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Genera un reporte en formato PDF con un resumen de los contenidos, </span>
-<span class="sd">    incluyendo el total de visitas, &quot;me gusta&quot; y un gráfico de los top 5 contenidos </span>
+<span class="sd">    Genera un reporte en formato PDF con un resumen de los contenidos,</span>
+<span class="sd">    incluyendo el total de visitas, &quot;me gusta&quot; y un gráfico de los top 5 contenidos</span>
 <span class="sd">    con más &quot;me gusta&quot;.</span>
 
 <span class="sd">    :param request: El objeto de solicitud HTTP para la petición de generar el reporte en PDF.</span>
@@ -1139,6 +1217,80 @@
             <span class="s2">&quot;fecha_inicio&quot;</span><span class="p">:</span> <span class="n">inicio</span><span class="o">.</span><span class="n">date</span><span class="p">(),</span>
             <span class="s2">&quot;fecha_fin&quot;</span><span class="p">:</span> <span class="n">fin</span><span class="o">.</span><span class="n">date</span><span class="p">(),</span>
         <span class="p">},</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="visualizar_historial">
+<a class="viewcode-back" href="../../modulesf/contenidos/views_cont.html#contenidos.views_cont.visualizar_historial">[documentos]</a>
+<span class="k">def</span> <span class="nf">visualizar_historial</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Visualiza el historial con detalles y permite filtrar por contenido, usuario y rango de fechas.</span>
+<span class="sd">    </span>
+<span class="sd">    :param request: Objeto de solicitud que contiene los datos de la petición.</span>
+<span class="sd">    :type request: HttpRequest</span>
+
+<span class="sd">    :return: Renderiza el template &#39;historial.html&#39; con los datos filtrados.</span>
+<span class="sd">    :rtype: HttpResponse</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Obtener parámetros de filtro desde la solicitud</span>
+    <span class="n">contenido_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;articulo&quot;</span><span class="p">)</span>  <span class="c1"># ID del contenido</span>
+    <span class="n">usuario_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;usuario&quot;</span><span class="p">)</span>  <span class="c1"># ID del usuario</span>
+    <span class="n">autor_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;autor&quot;</span><span class="p">)</span>  <span class="c1"># ID del autor</span>
+    <span class="n">fecha_inicio</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fecha_inicio&quot;</span><span class="p">)</span>  <span class="c1"># Fecha inicial (YYYY-MM-DD)</span>
+    <span class="n">fecha_fin</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fecha_fin&quot;</span><span class="p">)</span>  <span class="c1"># Fecha final (YYYY-MM-DD)</span>
+
+    <span class="c1"># Iniciar queryset base</span>
+    <span class="n">historial</span> <span class="o">=</span> <span class="n">Historico</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+    <span class="c1"># Obtener el nombre del contenido si se proporciona un ID</span>
+    <span class="n">titulo</span> <span class="o">=</span> <span class="n">Contenido</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">contenido_id</span><span class="p">)</span><span class="o">.</span><span class="n">titulo</span> <span class="k">if</span> <span class="n">contenido_id</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="c1"># Aplicar filtros dinámicamente</span>
+    <span class="k">if</span> <span class="n">contenido_id</span><span class="p">:</span>
+        <span class="n">historial</span> <span class="o">=</span> <span class="n">historial</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">titulo</span><span class="o">=</span><span class="n">titulo</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">usuario_id</span><span class="p">:</span>
+        <span class="n">historial</span> <span class="o">=</span> <span class="n">historial</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">usuario</span><span class="o">=</span><span class="n">usuario_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">autor_id</span><span class="p">:</span>
+        <span class="n">historial</span> <span class="o">=</span> <span class="n">historial</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">contenido_id__autor_id</span><span class="o">=</span><span class="n">autor_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">fecha_inicio</span> <span class="ow">and</span> <span class="n">fecha_fin</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">fecha_inicio</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">fecha_inicio</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">fecha_fin</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">fecha_fin</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">historial</span> <span class="o">=</span> <span class="n">historial</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">fecha__range</span><span class="o">=</span><span class="p">(</span><span class="n">fecha_inicio</span><span class="p">,</span> <span class="n">fecha_fin</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">pass</span>  <span class="c1"># Ignorar si las fechas no tienen el formato correcto</span>
+
+    <span class="c1"># Obtener todos los usuarios menos suscriptores</span>
+    <span class="n">autores</span> <span class="o">=</span> <span class="n">obtenerUsersConRol</span><span class="p">(</span><span class="s2">&quot;Autor&quot;</span><span class="p">)</span>
+    <span class="n">editores</span> <span class="o">=</span> <span class="n">obtenerUsersConRol</span><span class="p">(</span><span class="s2">&quot;Editor&quot;</span><span class="p">)</span>
+    <span class="n">administradores</span> <span class="o">=</span> <span class="n">obtenerUsersConRol</span><span class="p">(</span><span class="s2">&quot;Administrador&quot;</span><span class="p">)</span>
+    <span class="n">publicadores</span> <span class="o">=</span> <span class="n">obtenerUsersConRol</span><span class="p">(</span><span class="s2">&quot;Publicador&quot;</span><span class="p">)</span>
+
+    <span class="c1"># juntar los usuarios sin repetir</span>
+    <span class="n">usuarios</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="n">usuario</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]:</span> <span class="n">usuario</span>
+            <span class="k">for</span> <span class="n">usuario</span> <span class="ow">in</span> <span class="n">autores</span> <span class="o">+</span> <span class="n">editores</span> <span class="o">+</span> <span class="n">administradores</span> <span class="o">+</span> <span class="n">publicadores</span>
+        <span class="p">}</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Obtener los contenidos</span>
+    <span class="n">contenidos</span> <span class="o">=</span> <span class="n">Contenido</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+    <span class="c1"># Reemplazar el ID del usuario por su nombre de usuario en historial</span>
+    <span class="k">for</span> <span class="n">historico</span> <span class="ow">in</span> <span class="n">historial</span><span class="p">:</span>
+        <span class="n">historico</span><span class="o">.</span><span class="n">usuario</span> <span class="o">=</span> <span class="n">obtenerUserInfoById</span><span class="p">(</span><span class="n">historico</span><span class="o">.</span><span class="n">usuario</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;username&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Pasar los datos al template</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span>
+        <span class="n">request</span><span class="p">,</span>
+        <span class="s2">&quot;historial.html&quot;</span><span class="p">,</span>
+        <span class="p">{</span><span class="s2">&quot;historicos&quot;</span><span class="p">:</span> <span class="n">historial</span><span class="p">,</span> <span class="s2">&quot;usuarios&quot;</span><span class="p">:</span> <span class="n">usuarios</span><span class="p">,</span> <span class="s2">&quot;articulos&quot;</span><span class="p">:</span> <span class="n">contenidos</span><span class="p">},</span>
     <span class="p">)</span></div>
 
 </pre></div>
