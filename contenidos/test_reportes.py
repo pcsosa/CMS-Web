@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase,Client
 from django.urls import reverse
 from django.utils import timezone
 
@@ -15,6 +15,7 @@ class ReportesEstadisticosTests(TestCase):
         - Crea contenidos con diferentes características.
         - Crea visualizaciones para los contenidos.
         """
+        self.client = Client()
         # Crear categorías y subcategorías
         self.categoria = Categoria.objects.create(nombre="Categoría 1")
         self.subcategoria = Subcategoria.objects.create(
@@ -170,8 +171,8 @@ class ReportesEstadisticosTests(TestCase):
         response = self.client.get(
             reverse("reporte"),
             {
-                "fecha_inicio": (timezone.now() - timezone.timedelta(days=10)).date(),
-                "fecha_fin": (timezone.now() + timezone.timedelta(days=10)).date(),
+                "fecha_inicio": '',
+                "fecha_fin": '',
                 "estado": "Publicado",
                 "categoria": otra_categoria.id_categoria,
                 "subcategoria": self.subcategoria.id_subcategoria,
@@ -192,8 +193,8 @@ class ReportesEstadisticosTests(TestCase):
         response = self.client.get(
             reverse("reporte"),
             {
-                "fecha_inicio": (timezone.now() - timezone.timedelta(days=10)).date(),
-                "fecha_fin": (timezone.now() + timezone.timedelta(days=10)).date(),
+                "fecha_inicio": '',
+                "fecha_fin": '',
                 "estado": "Publicado",
                 "categoria": self.categoria.id_categoria,
                 "subcategoria": otra_subcategoria.id_subcategoria,
@@ -211,8 +212,8 @@ class ReportesEstadisticosTests(TestCase):
         response = self.client.get(
             reverse("reporte"),
             {
-                "fecha_inicio": (timezone.now() - timezone.timedelta(days=10)).date(),
-                "fecha_fin": (timezone.now() + timezone.timedelta(days=10)).date(),
+                "fecha_inicio": '',
+                "fecha_fin": '',
                 "estado": "Borrador",
                 "categoria": self.categoria.id_categoria,
                 "subcategoria": self.subcategoria.id_subcategoria,
@@ -269,3 +270,4 @@ class ReportesEstadisticosTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, self.contenido1.titulo)
         self.assertNotContains(response, self.contenido2.titulo)
+        
