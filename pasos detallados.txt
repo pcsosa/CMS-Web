@@ -1,0 +1,126 @@
+# 1. INSTALACIÓN DE JAVA
+
+# Actualizar los repositorios de paquetes
+sudo apt update
+
+# Instalar OpenJDK 17
+sudo apt install openjdk-17-jdk
+
+# Editar el archivo ~/.bashrc para agregar las variables de entorno de Java
+sudo nano ~/.bashrc
+
+# Agregar estas líneas al final del archivo .bashrc
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+export PATH=$PATH:$JAVA_HOME/bin
+
+# Guardar y salir del archivo
+
+# Recargar el archivo .bashrc para aplicar los cambios
+source ~/.bashrc
+
+# Verificar que las variables se cargaron correctamente
+echo $JAVA_HOME
+java -version
+
+
+# 2. REINSTALACIÓN DE POSTGRESQL
+
+# Detener el servicio de PostgreSQL si ya está instalado
+sudo systemctl stop postgresql
+
+# Eliminar PostgreSQL completamente
+sudo apt-get --purge remove postgresql\*
+sudo rm -rf /etc/postgresql/
+sudo rm -rf /var/lib/postgresql/
+sudo rm -rf /var/log/postgresql/
+
+# Actualizar repositorios de nuevo
+sudo apt-get update
+
+# Instalar PostgreSQL
+sudo apt-get install postgresql-14
+
+# Verificar el estado de PostgreSQL
+sudo systemctl status postgresql
+
+# Reiniciar PostgreSQL para asegurarse de que está en funcionamiento
+sudo systemctl restart postgresql
+
+
+# 3. CONFIGURACIÓN DE AUTENTICACIÓN EN POSTGRESQL
+
+# Editar el archivo de configuración de autenticación
+sudo nano /etc/postgresql/14/main/pg_hba.conf
+
+# Buscar la siguiente línea:
+# local   all             postgres                                peer
+
+# Reemplazarla por:
+local   all             postgres                                md5
+
+# Guardar y salir del archivo
+
+# Reiniciar PostgreSQL para aplicar los cambios
+sudo systemctl restart postgresql
+
+
+# 4. CONFIGURAR EL USUARIO Y BASES DE DATOS EN POSTGRESQL
+
+# Ingresar al usuario postgres
+sudo -i -u postgres
+
+# Acceder al cliente de PostgreSQL
+psql
+
+# Cambiar la contraseña del usuario postgres a "postgres"
+\password postgres
+
+# Crear las bases de datos para Keycloak y la aplicación
+CREATE DATABASE dbcmsweb;
+CREATE DATABASE dbkeycloak;
+
+# Salir de PostgreSQL
+\q
+
+# Salir del usuario postgres
+exit
+
+
+# 5. RESTAURAR LA BASE DE DATOS DE KEYCLOAK y la APP
+
+# Restaurar la base de datos desde un archivo de backup
+pg_restore -U postgres -W --clean -d dbkeycloak -F c archivo-backup-keycloak
+pg_restore -U postgres -W --clean -d dbcmsweb -F c archivo-backup-cmsweb
+
+# 6. DESCARGAR KEYCLOAK E INICIAR EN MODO DESARROLLO
+
+# Descargar Keycloak
+wget https://github.com/keycloak/keycloak/releases/download/25.0.6/keycloak-25.0.6.tar.gz
+
+# Navegar al directorio donde descargaste Keycloak
+cd keycloak-25.0.6
+
+# Crear script para iniciar keycloak mas rapido
+nano startkc.sh
+
+# Pegar todo esto:
+
+	#!/bin/bash
+
+	# Script para iniciar Keycloak con PostgreSQL
+	bin/kc.sh start-dev \
+	  --http-port 8080 \
+	  --db=postgres \
+	  --db-username=postgres \
+	  --db-password=postgres \
+	  --db-url=jdbc:postgresql://127.0.0.1:5432/dbkeycloak
+
+# Guardar y salir
+
+# Para iniciar keycloak ejecutar este comando
+./startkc.sh
+
+
+# Hacer copia de seguridad de la base de datos (no hacer)
+pg_dump -U postgres -W -F c -b -v -f "./dbcmsweb.backup" dbcmsweb
+pg_dump -U postgres -W -F c -b -v -f "./dbkeycloak.backup" dbkeycloak
